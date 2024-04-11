@@ -49,7 +49,7 @@
   },
   "git": {
     "scripts": {
-      "pre-push": "surge --project docs --domain grocery-planner.surge.sh"
+      "pre-push": "surge --project ./docs --domain grocery-planner.surge.sh"
     }
   }
 }
