@@ -38,5 +38,4 @@ jobs:
         run: npm ci
       
       - name: Deploy
-        run: npm run build
-      - run: surge --project ./build --domain grocery-planner.surge.sh
+        run: npm run deploy
