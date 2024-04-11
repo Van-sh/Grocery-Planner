@@ -39,4 +39,4 @@ jobs:
       
       - name: Deploy
         run: npm run build
-        run: surge --project ./build --domain grocery-planner.surge.sh
+      - run: surge --project ./build --domain grocery-planner.surge.sh
