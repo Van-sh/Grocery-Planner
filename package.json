@@ -20,7 +20,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "set BUILD_PATH=docs&& set GENERATE_SOURCEMAP=false&& react-scripts build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d docs",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
