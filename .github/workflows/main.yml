@@ -38,7 +38,5 @@ jobs:
         run: npm ci
       
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          personal_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN_1 }}
-          publish_dir: ./docs
+        run: npm run build
+        run: surge --project ./build --domain grocery-planner.surge.sh

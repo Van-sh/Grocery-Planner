@@ -46,10 +46,5 @@
   "devDependencies": {
     "git-scripts": "^0.6.4",
     "surge": "^0.23.1"
-  },
-  "git": {
-    "scripts": {
-      "pre-push": "npm run build && surge --project ./build --domain grocery-planner.surge.sh"
-    }
   }
 }
