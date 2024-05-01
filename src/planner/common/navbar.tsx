@@ -12,9 +12,7 @@ const menuItems = [
   }
 ];
 
-type Props = {};
-
-export default function NavBar({}: Props) {
+export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
