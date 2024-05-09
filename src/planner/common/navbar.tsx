@@ -20,7 +20,7 @@ export default function NavBar() {
       <NavbarContent>
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="sm:hidden" />
         <NavbarBrand>
-          <p className="font-bold text-inherit">PLANNER</p>
+          <p className="text-inherit">PLANNER</p>
         </NavbarBrand>
       </NavbarContent>
       <NavbarMenu>
