@@ -1,38 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Divider, Input, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { Button, Divider, Input, ModalBody, ModalFooter, ModalHeader, Select, SelectItem } from "@nextui-org/react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import Autocomplete from "../../../common/autoComplete";
 
+// TODO: Create a dropdown for Unit
+
 type TPreparation = {
   category: string;
-  amount: number;
-  unit: string;
+  timeAmount: number;
+  timeUnits: "" | "days" | "hours" | "minutes";
 };
 
 export type TInputs = {
   name: string;
-  preparation: TPreparation[];
-};
-
-const schema = yup.object({
-  name: yup.string().required("Name is required"),
-  preparation: yup
-    .array()
-    .of(
-      yup.object({
-        category: yup.string().required("Type is required"),
-        amount: yup.number().required("Amount is required").min(1, "Amount must be greater than 0"),
-        unit: yup.string().required("Unit is required")
-      })
-    )
-    .notRequired()
-});
-
-type Props = {
-  onClose: () => void;
-  onCreate: (data: TInputs) => void;
+  preparations: TPreparation[];
 };
 
 const preparationTypes = [
@@ -62,7 +45,28 @@ const preparationTypes = [
   "Whipped"
 ];
 
-const defaultPreparation = { category: "", amount: 0, unit: "" };
+const preparationUnits = ["days", "hours", "minutes"];
+
+const schema = yup.object({
+  name: yup.string().required("Name is required"),
+  preparations: yup
+    .array()
+    .of(
+      yup.object({
+        category: yup.mixed().oneOf(preparationTypes, "Select a type from dropdown").required("Type is required"),
+        timeAmount: yup.number().required("Time Amount is required").min(1, "Time Amount must be greater than 0"),
+        timeUnits: yup.mixed().oneOf(preparationUnits, "Select a type from dropdown").required("Time Unit is required")
+      })
+    )
+    .notRequired()
+});
+
+type Props = {
+  onClose: () => void;
+  onCreate: (data: TInputs) => void;
+};
+
+const defaultPreparation: TPreparation = { category: "", timeAmount: 0, timeUnits: "" };
 
 const preparationInputClasses = {
   inputWrapper: ["bg-white"]
@@ -72,7 +76,7 @@ export default function CreateForm({ onClose, onCreate }: Props) {
   const formik = useFormik({
     initialValues: {
       name: "",
-      preparation: []
+      preparations: []
     } as TInputs,
     validationSchema: schema,
     onSubmit: values => {
@@ -88,7 +92,7 @@ export default function CreateForm({ onClose, onCreate }: Props) {
         <Input
           autoFocus
           label="Name"
-          placeholder="Enter ingredient name"
+          placeholder="Onion, Tomato, Beans etc."
           variant="bordered"
           {...formik.getFieldProps("name")}
           isInvalid={formik.touched.name && !!formik.errors.name}
@@ -98,54 +102,59 @@ export default function CreateForm({ onClose, onCreate }: Props) {
         <div className="text-default-500 text-small">Preparation Needed?</div>
 
         <FormikProvider value={formik}>
-          <FieldArray name="preparation">
+          <FieldArray name="preparations">
             {({ push, remove }) => (
               <>
-                {formik.values.preparation.map((_, index) => (
+                {formik.values.preparations.map((_, index) => (
                   <div key={index} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Preparation type"
-                      placeholder="Select preparation type"
+                      placeholder="Fried, Boiled, etc."
                       variant="bordered"
-                      {...formik.getFieldProps(`preparation.${index}.category`)}
+                      {...formik.getFieldProps(`preparations.${index}.category`)}
                       isInvalid={
-                        formik.touched.preparation?.[index]?.category &&
-                        !!((formik.errors.preparation?.[index] as FormikErrors<TPreparation>) || {}).category
+                        formik.touched.preparations?.[index]?.category &&
+                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).category
                       }
-                      errorMessage={((formik.errors.preparation?.[index] as FormikErrors<TPreparation>) || {}).category}
+                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).category}
                       classNames={preparationInputClasses}
                       options={preparationTypes}
-                      onSelect={value => formik.setFieldValue(`preparation.${index}.category`, value)}
+                      onSelect={value => formik.setFieldValue(`preparations.${index}.category`, value)}
                     />
 
                     <Input
-                      label="Amount"
-                      placeholder="Enter amount"
+                      label="Amount of time required"
                       variant="bordered"
                       type="number"
-                      {...formik.getFieldProps(`preparation.${index}.amount`)}
+                      {...formik.getFieldProps(`preparations.${index}.timeAmount`)}
                       isInvalid={
-                        formik.touched.preparation?.[index]?.amount &&
-                        !!((formik.errors.preparation?.[index] as FormikErrors<TPreparation>) || {}).amount
+                        formik.touched.preparations?.[index]?.timeAmount &&
+                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).timeAmount
                       }
-                      errorMessage={((formik.errors.preparation?.[index] as FormikErrors<TPreparation>) || {})?.amount}
+                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {})?.timeAmount}
                       classNames={preparationInputClasses}
                     />
 
-                    <Input
-                      label="Unit"
-                      placeholder="Enter unit"
+                    <Select
+                      label="Time Unit"
+                      placeholder="days, hours, minutes"
                       variant="bordered"
-                      {...formik.getFieldProps(`preparation.${index}.unit`)}
+                      {...formik.getFieldProps(`preparations.${index}.timeUnits`)}
                       isInvalid={
-                        formik.touched.preparation?.[index]?.unit &&
-                        !!((formik.errors.preparation?.[index] as FormikErrors<TPreparation>) || {}).unit
+                        formik.touched.preparations?.[index]?.timeUnits &&
+                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).timeUnits
                       }
-                      errorMessage={((formik.errors.preparation?.[index] as FormikErrors<TPreparation>) || {})?.unit}
-                      classNames={preparationInputClasses}
-                    />
+                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {})?.timeUnits}
+                      classNames={{ trigger: ["bg-white"] }}
+                    >
+                      {preparationUnits.map(unit => (
+                        <SelectItem key={unit} value={unit}>
+                          {unit}
+                        </SelectItem>
+                      ))}
+                    </Select>
 
-                    {formik.values.preparation.length > 1 && (
+                    {formik.values.preparations.length > 1 && (
                       <>
                         <Divider />
                         <Button variant="flat" onClick={() => remove(index)}>
@@ -156,7 +165,11 @@ export default function CreateForm({ onClose, onCreate }: Props) {
                   </div>
                 ))}
 
-                <Button variant="bordered" isDisabled={!!formik.getFieldMeta("preparation").error} onClick={() => push(defaultPreparation)}>
+                <Button
+                  variant="bordered"
+                  isDisabled={!!formik.getFieldMeta("preparations").error}
+                  onClick={() => push(defaultPreparation)}
+                >
                   <FontAwesomeIcon icon={faPlus} />
                   Add Preparation
                 </Button>

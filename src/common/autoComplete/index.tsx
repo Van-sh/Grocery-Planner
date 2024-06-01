@@ -2,7 +2,7 @@ import { Input, SlotsToClasses } from "@nextui-org/react";
 import { useState } from "react";
 import DownChevron from "./downChevron";
 
-// TODOS:
+// TODO:
 // 1. Selection is not working on first click. It is working fine on keyboard selection.
 
 type Props = {
