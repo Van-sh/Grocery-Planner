@@ -4,7 +4,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import Autocomplete from "../../../common/autoComplete";
-import { TIngredientsBase, TPreparationBase } from "../types";
+import { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
 
 // TODO: Create a dropdown for Unit
 
@@ -52,8 +52,9 @@ const schema = yup.object({
 });
 
 type Props = {
+  initialValues?: TIngredients; // pass to edit a form
   onClose: () => void;
-  onCreate: (data: TIngredientsBase) => void;
+  onCreate: (data: TIngredientsBase, id?: string) => void;
 };
 
 const defaultPreparation: TPreparationBase = { category: "", timeAmount: 0, timeUnits: "" };
@@ -62,22 +63,22 @@ const preparationInputClasses = {
   inputWrapper: ["bg-white"]
 };
 
-export default function CreateForm({ onClose, onCreate }: Props) {
+export default function CreateForm({ initialValues, onClose, onCreate }: Props) {
   const formik = useFormik({
     initialValues: {
-      name: "",
-      preparations: []
+      name: initialValues?.name || "",
+      preparations: initialValues?.preparations || []
     } as TIngredientsBase,
     validationSchema: schema,
     onSubmit: values => {
-      onCreate(values);
+      onCreate(values, initialValues?._id);
       onClose();
     }
   });
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <ModalHeader>Add New Ingredient</ModalHeader>
+      <ModalHeader>{initialValues ? "Edit" : "Add New"} Ingredient</ModalHeader>
       <ModalBody>
         <Input
           autoFocus
@@ -129,6 +130,7 @@ export default function CreateForm({ onClose, onCreate }: Props) {
                       label="Time Unit"
                       placeholder="days, hours, minutes"
                       variant="bordered"
+                      selectedKeys={[formik.values.preparations[index].timeUnits]}
                       {...formik.getFieldProps(`preparations.${index}.timeUnits`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.timeUnits &&
@@ -173,7 +175,7 @@ export default function CreateForm({ onClose, onCreate }: Props) {
           Close
         </Button>
         <Button type="submit" color="primary" isDisabled={!formik.isValid}>
-          Add
+          Submit
         </Button>
       </ModalFooter>
     </form>

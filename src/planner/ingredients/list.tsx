@@ -1,12 +1,13 @@
-import { TIngredients } from './types'
-import { isDesktop } from '../../constants'
-import IngredientTable from './table'
-import IngredientCards from './cards'
+import { TIngredients } from "./types";
+import { isDesktop } from "../../constants";
+import IngredientTable from "./table";
+import IngredientCards from "./cards";
 
 type Props = {
-  data: TIngredients[]
-}
+  data: TIngredients[];
+  onEdit: (data: TIngredients) => void;
+};
 
-export default function List({data}: Props) {
-  return isDesktop ? <IngredientTable data={data} /> : <IngredientCards data={data} />
+export default function List(props: Props) {
+  return isDesktop ? <IngredientTable {...props} /> : <IngredientCards {...props} />;
 }

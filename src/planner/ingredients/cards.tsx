@@ -5,9 +5,10 @@ import DeleteIcon from "../../assets/deleteIcon";
 
 type Props = {
   data: TIngredients[];
+  onEdit: (data: TIngredients) => void;
 };
 
-export default function IngredientCards({ data }: Props) {
+export default function IngredientCards({ data, onEdit }: Props) {
   return (
     <>
       {data.map(ingredient => (
@@ -28,10 +29,7 @@ export default function IngredientCards({ data }: Props) {
           </CardBody>
           <Divider />
           <CardFooter className="justify-between">
-            <div
-              className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1"
-              onClick={() => console.log(ingredient)}
-            >
+            <div className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1" onClick={() => onEdit(ingredient)}>
               <EditIcon />
               Edit
             </div>

@@ -9,6 +9,7 @@ import DeleteIcon from "../../assets/deleteIcon";
 
 type Props = {
   data: TIngredients[];
+  onEdit: (data: TIngredients) => void;
 };
 
 const columns = [
@@ -18,7 +19,7 @@ const columns = [
   { name: "", key: "actions" }
 ];
 
-export default function IngredientTable({ data }: Props) {
+export default function IngredientTable({ data, onEdit }: Props) {
   const renderCell = React.useCallback((item: TIngredients, columnKey: string | number) => {
     const value = getKeyValue(item, columnKey);
 
@@ -34,8 +35,8 @@ export default function IngredientTable({ data }: Props) {
         return (
           <div className="flex items-center gap-2">
             <Tooltip content="Edit Ingredient">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => console.log(item, columnKey)}>
-                <EditIcon  />
+              <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => onEdit(item)}>
+                <EditIcon />
               </span>
             </Tooltip>
             <Tooltip content="Delete Ingredient">

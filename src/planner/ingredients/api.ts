@@ -15,3 +15,13 @@ export const createIngredient = (data: TIngredientsBase): Promise<TIngredientsBa
     .then(response => response.json())
     .then(({ data }) => data);
 };
+
+export const updateIngredient = ({ data, id }: { data: TIngredientsBase; id: string }): Promise<TIngredientsBase> => {
+  return fetch(`https://grocery-planner-be.onrender.com/api/ingredients/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(({ data }) => data);
+};
