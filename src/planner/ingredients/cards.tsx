@@ -18,7 +18,7 @@ export default function IngredientCards({ data }: Props) {
           <Divider />
           <CardBody className="flex-row justify-between">
             <div>
-              <p className="text-default-400">Updated By:</p>
+              <p className="text-default-400">Updated By</p>
               <p>{ingredient.updatedBy}</p>
             </div>
             <div>
