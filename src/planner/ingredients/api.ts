@@ -25,3 +25,9 @@ export const updateIngredient = ({ data, id }: { data: TIngredientsBase; id: str
     .then(response => response.json())
     .then(({ data }) => data);
 };
+
+export const deleteIngredient = (id: string): Promise<void> => {
+  return fetch(`https://grocery-planner-be.onrender.com/api/ingredients/${id}`, {
+    method: "DELETE"
+  }).then(response => response.json());
+};

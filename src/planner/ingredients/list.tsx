@@ -6,6 +6,7 @@ import IngredientCards from "./cards";
 type Props = {
   data: TIngredients[];
   onEdit: (data: TIngredients) => void;
+  onDelete: (id: string) => void;
 };
 
 export default function List(props: Props) {
