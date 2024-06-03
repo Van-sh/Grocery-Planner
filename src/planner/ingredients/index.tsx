@@ -4,6 +4,11 @@ import BlankScreen from "../../common/blankScreen";
 import Loader from "../../common/loader";
 import { createIngredient, getIngredients } from "./api";
 import CreateForm from "./createForm";
+import List from "./list";
+
+// TODO: 
+// 1. Add search functionality
+// 2. Pagination in FE and BE
 
 export default function Ingredients() {
   const {
@@ -23,7 +28,7 @@ export default function Ingredients() {
         <h1 className="text-2xl">Ingredients</h1>
 
         {isLoading && <Loader />}
-        {onGetSuccess && (data.length === 0 ? <BlankScreen name="Ingredients" onAdd={onOpen} /> : <div></div>)}
+        {onGetSuccess && (data.length === 0 ? <BlankScreen name="Ingredients" onAdd={onOpen} /> : <List data={data} />)}
         {onGetError && <div>Error: {error.message}</div>}
 
         <Modal

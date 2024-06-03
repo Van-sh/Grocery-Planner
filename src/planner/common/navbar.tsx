@@ -18,7 +18,7 @@ export default function NavBar() {
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
-        <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="sm:hidden" />
+        <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
         <NavbarBrand>
           <p className="text-inherit">PLANNER</p>
         </NavbarBrand>

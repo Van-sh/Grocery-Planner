@@ -1,7 +1,5 @@
 import style from "./style.module.scss";
 
-console.log(style);
-
 export default function Loader() {
   return (
     <svg

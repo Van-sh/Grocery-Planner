@@ -1,12 +1,12 @@
-import { TInputs } from "./createForm";
+import { TIngredients, TIngredientsBase } from "./types";
 
-export const getIngredients = (): Promise<[]> => {
+export const getIngredients = (): Promise<TIngredients[]> => {
   return fetch("https://grocery-planner-be.onrender.com/api/ingredients")
     .then(response => response.json())
     .then(({ data }) => data);
 };
 
-export const createIngredient = (data: TInputs): Promise<TInputs> => {
+export const createIngredient = (data: TIngredientsBase): Promise<TIngredientsBase> => {
   return fetch("https://grocery-planner-be.onrender.com/api/ingredients", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

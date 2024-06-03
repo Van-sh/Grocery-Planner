@@ -4,19 +4,9 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import Autocomplete from "../../../common/autoComplete";
+import { TIngredientsBase, TPreparationBase } from "../types";
 
 // TODO: Create a dropdown for Unit
-
-type TPreparation = {
-  category: string;
-  timeAmount: number;
-  timeUnits: "" | "days" | "hours" | "minutes";
-};
-
-export type TInputs = {
-  name: string;
-  preparations: TPreparation[];
-};
 
 const preparationTypes = [
   "Baked",
@@ -63,10 +53,10 @@ const schema = yup.object({
 
 type Props = {
   onClose: () => void;
-  onCreate: (data: TInputs) => void;
+  onCreate: (data: TIngredientsBase) => void;
 };
 
-const defaultPreparation: TPreparation = { category: "", timeAmount: 0, timeUnits: "" };
+const defaultPreparation: TPreparationBase = { category: "", timeAmount: 0, timeUnits: "" };
 
 const preparationInputClasses = {
   inputWrapper: ["bg-white"]
@@ -77,7 +67,7 @@ export default function CreateForm({ onClose, onCreate }: Props) {
     initialValues: {
       name: "",
       preparations: []
-    } as TInputs,
+    } as TIngredientsBase,
     validationSchema: schema,
     onSubmit: values => {
       onCreate(values);
@@ -114,9 +104,9 @@ export default function CreateForm({ onClose, onCreate }: Props) {
                       {...formik.getFieldProps(`preparations.${index}.category`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.category &&
-                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).category
+                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).category
                       }
-                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).category}
+                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).category}
                       classNames={preparationInputClasses}
                       options={preparationTypes}
                       onSelect={value => formik.setFieldValue(`preparations.${index}.category`, value)}
@@ -129,9 +119,9 @@ export default function CreateForm({ onClose, onCreate }: Props) {
                       {...formik.getFieldProps(`preparations.${index}.timeAmount`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.timeAmount &&
-                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).timeAmount
+                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).timeAmount
                       }
-                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {})?.timeAmount}
+                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {})?.timeAmount}
                       classNames={preparationInputClasses}
                     />
 
@@ -142,9 +132,9 @@ export default function CreateForm({ onClose, onCreate }: Props) {
                       {...formik.getFieldProps(`preparations.${index}.timeUnits`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.timeUnits &&
-                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {}).timeUnits
+                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).timeUnits
                       }
-                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparation>) || {})?.timeUnits}
+                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {})?.timeUnits}
                       classNames={{ trigger: ["bg-white"] }}
                     >
                       {preparationUnits.map(unit => (
