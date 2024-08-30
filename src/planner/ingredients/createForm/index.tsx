@@ -146,14 +146,11 @@ export default function CreateForm({ initialValues, onClose, onCreate }: Props) 
                       ))}
                     </Select>
 
-                    {formik.values.preparations.length > 1 && (
-                      <>
-                        <Divider />
-                        <Button variant="flat" onClick={() => remove(index)}>
-                          Remove
-                        </Button>
-                      </>
-                    )}
+                    <Divider />
+
+                    <Button variant="flat" onClick={() => remove(index)}>
+                      Remove
+                    </Button>
                   </div>
                 ))}
 
