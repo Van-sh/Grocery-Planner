@@ -12,6 +12,7 @@ import PlusIcon from "../../assets/plus";
 // TODO:
 // 1. Add search functionality
 // 2. Pagination in FE and BE
+// 3. Handle api errors
 
 export default function Ingredients() {
   const {
@@ -22,15 +23,39 @@ export default function Ingredients() {
     data,
     refetch
   } = useQuery({ queryKey: ["ingredients"], queryFn: getIngredients });
-  const create = useMutation({ mutationFn: createIngredient, onSuccess: () => refetch() });
-  const update = useMutation({ mutationFn: updateIngredient, onSuccess: () => refetch() });
-  const deleteI = useMutation({ mutationFn: deleteIngredient, onSettled: () => refetch() });
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
+  const create = useMutation({
+    mutationFn: createIngredient,
+    onSuccess: () => {
+      onEditModalClose();
+      refetch();
+    }
+  });
+  const update = useMutation({
+    mutationFn: updateIngredient,
+    onSuccess: () => {
+      onEditModalClose();
+      refetch();
+    }
+  });
+  const deleteI = useMutation({
+    mutationFn: deleteIngredient,
+    onSettled: () => {
+      onDeleteModalClose();
+      refetch();
+    }
+  });
   const [selectedIngredient, setSelectedIngredient] = useState<TIngredients>();
 
   const handleEdit = (item: TIngredients) => {
     setSelectedIngredient(item);
-    onOpen();
+    onEditModalOpen();
+  };
+
+  const showDeleteModal = (id: string) => {
+    setSelectedIngredient({ _id: id } as TIngredients);
+    onDeleteModalOpen();
   };
 
   const handleDelete = (id: string) => {
@@ -38,7 +63,7 @@ export default function Ingredients() {
   };
 
   const handleClose = () => {
-    onClose();
+    onEditModalClose();
     setSelectedIngredient(undefined);
   };
 
@@ -50,19 +75,19 @@ export default function Ingredients() {
         {isLoading && <Loader />}
         {onGetSuccess &&
           (data.length === 0 ? (
-            <BlankScreen name="Ingredients" onAdd={onOpen} />
+            <BlankScreen name="Ingredients" onAdd={onEditModalOpen} />
           ) : (
-            <List data={data} onEdit={handleEdit} onDelete={handleDelete} />
+            <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
           ))}
         {onGetError && <div>Error: {error.message}</div>}
 
-        <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={onOpen}>
+        <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={onEditModalOpen}>
           <PlusIcon />
           Create
         </Button>
 
         <Modal
-          isOpen={isOpen}
+          isOpen={isEditModalOpen}
           onClose={handleClose}
           isDismissable={false}
           isKeyboardDismissDisabled
@@ -73,11 +98,37 @@ export default function Ingredients() {
             {() => (
               <CreateForm
                 initialValues={selectedIngredient}
+                isLoading={create.isPending || update.isPending}
                 onClose={handleClose}
                 onCreate={(data, id) => {
                   id ? update.mutate({ data, id }) : create.mutate(data);
                 }}
               />
+            )}
+          </ModalContent>
+        </Modal>
+
+        <Modal
+          isOpen={isDeleteModalOpen}
+          onClose={onDeleteModalClose}
+          isDismissable={false}
+          isKeyboardDismissDisabled
+          placement="top-center"
+          scrollBehavior="outside"
+        >
+          <ModalContent>
+            {() => (
+              <div className="p-6">
+                <h2 className="text-lg">Are you sure you want to delete this ingredient?</h2>
+                <div className="flex justify-end gap-4 mt-6">
+                  <Button color="danger" onClick={() => handleDelete(selectedIngredient!._id)} isLoading={deleteI.isPending}>
+                    Yes
+                  </Button>
+                  <Button onClick={onDeleteModalClose} isLoading={deleteI.isPending}>
+                    No
+                  </Button>
+                </div>
+              </div>
             )}
           </ModalContent>
         </Modal>

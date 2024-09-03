@@ -28,6 +28,7 @@ const preparationTypes = [
   "Sliced",
   "Smoked",
   "Soaked",
+  "Sprouted",
   "Steamed",
   "Stir-fried",
   "Stuffed",
@@ -53,6 +54,7 @@ const schema = yup.object({
 
 type Props = {
   initialValues?: TIngredients; // pass to edit a form
+  isLoading?: boolean;
   onClose: () => void;
   onCreate: (data: TIngredientsBase, id?: string) => void;
 };
@@ -63,17 +65,14 @@ const preparationInputClasses = {
   inputWrapper: ["bg-white"]
 };
 
-export default function CreateForm({ initialValues, onClose, onCreate }: Props) {
+export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
   const formik = useFormik({
     initialValues: {
       name: initialValues?.name || "",
       preparations: initialValues?.preparations || []
     } as TIngredientsBase,
     validationSchema: schema,
-    onSubmit: values => {
-      onCreate(values, initialValues?._id);
-      onClose();
-    }
+    onSubmit: values => onCreate(values, initialValues?._id)
   });
 
   return (
@@ -168,10 +167,10 @@ export default function CreateForm({ initialValues, onClose, onCreate }: Props) 
         </FormikProvider>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose}>
+        <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
           Close
         </Button>
-        <Button type="submit" color="primary" isDisabled={!formik.isValid}>
+        <Button type="submit" color="primary" isDisabled={!formik.isValid} isLoading={isLoading}>
           Submit
         </Button>
       </ModalFooter>
