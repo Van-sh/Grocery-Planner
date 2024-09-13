@@ -21,3 +21,8 @@ export type TIngredients = TIngredientsBase & {
   updatedBy: string;
   preparations: TPreparation[];
 }
+
+export type TIngredientsResponse = {
+  data: TIngredients[];
+  count: number;
+}
