@@ -1,7 +1,7 @@
-import { Button, Input } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useRef, type ReactNode, type Dispatch } from "react";
+import { useState, useEffect, useRef, type Dispatch } from "react";
 
 type Props = {
    name?: string;
@@ -28,22 +28,13 @@ export default function Search({ name = "", query, setQuery }: Props) {
       };
    }, [debouncedQuery, setQuery]);
 
-   const magnifyingGlassButton: ReactNode = (
-      <Button isIconOnly variant="light">
-         <FontAwesomeIcon icon={faMagnifyingGlass} />
-      </Button>
-   );
-
    return (
       <Input
          className="sm:max-w-96"
-         classNames={{
-            inputWrapper: "pr-0",
-         }}
          placeholder={`Search${name}`}
          value={debouncedQuery}
          onValueChange={setDebouncedQuery}
-         endContent={magnifyingGlassButton}
+         startContent={<FontAwesomeIcon icon={faMagnifyingGlass} />}
       />
    );
 }
