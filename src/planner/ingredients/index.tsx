@@ -8,6 +8,7 @@ import CreateForm from "./createForm";
 import List from "./list";
 import { TIngredients } from "./types";
 import PlusIcon from "../../assets/plus";
+import Search from "../../common/search";
 
 // TODO:
 // 1. Add search functionality
@@ -15,6 +16,7 @@ import PlusIcon from "../../assets/plus";
 // 3. Handle api errors
 
 export default function Ingredients() {
+  const [query, setQuery] = useState<string>("");
   const {
     isLoading,
     isError: onGetError,
@@ -22,7 +24,7 @@ export default function Ingredients() {
     isSuccess: onGetSuccess,
     data,
     refetch
-  } = useQuery({ queryKey: ["ingredients"], queryFn: getIngredients });
+  } = useQuery({ queryKey: ["ingredients", query], queryFn: () => getIngredients(query) });
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
   const create = useMutation({
@@ -71,13 +73,16 @@ export default function Ingredients() {
     <div className="flex justify-center">
       <div className="max-w-[1024px] w-full px-6">
         <h1 className="text-2xl">Ingredients</h1>
+        <Search name="Ingredients" query={query} setQuery={setQuery} />
 
         {isLoading && <Loader />}
         {onGetSuccess &&
           (data.length === 0 ? (
             <BlankScreen name="Ingredients" onAdd={onEditModalOpen} />
           ) : (
-            <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
+            <>
+              <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
+            </>
           ))}
         {onGetError && <div>Error: {error.message}</div>}
 
