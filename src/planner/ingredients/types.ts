@@ -20,9 +20,9 @@ export type TIngredients = TIngredientsBase & {
   createdBy: string;
   updatedBy: string;
   preparations: TPreparation[];
-}
+};
 
 export type TIngredientsResponse = {
   data: TIngredients[];
   count: number;
-}
+};

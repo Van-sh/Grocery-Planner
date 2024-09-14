@@ -1,7 +1,7 @@
 import { TIngredientsBase, TIngredientsResponse } from "./types";
 
 export const getIngredients = ({ page = 1 }): Promise<TIngredientsResponse> => {
-  return fetch(`http://localhost:8000/api/ingredients?${new URLSearchParams({ page: page.toString() }).toString()}`).then(response =>
+  return fetch(`https://grocery-planner-be.onrender.com/api/ingredients?${new URLSearchParams({ page: page.toString() }).toString()}`).then(response =>
     response.json()
   );
 };
