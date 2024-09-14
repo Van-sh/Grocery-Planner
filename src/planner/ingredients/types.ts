@@ -26,3 +26,7 @@ export type TIngredientsResponse = {
   data: TIngredients[];
   count: number;
 };
+
+export type TIngredientsGetAllQuery = {
+  page: number;
+};
