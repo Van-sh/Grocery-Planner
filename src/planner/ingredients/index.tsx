@@ -1,28 +1,28 @@
-import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import Loader from "../../common/loader";
 import { createIngredient, deleteIngredient, getIngredients, updateIngredient } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
 import { TIngredients } from "./types";
-import PlusIcon from "../../assets/plus";
 
 // TODO:
 // 1. Add search functionality
-// 2. Pagination in FE and BE
 // 3. Handle api errors
-
+const limit = 10;
 export default function Ingredients() {
+  const [page, setPage] = useState(1);
   const {
     isLoading,
     isError: onGetError,
     error,
     isSuccess: onGetSuccess,
-    data,
+    data: { data = [], count = 0 } = {},
     refetch
-  } = useQuery({ queryKey: ["ingredients"], queryFn: getIngredients });
+  } = useQuery({ queryKey: ["ingredients", page], queryFn: () => getIngredients({ page }) });
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
   const create = useMutation({
@@ -77,7 +77,12 @@ export default function Ingredients() {
           (data.length === 0 ? (
             <BlankScreen name="Ingredients" onAdd={onEditModalOpen} />
           ) : (
-            <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
+            <>
+              <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
+              <div className="mt-4 flex justify-end mb-24 sm:mb-0">
+                <Pagination showControls total={Math.ceil(count / limit)} page={page} onChange={setPage} />
+              </div>
+            </>
           ))}
         {onGetError && <div>Error: {error.message}</div>}
 
