@@ -1,9 +1,9 @@
-import { TIngredients, TIngredientsBase } from "./types";
+import { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
 
-export const getIngredients = (): Promise<TIngredients[]> => {
-  return fetch("https://grocery-planner-be.onrender.com/api/ingredients")
-    .then(response => response.json())
-    .then(({ data }) => data);
+export const getIngredients = ({ page = 1 }: TIngredientsGetAllQuery): Promise<TIngredientsResponse> => {
+  return fetch(`https://grocery-planner-be.onrender.com/api/ingredients?${new URLSearchParams({ page: page.toString() }).toString()}`).then(
+    response => response.json()
+  );
 };
 
 export const createIngredient = (data: TIngredientsBase): Promise<TIngredientsBase> => {
