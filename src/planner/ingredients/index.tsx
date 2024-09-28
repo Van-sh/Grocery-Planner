@@ -1,6 +1,6 @@
 import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import Loader from "../../common/loader";
@@ -8,12 +8,14 @@ import { createIngredient, deleteIngredient, getIngredients, updateIngredient } 
 import CreateForm from "./createForm";
 import List from "./list";
 import { TIngredients } from "./types";
+import Search from "../../common/search";
 
 // TODO:
 // 1. Add search functionality
 // 3. Handle api errors
 const limit = 10;
 export default function Ingredients() {
+  const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const {
     isLoading,
@@ -22,7 +24,14 @@ export default function Ingredients() {
     isSuccess: onGetSuccess,
     data: { data = [], count = 0 } = {},
     refetch
-  } = useQuery({ queryKey: ["ingredients", page], queryFn: () => getIngredients({ page }) });
+  } = useQuery({ queryKey: ["ingredients", page, query], queryFn: () => getIngredients({ query, page }) });
+
+  useEffect(() => {
+    if (!isLoading) {
+      const pages = Math.ceil(count / limit);
+      if (page > pages) setPage(Math.max(1, pages));
+    }
+  }, [data, count, page, isLoading]);
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
   const create = useMutation({
@@ -71,6 +80,7 @@ export default function Ingredients() {
     <div className="flex justify-center">
       <div className="max-w-[1024px] w-full px-6">
         <h1 className="text-2xl">Ingredients</h1>
+        <Search name="Ingredients" query={query} setQuery={setQuery} />
 
         {isLoading && <Loader />}
         {onGetSuccess &&

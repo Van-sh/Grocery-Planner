@@ -52,8 +52,8 @@ export default function Autocomplete({
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleBlur = (e: React.FocusEvent<Element, Element>) => {
-    onBlur && onBlur(e);
     setTimeout(() => {
+      onBlur && onBlur(e);
       setSuggestions(options);
       setHover(false);
       setShowDropdown(false);

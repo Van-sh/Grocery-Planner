@@ -29,4 +29,5 @@ export type TIngredientsResponse = {
 
 export type TIngredientsGetAllQuery = {
   page: number;
+  query: string
 };
