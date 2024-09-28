@@ -1,15 +1,17 @@
 import { API_URL } from "../../constants";
-import { TIngredients, TIngredientsBase } from "./types";
+import { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
 
-export const getIngredients = (query: string = ""): Promise<TIngredients[]> => {
-  const searchQueries = new URLSearchParams();
+export const getIngredients = ({
+  query = "",
+  page = 1,
+}: TIngredientsGetAllQuery): Promise<TIngredientsResponse> => {
+  const searchQueries = new URLSearchParams({ page: page.toString() });
   if (query) searchQueries.append("q", query);
   return fetch(
     `${API_URL}/api/ingredients?${searchQueries.toString()}`
-  )
-     .then((response) => response.json())
-     .then(({ data }) => data);
+  ).then((response) => response.json());
 };
+
 
 export const createIngredient = (data: TIngredientsBase): Promise<TIngredientsBase> => {
   return fetch(`${API_URL}/api/ingredients`, {

@@ -16,7 +16,7 @@ export default function Search({ name = "", query, setQuery }: Props) {
    const previousQuery = useRef(query);
 
    useEffect(() => {
-      const intervalId = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
          if (previousQuery.current !== debouncedQuery) {
             setQuery(debouncedQuery);
             previousQuery.current = debouncedQuery;
@@ -24,7 +24,7 @@ export default function Search({ name = "", query, setQuery }: Props) {
       }, 750);
 
       return () => {
-         clearTimeout(intervalId);
+         clearTimeout(timeoutId);
       };
    }, [debouncedQuery, setQuery]);
 
