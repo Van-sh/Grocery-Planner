@@ -9,10 +9,8 @@ import CreateForm from "./createForm";
 import List from "./list";
 import { TIngredients } from "./types";
 import Search from "../../common/search";
+import GetErrorScreen from "../../common/getErrorScreen";
 
-// TODO:
-// 1. Add search functionality
-// 3. Handle api errors
 const limit = 10;
 export default function Ingredients() {
   const [query, setQuery] = useState<string>("");
@@ -94,7 +92,7 @@ export default function Ingredients() {
               </div>
             </>
           ))}
-        {onGetError && <div>Error: {error.message}</div>}
+        {onGetError && <GetErrorScreen errorMsg={error.message} onRetry={refetch} />}
 
         <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={onEditModalOpen}>
           <PlusIcon />
