@@ -1,5 +1,6 @@
-import { API_URL } from "../../constants";
 import { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
+
+const API_URL = process.env.REACT_APP_API_URL
 
 export const getIngredients = ({
   query = "",
