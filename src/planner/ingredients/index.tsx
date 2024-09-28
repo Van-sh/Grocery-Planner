@@ -27,11 +27,11 @@ export default function Ingredients() {
   } = useQuery({ queryKey: ["ingredients", page, query], queryFn: () => getIngredients({ query, page }) });
 
   useEffect(() => {
-    const pages = Math.ceil(count/limit)
-    if (page > pages) setPage(Math.max(1, pages))
-  }, [data, count, page])
-  
-
+    if (!isLoading) {
+      const pages = Math.ceil(count / limit);
+      if (page > pages) setPage(Math.max(1, pages));
+    }
+  }, [data, count, page, isLoading]);
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
   const create = useMutation({
@@ -90,7 +90,7 @@ export default function Ingredients() {
             <>
               <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
-                <Pagination isCompact showControls total={Math.ceil(count / limit)} page={page} onChange={setPage} />
+                <Pagination showControls total={Math.ceil(count / limit)} page={page} onChange={setPage} />
               </div>
             </>
           ))}
