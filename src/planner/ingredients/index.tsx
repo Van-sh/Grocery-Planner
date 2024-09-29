@@ -1,20 +1,23 @@
 import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
+import GetErrorScreen from "../../common/getErrorScreen";
 import Loader from "../../common/loader";
+import Search from "../../common/search";
+import ToastContext, { TToastContext } from "../../context/toastContext";
 import { createIngredient, deleteIngredient, getIngredients, updateIngredient } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
 import { TIngredients } from "./types";
-import Search from "../../common/search";
-import GetErrorScreen from "../../common/getErrorScreen";
 
 const limit = 10;
 export default function Ingredients() {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
+  const [selectedIngredient, setSelectedIngredient] = useState<TIngredients>();
+  const { addToast } = useContext(ToastContext) as TToastContext;
   const {
     isLoading,
     isError: onGetError,
@@ -23,37 +26,47 @@ export default function Ingredients() {
     data: { data = [], count = 0 } = {},
     refetch
   } = useQuery({ queryKey: ["ingredients", page, query], queryFn: () => getIngredients({ query, page }) });
-
-  useEffect(() => {
-    if (!isLoading) {
-      const pages = Math.ceil(count / limit);
-      if (page > pages) setPage(Math.max(1, pages));
-    }
-  }, [data, count, page, isLoading]);
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
+
+  const handleMutationSuccess = (action: string) => {
+    refetch();
+    addToast(`Ingredient ${action} successfully`, "success", true);
+  };
+
+  const handleMutationError = (action: string) => {
+    addToast(`Failed to ${action} ingredient`, "error", true);
+  };
+
   const create = useMutation({
     mutationFn: createIngredient,
     onSuccess: () => {
       onEditModalClose();
-      refetch();
-    }
+      handleMutationSuccess("created");
+    },
+    onError: () => handleMutationError("create")
   });
   const update = useMutation({
     mutationFn: updateIngredient,
     onSuccess: () => {
       onEditModalClose();
-      refetch();
-    }
+      handleMutationSuccess("updated");
+    },
+    onError: () => handleMutationError("update")
   });
   const deleteI = useMutation({
     mutationFn: deleteIngredient,
     onSettled: () => {
       onDeleteModalClose();
-      refetch();
-    }
+      handleMutationSuccess("deleted");
+    },
+    onError: () => handleMutationError("delete")
   });
-  const [selectedIngredient, setSelectedIngredient] = useState<TIngredients>();
+
+  const handleCreate = () => {
+    setSelectedIngredient(undefined);
+    onEditModalOpen();
+  };
 
   const handleEdit = (item: TIngredients) => {
     setSelectedIngredient(item);
@@ -73,6 +86,13 @@ export default function Ingredients() {
     onEditModalClose();
     setSelectedIngredient(undefined);
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      const pages = Math.ceil(count / limit);
+      if (page > pages) setPage(Math.max(1, pages));
+    }
+  }, [data, count, page, isLoading]);
 
   return (
     <div className="flex justify-center">
@@ -94,7 +114,7 @@ export default function Ingredients() {
           ))}
         {onGetError && <GetErrorScreen errorMsg={error.message} onRetry={refetch} />}
 
-        <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={onEditModalOpen}>
+        <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={handleCreate}>
           <PlusIcon />
           Create
         </Button>
