@@ -47,6 +47,30 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
+## Environment Variables
+
+This project uses environment variables to configure certain aspects of the app. The `.env` and `.env.development` files are already available in the repository, so you don’t need to create them manually.
+
+### Available Environment Files
+
+- **.env**: Contains variables for the production environment.
+- **.env.development**: Contains variables for the development environment.
+
+### How to Use
+
+Ensure you have the appropriate environment variables set up in the `.env` and `.env.development` files. For example:
+
+#### List of environment variable(s) used in this project
+
+- `REACT_APP_API_URL`
+
+### How Environment Variables Work in Create React App
+
+- **Development**: When running `npm start`, the environment variables from `.env.development` are loaded.
+- **Production**: When running `npm run build`, the environment variables from `.env` are used.
+
+> **Note:** All environment variables in Create React App must be prefixed with `REACT_APP_` to be accessible within the application.
+
 ## Icons
 
 Icons are from [Hero Icons](https://heroicons.com/)
