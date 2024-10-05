@@ -29,6 +29,11 @@ export default function Ingredients() {
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
 
+  const handleClose = () => {
+    onEditModalClose();
+    setSelectedIngredient(undefined);
+  };
+
   const handleMutationSuccess = (action: string) => {
     refetch();
     addToast(`Ingredient ${action} successfully`, "success", true);
@@ -41,7 +46,7 @@ export default function Ingredients() {
   const create = useMutation({
     mutationFn: createIngredient,
     onSuccess: () => {
-      onEditModalClose();
+      handleClose();
       handleMutationSuccess("created");
     },
     onError: () => handleMutationError("create")
@@ -49,7 +54,7 @@ export default function Ingredients() {
   const update = useMutation({
     mutationFn: updateIngredient,
     onSuccess: () => {
-      onEditModalClose();
+      handleClose();
       handleMutationSuccess("updated");
     },
     onError: () => handleMutationError("update")
@@ -58,15 +63,11 @@ export default function Ingredients() {
     mutationFn: deleteIngredient,
     onSettled: () => {
       onDeleteModalClose();
+      setSelectedIngredient(undefined);
       handleMutationSuccess("deleted");
     },
     onError: () => handleMutationError("delete")
   });
-
-  const handleCreate = () => {
-    setSelectedIngredient(undefined);
-    onEditModalOpen();
-  };
 
   const handleEdit = (item: TIngredients) => {
     setSelectedIngredient(item);
@@ -80,11 +81,6 @@ export default function Ingredients() {
 
   const handleDelete = (id: string) => {
     deleteI.mutate(id);
-  };
-
-  const handleClose = () => {
-    onEditModalClose();
-    setSelectedIngredient(undefined);
   };
 
   useEffect(() => {
@@ -114,7 +110,7 @@ export default function Ingredients() {
           ))}
         {onGetError && <GetErrorScreen errorMsg={error.message} onRetry={refetch} />}
 
-        <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={handleCreate}>
+        <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={onEditModalOpen}>
           <PlusIcon />
           Create
         </Button>
