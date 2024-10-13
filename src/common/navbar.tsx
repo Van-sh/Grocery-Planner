@@ -12,8 +12,9 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle
 } from "@nextui-org/react";
-import { useState } from "react";
-import Signup from "./signup";
+import { useContext, useState } from "react";
+import UserContext from "../context/userContext";
+import Signup from "./auth/signup";
 
 const menuItems = [
   {
@@ -26,10 +27,15 @@ const menuItems = [
   }
 ];
 
+// TODO: Add confirmation modal for logout
+// Show user profile photo on login
+// Create logged in user menu
+
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { userDetails, logOut } = useContext(UserContext)!;
 
   const showSignupModal = () => {
     setIsSignupModalOpen(true);
@@ -60,18 +66,29 @@ export default function NavBar() {
           ))}
         </NavbarMenu>
 
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <Button color="primary" variant="ghost" onClick={showLoginModal}>
-              Login
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button color="primary" variant="solid" onClick={showSignupModal}>
-              Sign Up
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
+        {userDetails ? (
+          <NavbarContent justify="end">
+            <div>User menu</div>
+            <NavbarItem>
+              <Button color="primary" variant="solid" onClick={logOut}>
+                Log Out
+              </Button>
+            </NavbarItem>
+          </NavbarContent>
+        ) : (
+          <NavbarContent justify="end">
+            <NavbarItem>
+              <Button color="primary" variant="ghost" onClick={showLoginModal}>
+                Log In
+              </Button>
+            </NavbarItem>
+            <NavbarItem>
+              <Button color="primary" variant="solid" onClick={showSignupModal}>
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </NavbarContent>
+        )}
       </Navbar>
 
       <Modal
@@ -99,13 +116,7 @@ export default function NavBar() {
         className="my-1"
         size="lg"
       >
-        <ModalContent>
-          {() => (
-            <ModalBody>
-              Login
-            </ModalBody>
-          )}
-        </ModalContent>
+        <ModalContent>{() => <ModalBody>Login</ModalBody>}</ModalContent>
       </Modal>
     </>
   );

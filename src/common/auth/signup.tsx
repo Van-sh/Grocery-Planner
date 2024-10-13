@@ -1,8 +1,11 @@
 import { Button, Input } from "@nextui-org/react";
-import { GoogleLogin } from "@react-oauth/google";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 import { useFormik } from "formik";
+import { useContext } from "react";
 import * as yup from "yup";
-import GroceryIcon from "../assets/groceryIcon";
+import GroceryIcon from "../../assets/groceryIcon";
+import UserContext from "../../context/userContext";
 
 type Props = {
   onLogin: () => void;
@@ -23,6 +26,8 @@ const schema = yup.object({
 });
 
 export default function Signup({ onLogin, onClose }: Props) {
+  const { addUserDetails } = useContext(UserContext)!;
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -35,13 +40,26 @@ export default function Signup({ onLogin, onClose }: Props) {
     onSubmit: console.log
   });
 
+  const onGoogleLoginSuccess = (credentialResponse: CredentialResponse) => {
+    axios
+      .post(API_URL + "/auth/google", credentialResponse)
+      .then(({ data }) => {
+        const { jwt, data: userData } = data;
+        addUserDetails(userData, jwt);
+        onClose();
+      })
+      .catch(err => {
+        // Handle login error
+      });
+  };
+
   return (
-    <div className="pt-8 text-center">
+    <div className="pt-8">
       <div className="flex justify-center">
         <GroceryIcon width={75} height={75} />
       </div>
-      <h1 className="text-2xl">Welcome to Grocery Planner</h1>
-      <p className="text-xs mt-2 mb-8">
+      <h1 className="text-2xl text-center">Welcome to Grocery Planner</h1>
+      <p className="text-xs mt-2 mb-8 text-center">
         Already have an account?
         <Button size="sm" className="bg-white p-0 pl-1 min-w-0 h-auto underline" onClick={onLogin}>
           Log in
@@ -50,22 +68,7 @@ export default function Signup({ onLogin, onClose }: Props) {
 
       <div className="flex justify-center">
         <GoogleLogin
-          onSuccess={credentialResponse => {
-            fetch(API_URL + "/auth/google", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(credentialResponse)
-            })
-              .then(res => {
-                // Handle successful login
-                onClose();
-              })
-              .catch(err => {
-                // Handle login error
-              });
-          }}
+          onSuccess={onGoogleLoginSuccess}
           onError={() => {
             console.log("Login Failed");
           }}
@@ -128,7 +131,7 @@ export default function Signup({ onLogin, onClose }: Props) {
           isInvalid={formik.touched.confirmPassword && !!formik.errors.confirmPassword}
           errorMessage={formik.errors.confirmPassword}
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" color="primary" isDisabled={!formik.isValid} className="w-full">
           Sign Up
         </Button>
       </form>
