@@ -9,7 +9,11 @@ const menuItems = [
   {
     label: "Ingredients",
     href: "/ingredients"
-  }
+  },
+  {
+    label: "Recipes",
+    href: "/recipes"
+  },
 ];
 
 export default function NavBar() {
