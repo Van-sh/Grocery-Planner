@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./App.css";
 import Planner from "./planner";
 import Ingredients from "./planner/ingredients";
+import Recipes from "./planner/recipes";
 
 const queryClient = new QueryClient()
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="planner" element={<Planner />}>
               <Route index element={<div>Planner</div>} />
               <Route path="ingredients" element={<Ingredients />} />
+              <Route path="recipes" element={<Recipes />} />
             </Route>
           </Routes>
         </BrowserRouter>
