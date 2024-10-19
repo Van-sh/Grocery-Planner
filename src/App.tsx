@@ -1,14 +1,15 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import { TUserData } from "./common/auth/types";
 import NavBar from "./common/navbar";
+import UserContext from "./context/userContext";
 import Planner from "./planner";
 import Ingredients from "./planner/ingredients";
-import { useState } from "react";
-import { TUserData } from "./common/auth/types";
-import UserContext from "./context/userContext";
+import Recipes from "./planner/recipes";
 
 const queryClient = new QueryClient();
 function App() {
@@ -40,6 +41,7 @@ function App() {
                 <Route path="planner" element={<Planner />}>
                   <Route index element={<div>Planner</div>} />
                   <Route path="ingredients" element={<Ingredients />} />
+                  <Route path="recipes" element={<Recipes />} />
                 </Route>
               </Routes>
             </BrowserRouter>

@@ -24,7 +24,11 @@ const menuItems = [
   {
     label: "Ingredients",
     href: "/ingredients"
-  }
+  },
+  {
+    label: "Recipes",
+    href: "/recipes"
+  },
 ];
 
 // TODO: Add confirmation modal for logout
