@@ -37,7 +37,18 @@ export default function Signup({ onLogin, onClose }: Props) {
       confirmPassword: ""
     },
     validationSchema: schema,
-    onSubmit: console.log
+    onSubmit: values => {
+      axios
+        .post(API_URL + "/auth/signup", values)
+        .then(({ data }) => {
+          const { jwt, data: userData } = data;
+          addUserDetails(userData, jwt);
+          onClose();
+        })
+        .catch(err => {
+          // Handle signup error
+        });
+    }
   });
 
   const onGoogleLoginSuccess = (credentialResponse: CredentialResponse) => {
