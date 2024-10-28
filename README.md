@@ -70,3 +70,7 @@ Ensure you have the appropriate environment variables set up in the `.env` and `
 - **Production**: When running `npm run build`, the environment variables from `.env` are used.
 
 > **Note:** All environment variables in Create React App must be prefixed with `REACT_APP_` to be accessible within the application.
+
+## Icons
+
+Icons are from [Hero Icons](https://heroicons.com/)
