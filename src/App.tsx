@@ -8,6 +8,7 @@ import { TToastData, TToastType } from "./common/toast/types";
 import ToastContext from "./context/toastContext";
 import Planner from "./planner";
 import Ingredients from "./planner/ingredients";
+import Recipes from "./planner/recipes";
 
 const queryClient = new QueryClient();
 function App() {
@@ -42,6 +43,7 @@ function App() {
               <Route path="planner" element={<Planner />}>
                 <Route index element={<div>Planner</div>} />
                 <Route path="ingredients" element={<Ingredients />} />
+                <Route path="recipes" element={<Recipes />} />
               </Route>
             </Routes>
           </BrowserRouter>
