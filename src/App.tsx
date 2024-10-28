@@ -7,15 +7,38 @@ import "./App.css";
 import { TUserData } from "./common/auth/types";
 import NavBar from "./common/navbar";
 import UserContext from "./context/userContext";
+import Toast from "./common/toast";
+import { TToastData, TToastType } from "./common/toast/types";
+import ToastContext from "./context/toastContext";
 import Planner from "./planner";
 import Ingredients from "./planner/ingredients";
 import Recipes from "./planner/recipes";
 
 const queryClient = new QueryClient();
 function App() {
+  const [toastList, setToastList] = useState<TToastData[]>([]);
   const [userDetails, setUserDetails] = useState<TUserData | undefined>(
     localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : undefined
   );
+
+  const removeToast = (id: string | number) => {
+    setToastList(prev => prev.filter(t => t.id !== id));
+  };
+
+  const addToast = (message: string, type: TToastType = "info", autoClose: boolean = false, autoCloseDuration: number = 3000) => {
+    const toast: TToastData = {
+      id: Date.now(),
+      message,
+      type
+    };
+    setToastList(prev => [...prev, toast]);
+
+    if (autoClose) {
+      setTimeout(() => {
+        removeToast(toast.id);
+      }, autoCloseDuration);
+    }
+  };
 
   const logOut = () => {
     document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
@@ -34,17 +57,20 @@ function App() {
       <NextUIProvider>
         <QueryClientProvider client={queryClient}>
           <UserContext.Provider value={{ userDetails, addUserDetails, logOut }}>
-            <BrowserRouter>
-              <NavBar />
-              <Routes>
-                <Route path="/" element={<div>Hello world!</div>} />
-                <Route path="planner" element={<Planner />}>
-                  <Route index element={<div>Planner</div>} />
-                  <Route path="ingredients" element={<Ingredients />} />
-                  <Route path="recipes" element={<Recipes />} />
-                </Route>
-              </Routes>
-            </BrowserRouter>
+            <ToastContext.Provider value={{ toastList, addToast, removeToast }}>
+              <BrowserRouter>
+                <NavBar />
+                <Routes>
+                  <Route path="/" element={<div>Hello world!</div>} />
+                  <Route path="planner" element={<Planner />}>
+                    <Route index element={<div>Planner</div>} />
+                    <Route path="ingredients" element={<Ingredients />} />
+                    <Route path="recipes" element={<Recipes />} />
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+              <Toast data={toastList} onRemove={removeToast} />
+            </ToastContext.Provider>
           </UserContext.Provider>
         </QueryClientProvider>
       </NextUIProvider>
