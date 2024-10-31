@@ -1,12 +1,13 @@
 import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import GetErrorScreen from "../../common/getErrorScreen";
 import Loader from "../../common/loader";
 import Search from "../../common/search";
-import ToastContext, { TToastContext } from "../../context/toastContext";
+import { addToast } from "../../common/toast/slice";
+import { useAppDispatch } from "../../store";
 import { createIngredient, deleteIngredient, getIngredients, updateIngredient } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
@@ -17,7 +18,7 @@ export default function Ingredients() {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const [selectedIngredient, setSelectedIngredient] = useState<TIngredients>();
-  const { addToast } = useContext(ToastContext) as TToastContext;
+  const dispatch = useAppDispatch();
   const {
     isLoading,
     isError: onGetError,
@@ -36,11 +37,11 @@ export default function Ingredients() {
 
   const handleMutationSuccess = (action: string) => {
     refetch();
-    addToast(`Ingredient ${action} successfully`, "success", true);
+    dispatch(addToast({ message: `Ingredient ${action} successfully`, type: "success", autoClose: true }));
   };
 
   const handleMutationError = (action: string) => {
-    addToast(`Failed to ${action} ingredient`, "error", true);
+    dispatch(addToast({ message: `Failed to ${action} ingredient`, type: "error", autoClose: true }));
   };
 
   const create = useMutation({
