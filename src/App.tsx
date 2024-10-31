@@ -1,11 +1,11 @@
 import { NextUIProvider } from "@nextui-org/react";
+import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Toast from "./common/toast";
 import Planner from "./planner";
 import Ingredients from "./planner/ingredients";
 import Recipes from "./planner/recipes";
-import { Provider } from "react-redux";
 import { store } from "./store";
 
 function App() {
