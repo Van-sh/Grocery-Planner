@@ -1,18 +1,17 @@
 import { Button, Input } from "@nextui-org/react";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import axios from "axios";
+import { GoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
-import { useContext } from "react";
+import { useEffect } from "react";
 import * as yup from "yup";
 import GroceryIcon from "../../assets/groceryIcon";
-import UserContext from "../../context/userContext";
+import { useAppDispatch } from "../../store";
+import { useGoogleMutation, useSignupMutation } from "./api";
+import { addUserDetails } from "./slice";
 
 type Props = {
   onLogin: () => void;
   onClose: () => void;
 };
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 const schema = yup.object({
   firstName: yup.string().required("First Name is required"),
@@ -26,7 +25,9 @@ const schema = yup.object({
 });
 
 export default function Signup({ onLogin, onClose }: Props) {
-  const { addUserDetails } = useContext(UserContext)!;
+  const dispatch = useAppDispatch();
+  const [signup, { data: signupData, status: signupStatus }] = useSignupMutation();
+  const [google, { data: googleData, status: googleStatus }] = useGoogleMutation();
 
   const formik = useFormik({
     initialValues: {
@@ -37,32 +38,28 @@ export default function Signup({ onLogin, onClose }: Props) {
       confirmPassword: ""
     },
     validationSchema: schema,
-    onSubmit: values => {
-      axios
-        .post(API_URL + "/auth/signup", values)
-        .then(({ data }) => {
-          const { jwt, data: userData } = data;
-          addUserDetails(userData, jwt);
-          onClose();
-        })
-        .catch(err => {
-          // Handle signup error
-        });
-    }
+    onSubmit: signup
   });
 
-  const onGoogleLoginSuccess = (credentialResponse: CredentialResponse) => {
-    axios
-      .post(API_URL + "/auth/google", credentialResponse)
-      .then(({ data }) => {
-        const { jwt, data: userData } = data;
-        addUserDetails(userData, jwt);
-        onClose();
-      })
-      .catch(err => {
-        // Handle login error
-      });
-  };
+  useEffect(() => {
+    if (signupStatus === "fulfilled") {
+      const { jwt, data: userDetails } = signupData!;
+      dispatch(addUserDetails({ userDetails, jwt }));
+      onClose();
+    } else if (signupStatus === "rejected") {
+      // Handle signup error
+    }
+  }, [signupStatus, signupData, dispatch, onClose]);
+
+  useEffect(() => {
+    if (googleStatus === "fulfilled") {
+      const { jwt, data: userDetails } = googleData!;
+      dispatch(addUserDetails({ userDetails, jwt }));
+      onClose();
+    } else if (googleStatus === "rejected") {
+      // Handle google login error
+    }
+  });
 
   return (
     <div className="pt-8">
@@ -79,7 +76,7 @@ export default function Signup({ onLogin, onClose }: Props) {
 
       <div className="flex justify-center">
         <GoogleLogin
-          onSuccess={onGoogleLoginSuccess}
+          onSuccess={google}
           onError={() => {
             console.log("Login Failed");
           }}

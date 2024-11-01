@@ -12,9 +12,10 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle
 } from "@nextui-org/react";
-import { useContext, useState } from "react";
-import UserContext from "../context/userContext";
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store";
 import Signup from "./auth/signup";
+import { logOut } from "./auth/slice";
 
 const menuItems = [
   {
@@ -28,7 +29,7 @@ const menuItems = [
   {
     label: "Recipes",
     href: "/recipes"
-  },
+  }
 ];
 
 // TODO: Add confirmation modal for logout
@@ -39,7 +40,8 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const { userDetails, logOut } = useContext(UserContext)!;
+  const userDetails = useAppSelector(state => state.auth.userDetails);
+  const dispatch = useAppDispatch();
 
   const showSignupModal = () => {
     setIsSignupModalOpen(true);
@@ -49,6 +51,10 @@ export default function NavBar() {
   const showLoginModal = () => {
     setIsLoginModalOpen(true);
     setIsSignupModalOpen(false);
+  };
+
+  const handleLogOut = () => {
+    dispatch(logOut());
   };
 
   return (
@@ -74,7 +80,7 @@ export default function NavBar() {
           <NavbarContent justify="end">
             <div>User menu</div>
             <NavbarItem>
-              <Button color="primary" variant="solid" onClick={logOut}>
+              <Button color="primary" variant="solid" onClick={handleLogOut}>
                 Log Out
               </Button>
             </NavbarItem>

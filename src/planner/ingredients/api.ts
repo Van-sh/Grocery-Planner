@@ -1,28 +1,42 @@
-import axios, { AxiosError } from "axios";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
 
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_API_URL;
 
-export const getIngredients = ({ query = "", page = 1 }: TIngredientsGetAllQuery): Promise<TIngredientsResponse> => {
-  const searchQueries = new URLSearchParams({ page: page.toString() });
-  if (query) searchQueries.append("q", query);
+export const ingredientsApi = createApi({
+  reducerPath: "ingredientsApi",
+  baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api/ingredients` }),
+  endpoints: build => ({
+    getIngredients: build.query<TIngredientsResponse, TIngredientsGetAllQuery>({
+      query: query => {
+        const searchQueries = new URLSearchParams({ page: query.page.toString() });
+        if (query.query) searchQueries.append("q", query.query);
 
-  return axios
-    .get(`${API_URL}/api/ingredients?${searchQueries.toString()}`)
-    .then(({ data }) => data)
-    .catch((error: AxiosError) => {
-      throw error?.response?.data || error;
-    });
-};
+        return `?${searchQueries.toString()}`;
+      },
+    }),
+    createIngredient: build.mutation<TIngredientsBase, TIngredientsBase>({
+      query: data => ({
+        url: "",
+        method: "POST",
+        body: data
+      })
+    }),
+    updateIngredient: build.mutation<TIngredientsBase, { data: TIngredientsBase; id: string }>({
+      query: ({ data, id }) => ({
+        url: `/${id}`,
+        method: "PATCH",
+        body: data
+      })
+    }),
+    deleteIngredient: build.mutation<void, string>({
+      query: id => ({
+        url: `/${id}`,
+        method: "DELETE"
+      })
+    })
+  })
+});
 
-export const createIngredient = (data: TIngredientsBase): Promise<TIngredientsBase> => {
-  return axios.post(`${API_URL}/api/ingredients`, data);
-};
-
-export const updateIngredient = ({ data, id }: { data: TIngredientsBase; id: string }): Promise<TIngredientsBase> => {
-  return axios.patch(`${API_URL}/api/ingredients/${id}`, data);
-};
-
-export const deleteIngredient = (id: string): Promise<void> => {
-  return axios.delete(`${API_URL}/api/ingredients/${id}`);
-};
+export const { useGetIngredientsQuery, useCreateIngredientMutation, useUpdateIngredientMutation, useDeleteIngredientMutation } =
+  ingredientsApi;
