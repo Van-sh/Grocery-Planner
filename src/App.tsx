@@ -1,57 +1,32 @@
 import { NextUIProvider } from "@nextui-org/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { lazy, useState } from "react";
+import { lazy } from "react";
+import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "./App.css";
 import Toast from "./common/toast";
-import { TToastData, TToastType } from "./common/toast/types";
-import ToastContext from "./context/toastContext";
+import { store } from "./store";
 
 const Planner = lazy(()=>import("./planner"));
 const Ingredients = lazy(()=>import("./planner/ingredients"))
 const Dishes = lazy(()=>import("./planner/dishes"))
 
-const queryClient = new QueryClient();
 function App() {
-  const [toastList, setToastList] = useState<TToastData[]>([]);
-
-  const removeToast = (id: string | number) => {
-    setToastList(prev => prev.filter(t => t.id !== id));
-  };
-
-  const addToast = (message: string, type: TToastType = "info", autoClose: boolean = false, autoCloseDuration: number = 3000) => {
-    const toast: TToastData = {
-      id: Date.now(),
-      message,
-      type
-    };
-    setToastList(prev => [...prev, toast]);
-
-    if (autoClose) {
-      setTimeout(() => {
-        removeToast(toast.id);
-      }, autoCloseDuration);
-    }
-  };
-
   return (
     <NextUIProvider>
-      <QueryClientProvider client={queryClient}>
-        <ToastContext.Provider value={{ toastList, addToast, removeToast }}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<div>Hello world!</div>} />
-              <Route path="planner" element={<Planner />}>
-                <Route index element={<div>Planner</div>} />
-                <Route path="ingredients" element={<Ingredients />} />
-                <Route path="dishes" element={<Dishes />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-          <Toast data={toastList} onRemove={removeToast} />
-        </ToastContext.Provider>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<div>Hello world!</div>} />
+            <Route path="planner" element={<Planner />}>
+              <Route index element={<div>Planner</div>} />
+              <Route path="ingredients" element={<Ingredients />} />
+              <Route path="dishes" element={<Dishes />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+        <Toast />
+      </Provider>
     </NextUIProvider>
   );
 }
