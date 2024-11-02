@@ -105,7 +105,7 @@ export default function Ingredients() {
   return (
     <div className="flex justify-center">
       <div className="max-w-[1024px] w-full px-6">
-        <h1 className="text-2xl">Ingredients</h1>
+        <h1 className="text-2xl mb-6">Ingredients</h1>
         <Search name="Ingredients" query={query} setQuery={setQuery} />
 
         {isLoading && <Loader />}
