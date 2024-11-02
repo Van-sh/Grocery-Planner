@@ -13,12 +13,19 @@ export type TIngredientsBase = {
   preparations: TPreparationBase[];
 };
 
+type TUser = {
+  id: string;
+  name: string;
+  fName: string;
+  lName: string;
+}
+
 export type TIngredients = TIngredientsBase & {
   _id: string;
   createdAt: string;
   updatedAt: string;
-  createdBy: string;
-  updatedBy: string;
+  createdBy: TUser;
+  updatedBy: TUser;
   preparations: TPreparation[];
 };
 
