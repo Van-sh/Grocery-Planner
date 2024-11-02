@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import Signup from "./auth/signup";
 import { logOut } from "./auth/slice";
+import Login from "./auth/login";
 
 const menuItems = [
   {
@@ -126,7 +127,13 @@ export default function NavBar() {
         className="my-1"
         size="lg"
       >
-        <ModalContent>{() => <ModalBody>Login</ModalBody>}</ModalContent>
+        <ModalContent>
+          {() => (
+            <ModalBody>
+              <Login onSignup={showSignupModal} onClose={() => setIsLoginModalOpen(false)} />
+            </ModalBody>
+          )}
+        </ModalContent>
       </Modal>
     </>
   );

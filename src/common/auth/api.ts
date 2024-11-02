@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TSignupFormData, TUserResponse } from "./types";
+import { TSigninFormData, TSignupFormData, TUserResponse } from "./types";
 import { CredentialResponse } from "@react-oauth/google";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -8,6 +8,13 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/auth` }),
   endpoints: build => ({
+    login: build.mutation<TUserResponse, TSigninFormData>({
+      query: body => ({
+        url: "/login",
+        method: "POST",
+        body
+      })
+    }),
     signup: build.mutation<TUserResponse, TSignupFormData>({
       query: body => ({
         url: "/signup",
@@ -25,4 +32,4 @@ export const authApi = createApi({
   })
 });
 
-export const { useSignupMutation, useGoogleMutation } = authApi;
+export const { useLoginMutation, useSignupMutation, useGoogleMutation } = authApi;
