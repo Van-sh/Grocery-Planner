@@ -22,3 +22,8 @@ export type TUserResponse = {
   jwt: string;
   data: TUserData;
 };
+
+export type TAddUserDetails = {
+  userDetails: TUserData;
+  jwt: string;
+}

@@ -56,6 +56,10 @@ export default function NavBar() {
 
   const handleLogOut = () => {
     dispatch(logOut());
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
   };
 
   return (

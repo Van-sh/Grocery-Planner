@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TUserData } from "./types";
+import { TAddUserDetails, TUserData } from "./types";
 
 type AuthState = {
   userDetails?: TUserData;
@@ -13,7 +13,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    addUserDetails: (state, { payload }: PayloadAction<{ userDetails: TUserData; jwt: string }>) => {
+    addUserDetails: (state, { payload }: PayloadAction<TAddUserDetails>) => {
       const { userDetails, jwt } = payload;
       state.userDetails = userDetails;
       document.cookie = `auth=${jwt}`;

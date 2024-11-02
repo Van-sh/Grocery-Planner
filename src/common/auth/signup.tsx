@@ -1,12 +1,13 @@
 import { Button, Input } from "@nextui-org/react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import * as yup from "yup";
 import GroceryIcon from "../../assets/groceryIcon";
 import { useAppDispatch } from "../../store";
 import { useGoogleMutation, useSignupMutation } from "./api";
 import { addUserDetails } from "./slice";
+import { TUserResponse } from "./types";
 
 type Props = {
   onLogin: () => void;
@@ -41,25 +42,34 @@ export default function Signup({ onLogin, onClose }: Props) {
     onSubmit: signup
   });
 
-  useEffect(() => {
-    if (signupStatus === "fulfilled") {
-      const { jwt, data: userDetails } = signupData!;
+  const handleSignupSuccess = useCallback(
+    (data: TUserResponse) => {
+      const { jwt, data: userDetails } = data;
       dispatch(addUserDetails({ userDetails, jwt }));
       onClose();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    },
+    [dispatch, onClose]
+  );
+
+  useEffect(() => {
+    if (signupStatus === "fulfilled") {
+      handleSignupSuccess(signupData!);
     } else if (signupStatus === "rejected") {
       // Handle signup error
     }
-  }, [signupStatus, signupData, dispatch, onClose]);
+  }, [signupData, signupStatus, handleSignupSuccess]);
 
   useEffect(() => {
     if (googleStatus === "fulfilled") {
-      const { jwt, data: userDetails } = googleData!;
-      dispatch(addUserDetails({ userDetails, jwt }));
-      onClose();
+      handleSignupSuccess(googleData!);
     } else if (googleStatus === "rejected") {
       // Handle google login error
     }
-  });
+  }, [googleData, googleStatus, handleSignupSuccess]);
 
   return (
     <div className="pt-8">

@@ -5,7 +5,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 export const ingredientsApi = createApi({
   reducerPath: "ingredientsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api/ingredients` }),
+  baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api/ingredients`, prepareHeaders: (headers, { getState }) => {
+    const token = document.cookie.split("; ").find(row => row.startsWith("auth="))?.split("=")[1];
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    return headers;
+  }}),
   endpoints: build => ({
     getIngredients: build.query<TIngredientsResponse, TIngredientsGetAllQuery>({
       query: query => {
@@ -13,7 +17,7 @@ export const ingredientsApi = createApi({
         if (query.query) searchQueries.append("q", query.query);
 
         return `?${searchQueries.toString()}`;
-      },
+      }
     }),
     createIngredient: build.mutation<TIngredientsBase, TIngredientsBase>({
       query: data => ({
