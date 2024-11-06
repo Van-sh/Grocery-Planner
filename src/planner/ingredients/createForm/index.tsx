@@ -76,7 +76,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} autoComplete="false">
       <ModalHeader>{initialValues ? "Edit" : "Add New"} Ingredient</ModalHeader>
       <ModalBody>
         <Input
