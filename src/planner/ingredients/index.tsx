@@ -1,13 +1,14 @@
 import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import GetErrorScreen from "../../common/getErrorScreen";
 import Loader from "../../common/loader";
 import Search from "../../common/search";
-import ToastContext, { TToastContext } from "../../context/toastContext";
-import { createIngredient, deleteIngredient, getIngredients, updateIngredient } from "./api";
+import { addToast } from "../../common/toast/slice";
+import { getErrorMessage } from "../../helper";
+import { useAppDispatch } from "../../store";
+import { useCreateIngredientMutation, useDeleteIngredientMutation, useGetIngredientsQuery, useUpdateIngredientMutation } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
 import { TIngredients } from "./types";
@@ -17,57 +18,40 @@ export default function Ingredients() {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const [selectedIngredient, setSelectedIngredient] = useState<TIngredients>();
-  const { addToast } = useContext(ToastContext) as TToastContext;
+  const dispatch = useAppDispatch();
   const {
     isLoading,
-    isError: onGetError,
+    isError: isGetError,
     error,
-    isSuccess: onGetSuccess,
+    isSuccess: isGetSuccess,
     data: { data = [], count = 0 } = {},
     refetch
-  } = useQuery({ queryKey: ["ingredients", page, query], queryFn: () => getIngredients({ query, page }) });
+  } = useGetIngredientsQuery({ query, page });
+  const [create, { isLoading: isCreateLoading, status: createStatus }] = useCreateIngredientMutation();
+  const [update, { isLoading: isUpdateLoading, status: updateStatus }] = useUpdateIngredientMutation();
+  const [deleteI, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeleteIngredientMutation();
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     onEditModalClose();
     setSelectedIngredient(undefined);
-  };
+  }, [onEditModalClose]);
 
-  const handleMutationSuccess = (action: string) => {
-    refetch();
-    addToast(`Ingredient ${action} successfully`, "success", true);
-  };
+  const handleMutationSuccess = useCallback(
+    (action: string) => {
+      refetch();
+      dispatch(addToast({ message: `Ingredient ${action} successfully`, type: "success", autoClose: true }));
+    },
+    [dispatch, refetch]
+  );
 
-  const handleMutationError = (action: string) => {
-    addToast(`Failed to ${action} ingredient`, "error", true);
-  };
-
-  const create = useMutation({
-    mutationFn: createIngredient,
-    onSuccess: () => {
-      handleClose();
-      handleMutationSuccess("created");
+  const handleMutationError = useCallback(
+    (action: string) => {
+      dispatch(addToast({ message: `Failed to ${action} ingredient`, type: "error", autoClose: true }));
     },
-    onError: () => handleMutationError("create")
-  });
-  const update = useMutation({
-    mutationFn: updateIngredient,
-    onSuccess: () => {
-      handleClose();
-      handleMutationSuccess("updated");
-    },
-    onError: () => handleMutationError("update")
-  });
-  const deleteI = useMutation({
-    mutationFn: deleteIngredient,
-    onSettled: () => {
-      onDeleteModalClose();
-      setSelectedIngredient(undefined);
-      handleMutationSuccess("deleted");
-    },
-    onError: () => handleMutationError("delete")
-  });
+    [dispatch]
+  );
 
   const handleEdit = (item: TIngredients) => {
     setSelectedIngredient(item);
@@ -80,7 +64,7 @@ export default function Ingredients() {
   };
 
   const handleDelete = (id: string) => {
-    deleteI.mutate(id);
+    deleteI(id);
   };
 
   useEffect(() => {
@@ -90,14 +74,42 @@ export default function Ingredients() {
     }
   }, [data, count, page, isLoading]);
 
+  useEffect(() => {
+    if (createStatus === "fulfilled") {
+      handleClose();
+      handleMutationSuccess("created");
+    } else if (createStatus === "rejected") {
+      handleMutationError("create");
+    }
+  }, [createStatus, handleClose, handleMutationSuccess, handleMutationError]);
+
+  useEffect(() => {
+    if (updateStatus === "fulfilled") {
+      handleClose();
+      handleMutationSuccess("updated");
+    } else if (updateStatus === "rejected") {
+      handleMutationError("update");
+    }
+  }, [updateStatus, handleClose, handleMutationSuccess, handleMutationError]);
+
+  useEffect(() => {
+    if (deleteStatus === "fulfilled") {
+      onDeleteModalClose();
+      setSelectedIngredient(undefined);
+      handleMutationSuccess("deleted");
+    } else if (deleteStatus === "rejected") {
+      handleMutationError("delete");
+    }
+  }, [deleteStatus, onDeleteModalClose, handleMutationSuccess, handleMutationError]);
+
   return (
     <div className="flex justify-center">
       <div className="max-w-[1024px] w-full px-6">
-        <h1 className="text-2xl">Ingredients</h1>
+        <h1 className="text-2xl mb-6">Ingredients</h1>
         <Search name="Ingredients" query={query} setQuery={setQuery} />
 
         {isLoading && <Loader />}
-        {onGetSuccess &&
+        {isGetSuccess &&
           (data.length === 0 ? (
             <BlankScreen name="Ingredients" onAdd={onEditModalOpen} />
           ) : (
@@ -108,7 +120,7 @@ export default function Ingredients() {
               </div>
             </>
           ))}
-        {onGetError && <GetErrorScreen errorMsg={error.message} onRetry={refetch} />}
+        {isGetError && <GetErrorScreen errorMsg={getErrorMessage(error)} onRetry={refetch} />}
 
         <Button color="primary" variant="shadow" className="fixed bottom-8 right-8" onClick={onEditModalOpen}>
           <PlusIcon />
@@ -127,10 +139,10 @@ export default function Ingredients() {
             {() => (
               <CreateForm
                 initialValues={selectedIngredient}
-                isLoading={create.isPending || update.isPending}
+                isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleClose}
                 onCreate={(data, id) => {
-                  id ? update.mutate({ data, id }) : create.mutate(data);
+                  id ? update({ data, id }) : create(data);
                 }}
               />
             )}
@@ -150,10 +162,10 @@ export default function Ingredients() {
               <div className="p-6">
                 <h2 className="text-lg">Are you sure you want to delete this ingredient?</h2>
                 <div className="flex justify-end gap-4 mt-6">
-                  <Button color="danger" onClick={() => handleDelete(selectedIngredient!._id)} isLoading={deleteI.isPending}>
+                  <Button color="danger" onClick={() => handleDelete(selectedIngredient!._id)} isLoading={isDeleteLoading}>
                     Yes
                   </Button>
-                  <Button onClick={onDeleteModalClose} isLoading={deleteI.isPending}>
+                  <Button onClick={onDeleteModalClose} isLoading={isDeleteLoading}>
                     No
                   </Button>
                 </div>
