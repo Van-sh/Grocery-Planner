@@ -43,7 +43,7 @@ function App() {
               <Route path="planner" element={<Planner />}>
                 <Route index element={<div>Planner</div>} />
                 <Route path="ingredients" element={<Ingredients />} />
-                <Route path="dishes" element={<Recipes />} />
+                <Route path="dishes" element={<Dishes />} />
               </Route>
             </Routes>
           </BrowserRouter>
