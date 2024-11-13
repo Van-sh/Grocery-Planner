@@ -22,8 +22,10 @@ export default function IngredientTable({ data, onEdit, onDelete }: Props) {
 
     switch (columnKey) {
       case "name":
-      case "updatedBy":
         return value;
+
+      case "updatedBy":
+        return value?.name;
 
       case "preparations":
         return value.length > 0 ? "Yes" : "No";
