@@ -13,7 +13,17 @@ export type TSignupFormData = {
   confirmPassword: string;
 };
 
+export type TSigninFormData = {
+  email: "",
+  password: ""
+};
+
 export type TUserResponse = {
   jwt: string;
   data: TUserData;
 };
+
+export type TAddUserDetails = {
+  userDetails: TUserData;
+  jwt: string;
+}
