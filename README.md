@@ -49,7 +49,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Environment Variables
 
-This project uses environment variables to configure certain aspects of the app. The `.env` and `.env.development` files are already available in the repository, so you don’t need to create them manually.
+This project uses environment variables to configure certain aspects of the app. Use `.env1` and `.env.development1` files to create `.env` and `.env.development` files respectively. You need to create the secret variables in the `.env.development` file for development purpose.
 
 ### Available Environment Files
 

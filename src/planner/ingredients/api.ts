@@ -1,11 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
+import { readCookie } from "../../common/cookieHelper";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const ingredientsApi = createApi({
   reducerPath: "ingredientsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api/ingredients` }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${API_URL}/api/ingredients`,
+    prepareHeaders: (headers) => {
+      const token = readCookie("auth");
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+      return headers;
+    }
+  }),
   endpoints: build => ({
     getIngredients: build.query<TIngredientsResponse, TIngredientsGetAllQuery>({
       query: query => {
@@ -13,7 +21,7 @@ export const ingredientsApi = createApi({
         if (query.query) searchQueries.append("q", query.query);
 
         return `?${searchQueries.toString()}`;
-      },
+      }
     }),
     createIngredient: build.mutation<TIngredientsBase, TIngredientsBase>({
       query: data => ({
