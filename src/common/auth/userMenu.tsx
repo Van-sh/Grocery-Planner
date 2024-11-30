@@ -5,7 +5,6 @@ import { logOut } from "./slice";
 export default function UserMenu() {
   const userDetails = useAppSelector(state => state.auth.userDetails);
   const dispatch = useAppDispatch();
-  console.log(userDetails);
   let userName = userDetails?.fName.substring(0, 15);
   if (userName !== userDetails?.fName) {
     userName += "...";
