@@ -1,8 +1,11 @@
 export type TUserData = {
-  fName: string;
-  lName?: string;
-  picture?: string;
+  authSource: "email" | "nonEmail";
   email: string;
+  fName: string;
+  id: string;
+  lName?: string;
+  name: string;
+  picture?: string;
 };
 
 export type TSignupFormData = {
@@ -14,8 +17,8 @@ export type TSignupFormData = {
 };
 
 export type TSigninFormData = {
-  email: "",
-  password: ""
+  email: "";
+  password: "";
 };
 
 export type TUserResponse = {
@@ -26,4 +29,4 @@ export type TUserResponse = {
 export type TAddUserDetails = {
   userDetails: TUserData;
   jwt: string;
-}
+};

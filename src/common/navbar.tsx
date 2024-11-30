@@ -13,10 +13,10 @@ import {
   NavbarMenuToggle
 } from "@nextui-org/react";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store";
-import Signup from "./auth/signup";
-import { logOut } from "./auth/slice";
+import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
+import Signup from "./auth/signup";
+import UserMenu from "./auth/userMenu";
 
 const menuItems = [
   {
@@ -34,15 +34,11 @@ const menuItems = [
 ];
 
 // TODO: Add confirmation modal for logout
-// Show user profile photo on login
-// Create logged in user menu
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const userDetails = useAppSelector(state => state.auth.userDetails);
-  const dispatch = useAppDispatch();
 
   const showSignupModal = () => {
     setIsSignupModalOpen(true);
@@ -52,14 +48,6 @@ export default function NavBar() {
   const showLoginModal = () => {
     setIsLoginModalOpen(true);
     setIsSignupModalOpen(false);
-  };
-
-  const handleLogOut = () => {
-    dispatch(logOut());
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
   };
 
   return (
@@ -81,29 +69,24 @@ export default function NavBar() {
           ))}
         </NavbarMenu>
 
-        {userDetails ? (
-          <NavbarContent justify="end">
-            <div>User menu</div>
-            <NavbarItem>
-              <Button color="primary" variant="solid" onClick={handleLogOut}>
-                Log Out
-              </Button>
-            </NavbarItem>
-          </NavbarContent>
-        ) : (
-          <NavbarContent justify="end">
-            <NavbarItem>
-              <Button color="primary" variant="ghost" onClick={showLoginModal}>
-                Log In
-              </Button>
-            </NavbarItem>
-            <NavbarItem>
-              <Button color="primary" variant="solid" onClick={showSignupModal}>
-                Sign Up
-              </Button>
-            </NavbarItem>
-          </NavbarContent>
-        )}
+        <NavbarContent justify="end">
+          {isLoggedIn() ? (
+            <UserMenu />
+          ) : (
+            <>
+              <NavbarItem>
+                <Button color="primary" variant="ghost" onClick={showLoginModal}>
+                  Log In
+                </Button>
+              </NavbarItem>
+              <NavbarItem>
+                <Button color="primary" variant="solid" onClick={showSignupModal}>
+                  Sign Up
+                </Button>
+              </NavbarItem>
+            </>
+          )}
+        </NavbarContent>
       </Navbar>
 
       <Modal
