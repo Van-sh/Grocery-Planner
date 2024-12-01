@@ -46,5 +46,5 @@ export const ingredientsApi = createApi({
   })
 });
 
-export const { useGetIngredientsQuery, useCreateIngredientMutation, useUpdateIngredientMutation, useDeleteIngredientMutation } =
+export const { useLazyGetIngredientsQuery, useGetIngredientsQuery, useCreateIngredientMutation, useUpdateIngredientMutation, useDeleteIngredientMutation } =
   ingredientsApi;
