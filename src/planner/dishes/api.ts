@@ -16,9 +16,7 @@ export const dishesApi = createApi({
   }),
   endpoints: (build) => ({
     getDishes: build.query<TDishesResponse, void>({
-      query: () => {
-        return "";
-      },
+      query: () => "",
     }),
   }),
 });
