@@ -8,7 +8,6 @@ export function debounce<T extends (...args: any[]) => any>(
    return function (...args: Parameters<T>) {
       clearTimeout(timer);
       timer = setTimeout(() => {
-         console.log("debounce", args);
          return func.apply(context, args);
       }, timeout);
    };

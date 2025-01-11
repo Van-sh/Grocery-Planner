@@ -1,5 +1,5 @@
 import { Input, SlotsToClasses } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 
 type Option = {_id: string, name: string}
@@ -130,6 +130,17 @@ export default function Autocomplete({
     onSelect && onSelect(suggestions[index]._id);
   };
 
+  useEffect(() => {
+      if (cleanOptions.length > 0 && suggestions.length === 0) {
+        if (inputValue.length > 0) {
+          const filteredSuggestions = cleanOptions.filter(suggestion => suggestion.name.toLowerCase().includes(inputValue.toLowerCase()));
+          setSuggestions(filteredSuggestions);
+        } else {
+          setSuggestions(cleanOptions);
+        }
+      }
+    }, [cleanOptions, inputValue, suggestions.length]);
+
   return (
     <div className="relative">
       <Input
@@ -147,6 +158,7 @@ export default function Autocomplete({
         classNames={classNames}
         value={inputValue}
         endContent={<DownChevron />}
+        autoComplete="off"
       />
       {showDropdown && suggestions.length > 0 && (
         <div
