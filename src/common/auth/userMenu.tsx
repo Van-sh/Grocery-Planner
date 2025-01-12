@@ -25,7 +25,7 @@ export default function UserMenu() {
       </DropdownTrigger>
 
       <DropdownMenu variant="flat">
-        <DropdownItem key="profile" className="h-14 gap-2">
+        <DropdownItem key="email" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
           <p className="font-semibold">{userDetails?.email}</p>
         </DropdownItem>
