@@ -1,5 +1,5 @@
 import { Input, SlotsToClasses } from "@nextui-org/react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 
 type Option = {_id: string, name: string}
@@ -58,6 +58,15 @@ export default function Autocomplete({
   const [selected, setSelected] = useState<false | number>(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const updateSuggestions = useCallback((value: string) => {
+    if (value.length > 0) {
+      const filteredSuggestions = cleanOptions.filter(suggestion => suggestion.name.toLowerCase().includes(value.toLowerCase()));
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions(cleanOptions);
+    }
+  }, [cleanOptions]);
+
   const handleBlur = (e: React.FocusEvent<Element, Element>) => {
     setTimeout(() => {
       onBlur && onBlur(e);
@@ -72,12 +81,7 @@ export default function Autocomplete({
     setInputValue(value);
     onChange && onChange(e);
 
-    if (value.length > 0) {
-      const filteredSuggestions = cleanOptions.filter(suggestion => suggestion.name.toLowerCase().includes(value.toLowerCase()));
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions(cleanOptions);
-    }
+    updateSuggestions(value);
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -131,15 +135,10 @@ export default function Autocomplete({
   };
 
   useEffect(() => {
-      if (cleanOptions.length > 0 && suggestions.length === 0) {
-        if (inputValue.length > 0) {
-          const filteredSuggestions = cleanOptions.filter(suggestion => suggestion.name.toLowerCase().includes(inputValue.toLowerCase()));
-          setSuggestions(filteredSuggestions);
-        } else {
-          setSuggestions(cleanOptions);
-        }
+      if (cleanOptions.length > 0) {
+        updateSuggestions(inputValue);
       }
-    }, [cleanOptions, inputValue, suggestions.length]);
+    }, [cleanOptions, inputValue, updateSuggestions]);
 
   return (
     <div className="relative">

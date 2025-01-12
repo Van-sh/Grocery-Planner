@@ -22,8 +22,6 @@ import { useLazyGetIngredientsQuery } from "../../ingredients/api";
 import { type TIngredients } from "../../ingredients/types";
 import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
 
-// TODO: Create a dropdown for Unit
-
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
 
 const schema = yup.object({
