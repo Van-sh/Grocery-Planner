@@ -13,10 +13,12 @@ import {
   NavbarMenuToggle
 } from "@nextui-org/react";
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
 import UserMenu from "./auth/userMenu";
+import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } from "./auth/slice";
 
 const menuItems = [
   {
@@ -37,17 +39,26 @@ const menuItems = [
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(state => ({
+    isLoginModalOpen: state.auth.isLoginModalOpen,
+    isSignupModalOpen: state.auth.isSignUpModalOpen
+  }));
+  const dispatch = useAppDispatch();
 
   const showSignupModal = () => {
-    setIsSignupModalOpen(true);
-    setIsLoginModalOpen(false);
+    dispatch(openSignupModal());
+  };
+
+  const hideSignupModal = () => {
+    dispatch(closeSignupModal());
   };
 
   const showLoginModal = () => {
-    setIsLoginModalOpen(true);
-    setIsSignupModalOpen(false);
+    dispatch(openLoginModal());
+  };
+
+  const hideLoginModal = () => {
+    dispatch(closeLoginModal());
   };
 
   return (
@@ -91,7 +102,7 @@ export default function NavBar() {
 
       <Modal
         isOpen={isSignupModalOpen}
-        onClose={() => setIsSignupModalOpen(false)}
+        onClose={hideSignupModal}
         placement="top-center"
         scrollBehavior="outside"
         className="my-1"
@@ -100,24 +111,17 @@ export default function NavBar() {
         <ModalContent>
           {() => (
             <ModalBody>
-              <Signup onLogin={showLoginModal} onClose={() => setIsSignupModalOpen(false)} />
+              <Signup onLogin={showLoginModal} onClose={hideSignupModal} />
             </ModalBody>
           )}
         </ModalContent>
       </Modal>
 
-      <Modal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        placement="top-center"
-        scrollBehavior="outside"
-        className="my-1"
-        size="lg"
-      >
+      <Modal isOpen={isLoginModalOpen} onClose={hideLoginModal} placement="top-center" scrollBehavior="outside" className="my-1" size="lg">
         <ModalContent>
           {() => (
             <ModalBody>
-              <Login onSignup={showSignupModal} onClose={() => setIsLoginModalOpen(false)} />
+              <Login onSignup={showSignupModal} onClose={hideLoginModal} />
             </ModalBody>
           )}
         </ModalContent>
