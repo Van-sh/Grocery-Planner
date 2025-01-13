@@ -21,7 +21,7 @@ export default function IngredientCards({ data, onEdit, onDelete }: Props) {
           <CardBody className="flex-row justify-between">
             <div>
               <p className="text-default-400">Updated By</p>
-              <p>{ingredient.updatedBy.name}</p>
+              <p>{ingredient.updatedBy?.name}</p>
             </div>
             <div>
               <p className="text-default-400">Preparations needed?</p>

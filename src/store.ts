@@ -5,6 +5,7 @@ import authSliceReducer from "./common/auth/slice";
 import toastSliceReducer from "./common/toast/slice";
 import { dishesApi } from "./planner/dishes/api";
 import { ingredientsApi } from "./planner/ingredients/api";
+import { dishesApi } from "./planner/dishes/api";
 
 export const store = configureStore({
   reducer: {
