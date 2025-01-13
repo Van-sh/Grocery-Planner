@@ -17,7 +17,7 @@ export const authSlice = createSlice({
       const { userDetails, jwt } = payload;
       state.userDetails = userDetails;
       document.cookie = `auth=${jwt}`;
-      localStorage.setItem("user", JSON.stringify(payload));
+      localStorage.setItem("user", JSON.stringify(userDetails));
     },
     logOut: state => {
       state.userDetails = undefined;

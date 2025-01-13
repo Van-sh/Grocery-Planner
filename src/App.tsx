@@ -10,6 +10,8 @@ import Planner from "./planner";
 import Ingredients from "./planner/ingredients";
 import Dishes from "./planner/dishes";
 import { store } from "./store";
+import User from "./user";
+import ChangePassword from "./user/change-password";
 
 function App() {
   return (
@@ -26,6 +28,10 @@ function App() {
                   <Route index element={<div>Planner</div>} />
                   <Route path="ingredients" element={<Ingredients />} />
                   <Route path="dishes" element={<Dishes />} />
+                </Route>
+                <Route path="user" element={<User />}>
+                  <Route path="change-password" element={<ChangePassword />} />
+                  <Route path="section1" element={<div>Coming Soon...</div>} />
                 </Route>
               </Route>
             </Routes>

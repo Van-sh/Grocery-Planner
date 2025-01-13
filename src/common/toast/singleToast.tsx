@@ -25,7 +25,7 @@ export default function SingleToast({ message, type = "info", index = 0, onClose
       role="alert"
     >
       <div className="flex gap-4 items-start">
-        <div className="w-4 h-4">{iconMap[type]}</div>
+        <div className="w-6 h-6">{iconMap[type]}</div>
         <p>{message}</p>
       </div>
       <Button className="absolute top-2 right-2 p-0 h-4 w-4 min-w-4" isIconOnly size="sm" variant="light" onClick={onClose}>
