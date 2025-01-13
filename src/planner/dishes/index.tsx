@@ -13,7 +13,6 @@ import { type TDishes } from "./types";
 import PlusIcon from "../../assets/plus";
 import CreateForm from "./createForm";
 
-const limit = 10;
 export default function Dishes() {
    const [selectedDish, setSelectedDish] = useState<TDishes>();
    const dispatch = useAppDispatch();
@@ -41,7 +40,7 @@ export default function Dishes() {
 
    const handleMutationSuccess = useCallback(
       (action: string) => {
-         // refetch();
+         refetch();
          dispatch(
             addToast({
                message: `Ingredient ${action} successfully`,
@@ -50,7 +49,7 @@ export default function Dishes() {
             }),
          );
       },
-      [dispatch],
+      [dispatch, refetch],
    );
 
    const handleMutationError = useCallback(

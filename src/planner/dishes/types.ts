@@ -17,12 +17,19 @@ export type TDishIngredients = Omit<TDishIngredientsBase, "ingredient"> & {
    ingredient: TIngredients;
 };
 
+type TUser = {
+   id: string;
+   name: string;
+   fName: string;
+   lName: string;
+};
+
 export type TDishes = Omit<TDishesBase, "ingredients"> & {
    _id: string;
    createdAt: string;
    updatedAt: string;
-   createdBy: string;
-   updatedBy: string;
+   createdBy: TUser;
+   updatedBy: TUser;
    ingredients: TDishIngredients[];
 };
 
