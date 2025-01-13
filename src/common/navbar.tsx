@@ -28,8 +28,8 @@ const menuItems = [
     href: "/ingredients"
   },
   {
-    label: "Recipes",
-    href: "/recipes"
+    label: "Dishes",
+    href: "/dishes"
   }
 ];
 
