@@ -1,9 +1,8 @@
 import { Input, SlotsToClasses } from "@nextui-org/react";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 
-// TODO:
-// 1. Selection is not working on first click. It is working fine on keyboard selection.
+type Option = {_id: string, name: string}
 
 type Props = {
   label?: React.ReactNode;
@@ -28,7 +27,7 @@ type Props = {
     | "clearButton"
     | "helperWrapper"
   >;
-  options: string[];
+  options: string[] | Option[];
 };
 
 export default function Autocomplete({
@@ -45,16 +44,33 @@ export default function Autocomplete({
   classNames,
   options
 }: Props) {
+  const cleanOptions = useMemo(
+    () =>
+      options.map((option) =>
+        typeof option === "string" ? { _id: option, name: option } : option,
+      ),
+    [options],
+  );
+
   const [inputValue, setInputValue] = useState(value);
-  const [suggestions, setSuggestions] = useState<string[]>(options);
+  const [suggestions, setSuggestions] = useState<Option[]>(cleanOptions);
   const [hover, setHover] = useState<false | number>(false);
   const [selected, setSelected] = useState<false | number>(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const updateSuggestions = useCallback((value: string) => {
+    if (value.length > 0) {
+      const filteredSuggestions = cleanOptions.filter(suggestion => suggestion.name.toLowerCase().includes(value.toLowerCase()));
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions(cleanOptions);
+    }
+  }, [cleanOptions]);
+
   const handleBlur = (e: React.FocusEvent<Element, Element>) => {
     setTimeout(() => {
       onBlur && onBlur(e);
-      setSuggestions(options);
+      setSuggestions(cleanOptions);
       setHover(false);
       setShowDropdown(false);
     }, 250);
@@ -65,12 +81,7 @@ export default function Autocomplete({
     setInputValue(value);
     onChange && onChange(e);
 
-    if (value.length > 0) {
-      const filteredSuggestions = options.filter(suggestion => suggestion.toLowerCase().includes(value.toLowerCase()));
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions(options);
-    }
+    updateSuggestions(value);
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -116,12 +127,18 @@ export default function Autocomplete({
   };
 
   const select = (index: number) => {
-    setInputValue(suggestions[index]);
-    setSuggestions(options);
+    setInputValue(suggestions[index].name);
+    setSuggestions(cleanOptions);
     setSelected(false);
     setShowDropdown(false);
-    onSelect && onSelect(suggestions[index]);
+    onSelect && onSelect(suggestions[index]._id);
   };
+
+  useEffect(() => {
+      if (cleanOptions.length > 0) {
+        updateSuggestions(inputValue);
+      }
+    }, [cleanOptions, inputValue, updateSuggestions]);
 
   return (
     <div className="relative">
@@ -140,6 +157,7 @@ export default function Autocomplete({
         classNames={classNames}
         value={inputValue}
         endContent={<DownChevron />}
+        autoComplete="off"
       />
       {showDropdown && suggestions.length > 0 && (
         <div
@@ -152,11 +170,11 @@ export default function Autocomplete({
                 <li
                   className="flex gap-2 items-center justify-between px-2 py-1.5 rounded-small cursor-pointer data-[hover=true]:transition-colors data-[hover=true]:bg-default data-[hover=true]:text-default-foreground"
                   data-hover={hover === index || (hover === false && selected === index)}
-                  key={suggestion}
+                  key={suggestion._id}
                   onClick={() => select(index)}
                   onMouseOver={() => setHover(index)}
                 >
-                  <span className="flex-1 text-small font-normal truncate">{suggestion}</span>
+                  <span className="flex-1 text-small font-normal truncate">{suggestion.name}</span>
                 </li>
               ))}
             </ul>

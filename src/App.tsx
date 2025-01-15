@@ -1,17 +1,20 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { lazy } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import "./App.css";
 import NavBar from "./common/navbar";
 import ProtectedRoute from "./common/protectedRoute";
 import Toast from "./common/toast";
-import Planner from "./planner";
-import Ingredients from "./planner/ingredients";
-import Dishes from "./planner/dishes";
 import { store } from "./store";
 import User from "./user";
 import ChangePassword from "./user/change-password";
+
+const Planner = lazy(()=>import("./planner"));
+const Ingredients = lazy(()=>import("./planner/ingredients"))
+const Dishes = lazy(()=>import("./planner/dishes"))
 
 function App() {
   return (
