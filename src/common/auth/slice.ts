@@ -3,10 +3,14 @@ import { TAddUserDetails, TUserData } from "./types";
 
 type AuthState = {
   userDetails?: TUserData;
+  isLoginModalOpen: boolean;
+  isSignUpModalOpen: boolean;
 };
 
 const initialState: AuthState = {
-  userDetails: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : undefined
+  userDetails: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : undefined,
+  isLoginModalOpen: false,
+  isSignUpModalOpen: false
 };
 
 export const authSlice = createSlice({
@@ -19,6 +23,20 @@ export const authSlice = createSlice({
       document.cookie = `auth=${jwt}`;
       localStorage.setItem("user", JSON.stringify(userDetails));
     },
+    openLoginModal: state => {
+      state.isLoginModalOpen = true;
+      state.isSignUpModalOpen = false;
+    },
+    closeLoginModal: state => {
+      state.isLoginModalOpen = false;
+    },
+    openSignupModal: state => {
+      state.isLoginModalOpen = false;
+      state.isSignUpModalOpen = true;
+    },
+    closeSignupModal: state => {
+      state.isSignUpModalOpen = false;
+    },
     logOut: state => {
       state.userDetails = undefined;
       document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
@@ -27,5 +45,5 @@ export const authSlice = createSlice({
   }
 });
 
-export const { addUserDetails, logOut } = authSlice.actions;
+export const { addUserDetails, openLoginModal, closeLoginModal, openSignupModal, closeSignupModal, logOut } = authSlice.actions;
 export default authSlice.reducer;
