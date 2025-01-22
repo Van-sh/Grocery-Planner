@@ -65,11 +65,6 @@ export default function Dishes() {
       [dispatch],
    );
 
-   const handleEdit = (item: TDishes) => {
-      setSelectedDish(item);
-      onEditModalOpen();
-   };
-
    useEffect(() => {
       if (createStatus === "fulfilled") {
          handleClose();
