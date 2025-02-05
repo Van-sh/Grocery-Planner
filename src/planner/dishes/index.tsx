@@ -43,7 +43,7 @@ export default function Dishes() {
          refetch();
          dispatch(
             addToast({
-               message: `Ingredient ${action} successfully`,
+               message: `Dish ${action} successfully`,
                type: "success",
                autoClose: true,
             }),
@@ -56,7 +56,7 @@ export default function Dishes() {
       (action: string) => {
          dispatch(
             addToast({
-               message: `Failed to ${action} ingredient`,
+               message: `Failed to ${action} dish`,
                type: "error",
                autoClose: true,
             }),
