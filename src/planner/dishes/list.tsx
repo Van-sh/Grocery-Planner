@@ -5,6 +5,8 @@ import { TDishes } from "./types"
 
 type Props = {
     data: TDishes[];
+    onEdit: (data: TDishes) => void;
+    onDelete: (id: string) => void;
 }
 
 export default function List(props: Props) {
