@@ -13,14 +13,16 @@ import {
    Textarea,
 } from "@nextui-org/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+// import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import * as yup from "yup";
 
 import Autocomplete from "../../../common/autoComplete";
 import { debounce } from "../../../common/utils";
-import { useLazyGetIngredientsQuery } from "../../ingredients/api";
-import { type TIngredients } from "../../ingredients/types";
+// import { useLazyGetIngredientsQuery } from "../../ingredients/api";
+// import { type TIngredients } from "../../ingredients/types";
 import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
+import { preparationTypes } from "../../../common/constants";
 
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
 
@@ -83,25 +85,25 @@ const cleanData: (data: TDishes) => TDishesBase = (data: TDishes) => {
 
 export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
    const [queryList, setQueryList] = useState<{ query: string; page: number }[]>([]);
-   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>([]);
-   const ingredientsFetchRef = useRef(0);
+   // const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>([]);
+   // const ingredientsFetchRef = useRef(0);
 
-   const [getIngredients] = useLazyGetIngredientsQuery();
-   const refetchIngredients = useCallback(async () => {
-      const ingredientsData: TIngredients[][] = Array(queryList.length);
-      const fetchId = ++ingredientsFetchRef.current;
-      const promises = queryList.map(async (query, index) => {
-         const { data: ingredient } = await getIngredients(query);
-         ingredientsData[index] = ingredient?.data ?? [];
-      });
-      await Promise.all(promises);
-      if (ingredientsFetchRef.current !== fetchId) {
-         // User changed selection while these requests were ongoing; abort so
-         // that we don't squash the state.
-         return;
-      }
-      setIngredientsData(ingredientsData);
-   }, [getIngredients, queryList]);
+   // const [getIngredients] = useLazyGetIngredientsQuery();
+   // const refetchIngredients = useCallback(async () => {
+   //    const ingredientsData: TIngredients[][] = Array(queryList.length);
+   //    const fetchId = ++ingredientsFetchRef.current;
+   //    const promises = queryList.map(async (query, index) => {
+   //       const { data: ingredient } = await getIngredients(query);
+   //       ingredientsData[index] = ingredient?.data ?? [];
+   //    });
+   //    await Promise.all(promises);
+   //    if (ingredientsFetchRef.current !== fetchId) {
+   //       // User changed selection while these requests were ongoing; abort so
+   //       // that we don't squash the state.
+   //       return;
+   //    }
+   //    setIngredientsData(ingredientsData);
+   // }, [getIngredients, queryList]);
 
    const setQuery = useMemo(
       () =>
@@ -130,9 +132,9 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       onSubmit: (values) => onCreate(values, initialValues?._id),
    });
 
-   useEffect(() => {
-      refetchIngredients();
-   }, [queryList, refetchIngredients]);
+   // useEffect(() => {
+   //    refetchIngredients();
+   // }, [queryList, refetchIngredients]);
    return (
       <form onSubmit={formik.handleSubmit} autoComplete="false">
          <ModalHeader>{initialValues ? "Edit" : "Add New"} Dish</ModalHeader>
@@ -188,7 +190,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                                     ).ingredient
                                  }
                                  classNames={ingredientInputClasses}
-                                 options={ingredientsData[index]}
+                                 options={preparationTypes}
                                  onChange={(event) => setQuery(event.target.value, index)}
                                  onSelect={(value) =>
                                     formik.setFieldValue(`ingredients.${index}.ingredient`, value)
@@ -256,9 +258,9 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                                     setQueryList((prevState) =>
                                        prevState.filter((_, i) => i !== index),
                                     );
-                                    setIngredientsData((prevState) =>
-                                       prevState.filter((_, i) => i !== index),
-                                    );
+                                    // setIngredientsData((prevState) =>
+                                    //    prevState.filter((_, i) => i !== index),
+                                    // );
                                     remove(index);
                                  }}
                               >
@@ -272,7 +274,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                            isDisabled={!!formik.getFieldMeta("ingredients").error}
                            onClick={() => {
                               setQueryList((prevState) => [...prevState, defaultQuery]);
-                              setIngredientsData((prevState) => [...prevState, []]);
+                              // setIngredientsData((prevState) => [...prevState, []]);
                               push(defaultIngredient);
                            }}
                         >

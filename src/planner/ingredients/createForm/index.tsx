@@ -5,36 +5,9 @@ import * as yup from "yup";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import Autocomplete from "../../../common/autoComplete";
 import { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
+import { preparationTypes } from "../../../common/constants";
 
 // TODO: Create a dropdown for Unit
-
-const preparationTypes = [
-  "Baked",
-  "Boiled",
-  "Chopped",
-  "Diced",
-  "Dried",
-  "Fermented",
-  "Fried",
-  "Frosted",
-  "Grated",
-  "Grilled",
-  "Ground",
-  "Kneaded",
-  "Marinated",
-  "Roasted",
-  "Sauteed",
-  "Shredded",
-  "Sliced",
-  "Smoked",
-  "Soaked",
-  "Sprouted",
-  "Steamed",
-  "Stir-fried",
-  "Stuffed",
-  "Toasted",
-  "Whipped"
-];
 
 const preparationUnits = ["days", "hours", "minutes"];
 
