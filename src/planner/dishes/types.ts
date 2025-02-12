@@ -1,7 +1,7 @@
 import { type TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
-   ingredient: string;
+   ingredient: { id: string; name: string };
    measurement_unit: "" | "cup" | "tablespoon" | "teaspoon" | "gm" | "ml";
    amount: number;
 };

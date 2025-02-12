@@ -31,7 +31,10 @@ const schema = yup.object({
       .array()
       .of(
          yup.object({
-            ingredient: yup.string().required("Type is required"),
+            ingredient: yup.object({
+               id: yup.string(),
+               name: yup.string(),
+            }).required("Ingredient is required"),
             amount: yup
                .number()
                .required("Amount is required")
@@ -55,7 +58,7 @@ type Props = {
 };
 
 const defaultIngredient: TDishIngredientsBase = {
-   ingredient: "",
+   ingredient: { id: "", name: "" },
    amount: 0,
    measurement_unit: "",
 };
@@ -75,24 +78,35 @@ const cleanData: (data: TDishes) => TDishesBase = (data: TDishes) => {
       ingredients: data.ingredients.map((ingredient) => {
          return {
             ...ingredient,
-            ingredient: ingredient.ingredient._id,
+            ingredient: { id: ingredient.ingredient._id, name: ingredient.ingredient.name },
          };
       }),
    };
 };
 
 export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
-   const [queryList, setQueryList] = useState<{ query: string; page: number }[]>([]);
-   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>([]);
+   const initial: TDishesBase | undefined = useMemo(
+      () => (initialValues ? cleanData(initialValues) : undefined),
+      [initialValues],
+   );
+   const [queryList, setQueryList] = useState<{ query: string; page: number }[]>(
+      initialValues?.ingredients.map((ingredient) => ({
+         query: ingredient.ingredient.name,
+         page: 1,
+      })) ?? [],
+   );
+   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
+      initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
+   );
    const ingredientsFetchRef = useRef(0);
 
    const [getIngredients] = useLazyGetIngredientsQuery();
    const refetchIngredients = useCallback(async () => {
-      const ingredientsData: TIngredients[][] = Array(queryList.length);
+      const newIngredientsData: TIngredients[][] = Array(queryList.length);
       const fetchId = ++ingredientsFetchRef.current;
       const promises = queryList.map(async (query, index) => {
          const { data: ingredient } = await getIngredients(query);
-         ingredientsData[index] = ingredient?.data ?? [];
+         newIngredientsData[index] = ingredient?.data ?? [];
       });
       await Promise.all(promises);
       if (ingredientsFetchRef.current !== fetchId) {
@@ -100,7 +114,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
          // that we don't squash the state.
          return;
       }
-      setIngredientsData(ingredientsData);
+      setIngredientsData(newIngredientsData);
    }, [getIngredients, queryList]);
 
    const setQuery = useMemo(
@@ -112,11 +126,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
             setQueryList(newQueryList);
          }, 750),
       [queryList],
-   );
-
-   let initial: TDishesBase | undefined = useMemo(
-      () => (initialValues ? cleanData(initialValues) : undefined),
-      [initialValues],
    );
 
    const formik = useFormik({
@@ -131,7 +140,9 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
    });
 
    useEffect(() => {
-      refetchIngredients();
+      (async function () {
+         await refetchIngredients();
+      })();
    }, [queryList, refetchIngredients]);
    return (
       <form onSubmit={formik.handleSubmit} autoComplete="false">
@@ -168,8 +179,8 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                               className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg"
                            >
                               <Autocomplete
-                                 label="Preparation type"
-                                 placeholder="Fried, Boiled, etc."
+                                 label="Ingredient"
+                                 placeholder="Chana, Coriander, etc."
                                  variant="bordered"
                                  {...formik.getFieldProps(`preparations.${index}.category`)}
                                  isInvalid={
@@ -185,9 +196,10 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                                        (formik.errors.ingredients?.[
                                           index
                                        ] as FormikErrors<TDishIngredientsBase>) || {}
-                                    ).ingredient
+                                    ).ingredient?.id
                                  }
                                  classNames={ingredientInputClasses}
+                                 value={formik.values.ingredients[index].ingredient.name}
                                  options={ingredientsData[index]}
                                  onChange={(event) => setQuery(event.target.value, index)}
                                  onSelect={(value) =>
