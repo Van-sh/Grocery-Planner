@@ -1,5 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Divider, Input, ModalBody, ModalFooter, ModalHeader, Select, SelectItem } from "@nextui-org/react";
+import {
+  Button,
+  Divider,
+  Input,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
@@ -17,12 +26,21 @@ const schema = yup.object({
     .array()
     .of(
       yup.object({
-        category: yup.mixed().oneOf(preparationTypes, "Select a type from dropdown").required("Type is required"),
-        timeAmount: yup.number().required("Time Amount is required").min(1, "Time Amount must be greater than 0"),
-        timeUnits: yup.mixed().oneOf(preparationUnits, "Select a type from dropdown").required("Time Unit is required")
-      })
+        category: yup
+          .mixed()
+          .oneOf(preparationTypes, "Select a type from dropdown")
+          .required("Type is required"),
+        timeAmount: yup
+          .number()
+          .required("Time Amount is required")
+          .min(1, "Time Amount must be greater than 0"),
+        timeUnits: yup
+          .mixed()
+          .oneOf(preparationUnits, "Select a type from dropdown")
+          .required("Time Unit is required"),
+      }),
     )
-    .notRequired()
+    .notRequired(),
 });
 
 type Props = {
@@ -35,17 +53,17 @@ type Props = {
 const defaultPreparation: TPreparationBase = { category: "", timeAmount: 0, timeUnits: "" };
 
 const preparationInputClasses = {
-  inputWrapper: ["bg-white"]
+  inputWrapper: ["bg-white"],
 };
 
 export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
   const formik = useFormik({
     initialValues: {
       name: initialValues?.name || "",
-      preparations: initialValues?.preparations || []
+      preparations: initialValues?.preparations || [],
     } as TIngredientsBase,
     validationSchema: schema,
-    onSubmit: values => onCreate(values, initialValues?._id)
+    onSubmit: (values) => onCreate(values, initialValues?._id),
   });
 
   return (
@@ -77,12 +95,22 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       {...formik.getFieldProps(`preparations.${index}.category`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.category &&
-                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).category
+                        !!(
+                          (formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) ||
+                          {}
+                        ).category
                       }
-                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).category}
+                      errorMessage={
+                        (
+                          (formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) ||
+                          {}
+                        ).category
+                      }
                       classNames={preparationInputClasses}
                       options={preparationTypes}
-                      onSelect={value => formik.setFieldValue(`preparations.${index}.category`, value)}
+                      onSelect={(value) =>
+                        formik.setFieldValue(`preparations.${index}.category`, value)
+                      }
                     />
 
                     <Input
@@ -92,9 +120,17 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       {...formik.getFieldProps(`preparations.${index}.timeAmount`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.timeAmount &&
-                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).timeAmount
+                        !!(
+                          (formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) ||
+                          {}
+                        ).timeAmount
                       }
-                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {})?.timeAmount}
+                      errorMessage={
+                        (
+                          (formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) ||
+                          {}
+                        )?.timeAmount
+                      }
                       classNames={preparationInputClasses}
                     />
 
@@ -106,12 +142,20 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       {...formik.getFieldProps(`preparations.${index}.timeUnits`)}
                       isInvalid={
                         formik.touched.preparations?.[index]?.timeUnits &&
-                        !!((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {}).timeUnits
+                        !!(
+                          (formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) ||
+                          {}
+                        ).timeUnits
                       }
-                      errorMessage={((formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) || {})?.timeUnits}
+                      errorMessage={
+                        (
+                          (formik.errors.preparations?.[index] as FormikErrors<TPreparationBase>) ||
+                          {}
+                        )?.timeUnits
+                      }
                       classNames={{ trigger: ["bg-white"] }}
                     >
-                      {preparationUnits.map(unit => (
+                      {preparationUnits.map((unit) => (
                         <SelectItem key={unit} value={unit}>
                           {unit}
                         </SelectItem>

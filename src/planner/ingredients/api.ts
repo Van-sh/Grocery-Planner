@@ -12,39 +12,44 @@ export const ingredientsApi = createApi({
       const token = readCookie("auth");
       if (token) headers.set("Authorization", `Bearer ${token}`);
       return headers;
-    }
+    },
   }),
-  endpoints: build => ({
+  endpoints: (build) => ({
     getIngredients: build.query<TIngredientsResponse, TIngredientsGetAllQuery>({
-      query: query => {
+      query: (query) => {
         const searchQueries = new URLSearchParams({ page: query.page.toString() });
         if (query.query) searchQueries.append("q", query.query);
 
         return `?${searchQueries.toString()}`;
-      }
+      },
     }),
     createIngredient: build.mutation<TIngredientsBase, TIngredientsBase>({
-      query: data => ({
+      query: (data) => ({
         url: "",
         method: "POST",
-        body: data
-      })
+        body: data,
+      }),
     }),
     updateIngredient: build.mutation<TIngredientsBase, { data: TIngredientsBase; id: string }>({
       query: ({ data, id }) => ({
         url: `/${id}`,
         method: "PATCH",
-        body: data
-      })
+        body: data,
+      }),
     }),
     deleteIngredient: build.mutation<void, string>({
-      query: id => ({
+      query: (id) => ({
         url: `/${id}`,
-        method: "DELETE"
-      })
-    })
-  })
+        method: "DELETE",
+      }),
+    }),
+  }),
 });
 
-export const { useLazyGetIngredientsQuery, useGetIngredientsQuery, useCreateIngredientMutation, useUpdateIngredientMutation, useDeleteIngredientMutation } =
-  ingredientsApi;
+export const {
+  useLazyGetIngredientsQuery,
+  useGetIngredientsQuery,
+  useCreateIngredientMutation,
+  useUpdateIngredientMutation,
+  useDeleteIngredientMutation,
+} = ingredientsApi;

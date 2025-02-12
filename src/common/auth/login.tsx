@@ -16,7 +16,7 @@ type Props = {
 
 const schema = yup.object({
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required")
+  password: yup.string().required("Password is required"),
 });
 
 export default function Login({ onSignup, onClose }: Props) {
@@ -27,7 +27,7 @@ export default function Login({ onSignup, onClose }: Props) {
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: schema,
-    onSubmit: login
+    onSubmit: login,
   });
 
   const handleLoginSuccess = useCallback(
@@ -40,7 +40,7 @@ export default function Login({ onSignup, onClose }: Props) {
         window.location.reload();
       }, 200);
     },
-    [dispatch, onClose]
+    [dispatch, onClose],
   );
 
   useEffect(() => {

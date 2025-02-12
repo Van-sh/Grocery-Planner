@@ -23,9 +23,21 @@ export default function Loader() {
         </mask>
       </defs>
       <g fill="currentColor">
-        <g fill="none" strokeDasharray="20 221" strokeDashoffset="20" strokeLinecap="round" strokeWidth="4">
+        <g
+          fill="none"
+          strokeDasharray="20 221"
+          strokeDashoffset="20"
+          strokeLinecap="round"
+          strokeWidth="4"
+        >
           <g stroke="hsl(38, 90%, 50%)">
-            <circle className={style.pan_ring} cx="44" cy="40" r="35" transform="rotate(90, 44, 40)" />
+            <circle
+              className={style.pan_ring}
+              cx="44"
+              cy="40"
+              r="35"
+              transform="rotate(90, 44, 40)"
+            />
           </g>
         </g>
         <g fill="hsla(223, 10%, 70%, 0)">
@@ -46,10 +58,28 @@ export default function Loader() {
           </g>
         </g>
         <g className={style.pan_pan}>
-          <rect rx="2" ry="2" x="4" y="66" width="68" height="14" clipPath="url(#pan-clip)" id="pan" />
+          <rect
+            rx="2"
+            ry="2"
+            x="4"
+            y="66"
+            width="68"
+            height="14"
+            clipPath="url(#pan-clip)"
+            id="pan"
+          />
           <rect rx="2" ry="2" x="76" y="66" width="48" height="7" />
         </g>
-        <rect className={style.pan_shadow} fill="hsla(223, 10%, 50%, 0.2)" rx="3.5" ry="3.5" x="10" y="100" width="60" height="7" />
+        <rect
+          className={style.pan_shadow}
+          fill="hsla(223, 10%, 50%, 0.2)"
+          rx="3.5"
+          ry="3.5"
+          x="10"
+          y="100"
+          width="60"
+          height="7"
+        />
       </g>
     </svg>
   );
