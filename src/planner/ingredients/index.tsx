@@ -2,6 +2,7 @@ import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-
 import { useCallback, useEffect, useState } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
+import ConfirmationModal from "../../common/confirmationModal";
 import GetErrorScreen from "../../common/getErrorScreen";
 import Loader from "../../common/loader";
 import Search from "../../common/search";
@@ -149,30 +150,13 @@ export default function Ingredients() {
           </ModalContent>
         </Modal>
 
-        <Modal
-          isOpen={isDeleteModalOpen}
-          onClose={onDeleteModalClose}
-          isDismissable={false}
-          isKeyboardDismissDisabled
-          placement="top-center"
-          scrollBehavior="outside"
-        >
-          <ModalContent>
-            {() => (
-              <div className="p-6">
-                <h2 className="text-lg">Are you sure you want to delete this ingredient?</h2>
-                <div className="flex justify-end gap-4 mt-6">
-                  <Button color="danger" onClick={() => handleDelete(selectedIngredient!._id)} isLoading={isDeleteLoading}>
-                    Yes
-                  </Button>
-                  <Button onClick={onDeleteModalClose} isLoading={isDeleteLoading}>
-                    No
-                  </Button>
-                </div>
-              </div>
-            )}
-          </ModalContent>
-        </Modal>
+        <ConfirmationModal
+          isModalOpen={isDeleteModalOpen}
+          onModalClose={onDeleteModalClose}
+          onYesClick={() => handleDelete(selectedIngredient!._id)}
+          isLoading={isDeleteLoading}
+          message="Are you sure you want to delete this ingredient?"
+        />
       </div>
     </div>
   );
