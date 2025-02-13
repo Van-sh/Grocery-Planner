@@ -31,12 +31,10 @@ const schema = yup.object({
     .array()
     .of(
       yup.object({
-        ingredient: yup
-          .object({
-            id: yup.string(),
-            name: yup.string(),
-          })
-          .required("Ingredient is required"),
+        ingredient: yup.object({
+          id: yup.string().required("Ingredient is required"),
+          name: yup.string(),
+        }),
         amount: yup.number().required("Amount is required").min(1, "Amount must be greater than 0"),
         measurement_unit: yup
           .string()
@@ -178,14 +176,14 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       label="Ingredient"
                       placeholder="Chana, Coriander, etc."
                       variant="bordered"
-                      {...formik.getFieldProps(`preparations.${index}.category`)}
+                      {...formik.getFieldProps(`ingredients.${index}.ingredient`)}
                       isInvalid={
                         formik.touched.ingredients?.[index]?.ingredient &&
                         !!(
                           (formik.errors.ingredients?.[
                             index
                           ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).ingredient
+                        ).ingredient?.id
                       }
                       errorMessage={
                         (
@@ -199,7 +197,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       options={ingredientsData[index]}
                       onChange={(event) => setQuery(event.target.value, index)}
                       onSelect={(value) =>
-                        formik.setFieldValue(`ingredients.${index}.ingredient`, value)
+                        formik.setFieldValue(`ingredients.${index}.ingredient.id`, value)
                       }
                     />
 
@@ -262,9 +260,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       variant="flat"
                       onClick={() => {
                         setQueryList((prevState) => prevState.filter((_, i) => i !== index));
-                        // setIngredientsData((prevState) =>
-                        //    prevState.filter((_, i) => i !== index),
-                        // );
+                        setIngredientsData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
                       }}
                     >
@@ -278,12 +274,12 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                   isDisabled={!!formik.getFieldMeta("ingredients").error}
                   onClick={() => {
                     setQueryList((prevState) => [...prevState, defaultQuery]);
-                    // setIngredientsData((prevState) => [...prevState, []]);
+                    setIngredientsData((prevState) => [...prevState, []]);
                     push(defaultIngredient);
                   }}
                 >
                   <FontAwesomeIcon icon={faPlus} />
-                  Add Preparation
+                  Add Ingredient
                 </Button>
               </>
             )}
