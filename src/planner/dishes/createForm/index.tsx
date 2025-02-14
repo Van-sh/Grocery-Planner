@@ -268,9 +268,9 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                                     setQueryList((prevState) =>
                                        prevState.filter((_, i) => i !== index),
                                     );
-                                    // setIngredientsData((prevState) =>
-                                    //    prevState.filter((_, i) => i !== index),
-                                    // );
+                                    setIngredientsData((prevState) =>
+                                       prevState.filter((_, i) => i !== index),
+                                    );
                                     remove(index);
                                  }}
                               >
@@ -284,7 +284,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                            isDisabled={!!formik.getFieldMeta("ingredients").error}
                            onClick={() => {
                               setQueryList((prevState) => [...prevState, defaultQuery]);
-                              // setIngredientsData((prevState) => [...prevState, []]);
+                              setIngredientsData((prevState) => [...prevState, []]);
                               push(defaultIngredient);
                            }}
                         >
