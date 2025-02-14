@@ -16,7 +16,7 @@ export default function SingleToast({ message, type = "info", index = 0, onClose
   const iconMap = {
     info: <ExclamationCircleSolid fill={semanticColors.light.primary[500]} />,
     error: <XCircleSolid fill={semanticColors.light.danger[500]} />,
-    success: <TickCircleSolid fill={semanticColors.light.success[500]} />
+    success: <TickCircleSolid fill={semanticColors.light.success[500]} />,
   };
 
   return (
@@ -28,7 +28,13 @@ export default function SingleToast({ message, type = "info", index = 0, onClose
         <div className="w-6 h-6">{iconMap[type]}</div>
         <p>{message}</p>
       </div>
-      <Button className="absolute top-2 right-2 p-0 h-4 w-4 min-w-4" isIconOnly size="sm" variant="light" onClick={onClose}>
+      <Button
+        className="absolute top-2 right-2 p-0 h-4 w-4 min-w-4"
+        isIconOnly
+        size="sm"
+        variant="light"
+        onClick={onClose}
+      >
         <span className="h-4 w-4">
           <XMark />
         </span>

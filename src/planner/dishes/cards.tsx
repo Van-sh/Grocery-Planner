@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-} from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/react";
 import { TDishes } from "./types";
 import EditIcon from "../../assets/editIcon";
 import DeleteIcon from "../../assets/deleteIcon";

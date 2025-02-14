@@ -43,12 +43,18 @@ export default function DishesTable({ data, onEdit, onDelete }: Props) {
         return (
           <div className="flex items-center gap-2">
             <Tooltip content="Edit">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => onEdit(item)}>
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => onEdit(item)}
+              >
                 <EditIcon />
               </span>
             </Tooltip>
             <Tooltip content="Delete">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50" onClick={() => onDelete(item._id)}>
+              <span
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+                onClick={() => onDelete(item._id)}
+              >
                 <DeleteIcon />
               </span>
             </Tooltip>
@@ -66,9 +72,7 @@ export default function DishesTable({ data, onEdit, onDelete }: Props) {
       <TableBody items={data}>
         {(item) => (
           <TableRow key={item._id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
+            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
           </TableRow>
         )}
       </TableBody>

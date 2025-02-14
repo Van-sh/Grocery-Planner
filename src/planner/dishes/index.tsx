@@ -6,11 +6,7 @@ import Loader from "../../common/loader";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
-import {
-  useCreateDishMutation,
-  useGetDishesQuery,
-  useUpdateDishMutation,
-} from "./api";
+import { useCreateDishMutation, useGetDishesQuery, useUpdateDishMutation } from "./api";
 import List from "./list";
 import { type TDishes } from "./types";
 
@@ -35,10 +31,8 @@ export default function Dishes() {
     onClose: onEditModalClose,
   } = useDisclosure();
 
-  const [create, { isLoading: isCreateLoading, status: createStatus }] =
-    useCreateDishMutation();
-  const [update, { isLoading: isUpdateLoading, status: updateStatus }] =
-    useUpdateDishMutation();
+  const [create, { isLoading: isCreateLoading, status: createStatus }] = useCreateDishMutation();
+  const [update, { isLoading: isUpdateLoading, status: updateStatus }] = useUpdateDishMutation();
 
   const handleClose = useCallback(() => {
     onEditModalClose();
@@ -53,10 +47,10 @@ export default function Dishes() {
           message: `Dish ${action} successfully`,
           type: "success",
           autoClose: true,
-        })
+        }),
       );
     },
-    [dispatch, refetch]
+    [dispatch, refetch],
   );
 
   const handleMutationError = useCallback(
@@ -66,10 +60,10 @@ export default function Dishes() {
           message: `Failed to ${action} dish`,
           type: "error",
           autoClose: true,
-        })
+        }),
       );
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleEdit = (item: TDishes) => {
@@ -104,15 +98,9 @@ export default function Dishes() {
           (data.length === 0 ? (
             <BlankScreen name="Dishes" onAdd={onEditModalOpen} />
           ) : (
-            <List
-              data={data}
-              onEdit={handleEdit}
-              onDelete={() => console.log("UnImplemented")}
-            />
+            <List data={data} onEdit={handleEdit} onDelete={() => console.log("UnImplemented")} />
           ))}
-        {isGetError && (
-          <GetErrorScreen errorMsg={getErrorMessage(error)} onRetry={refetch} />
-        )}
+        {isGetError && <GetErrorScreen errorMsg={getErrorMessage(error)} onRetry={refetch} />}
         <Button
           color="primary"
           variant="shadow"

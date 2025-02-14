@@ -14,11 +14,12 @@ export const store = configureStore({
     dishesApi: dishesApi.reducer,
     ingredientsApi: ingredientsApi.reducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(
-    authApi.middleware,
-    dishesApi.middleware,
-    ingredientsApi.middleware,
-  ),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      dishesApi.middleware,
+      ingredientsApi.middleware,
+    ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
