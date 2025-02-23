@@ -32,7 +32,7 @@ const schema = yup.object({
     .of(
       yup.object({
         ingredient: yup.object({
-          id: yup.string().required("Ingredient is required"),
+          _id: yup.string().required("Ingredient is required"),
           name: yup.string(),
         }),
         amount: yup.number().required("Amount is required").min(1, "Amount must be greater than 0"),
@@ -55,7 +55,7 @@ type Props = {
 };
 
 const defaultIngredient: TDishIngredientsBase = {
-  ingredient: { id: "", name: "" },
+  ingredient: { _id: "", name: "" },
   amount: 0,
   measurement_unit: "",
 };
@@ -75,7 +75,7 @@ const cleanData: (data: TDishes) => TDishesBase = (data: TDishes) => {
     ingredients: data.ingredients.map((ingredient) => {
       return {
         ...ingredient,
-        ingredient: { id: ingredient.ingredient._id, name: ingredient.ingredient.name },
+        ingredient: { _id: ingredient.ingredient._id, name: ingredient.ingredient.name },
       };
     }),
   };
@@ -183,21 +183,21 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                           (formik.errors.ingredients?.[
                             index
                           ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).ingredient?.id
+                        ).ingredient?._id
                       }
                       errorMessage={
                         (
                           (formik.errors.ingredients?.[
                             index
                           ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).ingredient?.id
+                        ).ingredient?._id
                       }
                       classNames={ingredientInputClasses}
                       value={formik.values.ingredients[index].ingredient.name}
                       options={ingredientsData[index]}
                       onChange={(event) => setQuery(event.target.value, index)}
                       onSelect={(value) =>
-                        formik.setFieldValue(`ingredients.${index}.ingredient.id`, value)
+                        formik.setFieldValue(`ingredients.${index}.ingredient._id`, value)
                       }
                     />
 
