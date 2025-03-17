@@ -2,7 +2,7 @@ import { Input, SlotsToClasses } from "@nextui-org/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 
-type Option = { _id: string; name: string };
+type Option = { _id: string; name: string; description?: string };
 
 type Props = {
   label?: React.ReactNode;
@@ -180,7 +180,12 @@ export default function Autocomplete({
                   onClick={() => select(index)}
                   onMouseOver={() => setHover(index)}
                 >
-                  <span className="flex-1 text-small font-normal truncate">{suggestion.name}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-left">{suggestion.name}</p>
+                    {suggestion.description && (
+                      <p className="text-xs text-default-500 text-left">{suggestion.description}</p>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
