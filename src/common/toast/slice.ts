@@ -20,7 +20,7 @@ type ToastState = {
 };
 
 const initialState: ToastState = {
-  toastList: []
+  toastList: [],
 };
 
 export const toastSlice = createSlice({
@@ -28,12 +28,12 @@ export const toastSlice = createSlice({
   initialState,
   reducers: {
     removeToast: (state, action: PayloadAction<{ id: string | number }>) => {
-      state.toastList = state.toastList.filter(t => t.id !== action.payload.id);
+      state.toastList = state.toastList.filter((t) => t.id !== action.payload.id);
     },
     addToast: (state, { payload }: PayloadAction<TToastData>) => {
       state.toastList.push(payload);
-    }
-  }
+    },
+  },
 });
 
 export const addToast = (data: TAddToastData) => (dispatch: any) => {

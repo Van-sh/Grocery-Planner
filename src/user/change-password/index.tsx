@@ -13,7 +13,7 @@ const schema = yup.object({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("newPassword"), undefined], "Passwords must match")
-    .required("Confirm Password is required")
+    .required("Confirm Password is required"),
 });
 
 export default function ChangePassword() {
@@ -25,23 +25,36 @@ export default function ChangePassword() {
     isValid,
     getFieldProps,
     handleSubmit,
-    resetForm
+    resetForm,
   } = useFormik({
     initialValues: {
       currentPassword: "",
       newPassword: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit: changePassword
+    onSubmit: changePassword,
   });
 
   useEffect(() => {
     if (status === "fulfilled") {
       resetForm();
-      dispatch(addToast({ message: data?.data?.message || "Password changed successfully", type: "success", autoClose: true }));
+      dispatch(
+        addToast({
+          message: data?.data?.message || "Password changed successfully",
+          type: "success",
+          autoClose: true,
+        }),
+      );
     } else if (status === "rejected") {
-      dispatch(addToast({ message: getErrorMessage(error), type: "error", autoClose: true, autoCloseDuration: 5000 }));
+      dispatch(
+        addToast({
+          message: getErrorMessage(error),
+          type: "error",
+          autoClose: true,
+          autoCloseDuration: 5000,
+        }),
+      );
     }
   }, [status, error, data, resetForm, dispatch]);
 
@@ -77,7 +90,13 @@ export default function ChangePassword() {
           isInvalid={touched.confirmPassword && !!formErrors.confirmPassword}
           errorMessage={formErrors.confirmPassword}
         />
-        <Button type="submit" color="primary" className="w-full" isDisabled={!isValid} isLoading={isLoading}>
+        <Button
+          type="submit"
+          color="primary"
+          className="w-full"
+          isDisabled={!isValid}
+          isLoading={isLoading}
+        >
           Change Password
         </Button>
       </form>

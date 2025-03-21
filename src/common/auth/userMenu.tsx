@@ -5,7 +5,7 @@ import ConfirmationModal from "../confirmationModal";
 import { logOut } from "./slice";
 
 export default function UserMenu() {
-  const userDetails = useAppSelector(state => state.auth.userDetails);
+  const userDetails = useAppSelector((state) => state.auth.userDetails);
   const dispatch = useAppDispatch();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   let userName = userDetails?.fName.substring(0, 15);

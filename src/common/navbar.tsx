@@ -10,7 +10,7 @@ import {
   NavbarItem,
   NavbarMenu,
   NavbarMenuItem,
-  NavbarMenuToggle
+  NavbarMenuToggle,
 } from "@nextui-org/react";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -23,25 +23,25 @@ import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } fr
 const menuItems = [
   {
     label: "Dashboard",
-    href: ""
+    href: "",
   },
   {
     label: "Ingredients",
-    href: "/ingredients"
+    href: "/ingredients",
   },
   {
     label: "Dishes",
-    href: "/dishes"
-  }
+    href: "/dishes",
+  },
 ];
 
 // TODO: Add confirmation modal for logout
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(state => ({
+  const { isLoginModalOpen, isSignupModalOpen } = useAppSelector((state) => ({
     isLoginModalOpen: state.auth.isLoginModalOpen,
-    isSignupModalOpen: state.auth.isSignUpModalOpen
+    isSignupModalOpen: state.auth.isSignUpModalOpen,
   }));
   const dispatch = useAppDispatch();
 
@@ -71,7 +71,7 @@ export default function NavBar() {
           </NavbarBrand>
         </NavbarContent>
         <NavbarMenu>
-          {menuItems.map(item => (
+          {menuItems.map((item) => (
             <NavbarMenuItem key={item.label}>
               <Link color={"foreground"} className="w-full" href={`/planner${item.href}`} size="lg">
                 {item.label}
@@ -117,7 +117,14 @@ export default function NavBar() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isLoginModalOpen} onClose={hideLoginModal} placement="top-center" scrollBehavior="outside" className="my-1" size="lg">
+      <Modal
+        isOpen={isLoginModalOpen}
+        onClose={hideLoginModal}
+        placement="top-center"
+        scrollBehavior="outside"
+        className="my-1"
+        size="lg"
+      >
         <ModalContent>
           {() => (
             <ModalBody>

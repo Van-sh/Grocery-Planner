@@ -18,7 +18,7 @@ type TUser = {
   name: string;
   fName: string;
   lName: string;
-}
+};
 
 export type TIngredients = TIngredientsBase & {
   _id: string;
@@ -36,5 +36,5 @@ export type TIngredientsResponse = {
 
 export type TIngredientsGetAllQuery = {
   page: number;
-  query: string
+  query: string;
 };

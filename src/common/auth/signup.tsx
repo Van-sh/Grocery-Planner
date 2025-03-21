@@ -22,7 +22,7 @@ const schema = yup.object({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), undefined], "Passwords must match")
-    .required("Confirm Password is required")
+    .required("Confirm Password is required"),
 });
 
 export default function Signup({ onLogin, onClose }: Props) {
@@ -36,10 +36,10 @@ export default function Signup({ onLogin, onClose }: Props) {
       lastName: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit: signup
+    onSubmit: signup,
   });
 
   const handleSignupSuccess = useCallback(
@@ -52,7 +52,7 @@ export default function Signup({ onLogin, onClose }: Props) {
         window.location.reload();
       }, 200);
     },
-    [dispatch, onClose]
+    [dispatch, onClose],
   );
 
   useEffect(() => {
