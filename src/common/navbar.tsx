@@ -35,8 +35,6 @@ const menuItems = [
   }
 ];
 
-// TODO: Add confirmation modal for logout
-
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(state => ({
