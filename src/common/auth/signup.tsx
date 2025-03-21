@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { useCallback, useEffect } from "react";
 import * as yup from "yup";
 import GroceryIcon from "../../assets/groceryIcon";
+import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
 import { useGoogleMutation, useSignupMutation } from "./api";
 import { addUserDetails } from "./slice";
@@ -27,7 +28,7 @@ const schema = yup.object({
 
 export default function Signup({ onLogin, onClose }: Props) {
   const dispatch = useAppDispatch();
-  const [signup, { data: signupData, status: signupStatus }] = useSignupMutation();
+  const [signup, { data: signupData, error: signupError, isError: isSignupError, status: signupStatus }] = useSignupMutation();
   const [google, { data: googleData, status: googleStatus }] = useGoogleMutation();
 
   const formik = useFormik({
@@ -58,8 +59,6 @@ export default function Signup({ onLogin, onClose }: Props) {
   useEffect(() => {
     if (signupStatus === "fulfilled") {
       handleSignupSuccess(signupData!);
-    } else if (signupStatus === "rejected") {
-      // Handle signup error
     }
   }, [signupData, signupStatus, handleSignupSuccess]);
 
@@ -67,7 +66,8 @@ export default function Signup({ onLogin, onClose }: Props) {
     if (googleStatus === "fulfilled") {
       handleSignupSuccess(googleData!);
     } else if (googleStatus === "rejected") {
-      // Handle google login error
+      // TODO: Handle google signup error.
+      // I am not getting this error right now. Please handle when you see this error.
     }
   }, [googleData, googleStatus, handleSignupSuccess]);
 
@@ -102,6 +102,8 @@ export default function Signup({ onLogin, onClose }: Props) {
         <p className="mx-4">OR</p>
         <div className="w-full border-slate-300 border-t h-0" />
       </div>
+
+      {isSignupError && <p className="text-red-500 text-sm text-center">{getErrorMessage(signupError)}</p>}
 
       <form className="flex flex-col gap-y-2 mb-4" onSubmit={formik.handleSubmit}>
         <div className="flex gap-x-4">
