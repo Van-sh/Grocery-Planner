@@ -1,4 +1,4 @@
-import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
 
 import GetErrorScreen from "../../common/getErrorScreen";
@@ -11,10 +11,13 @@ import List from "./list";
 import { type TDishes } from "./types";
 
 import PlusIcon from "../../assets/plus";
-import CreateForm from "./createForm";
 import BlankScreen from "../../common/blankScreen";
+import CreateForm from "./createForm";
 
+const limit = 10
 export default function Dishes() {
+  const [query] = useState<string>("");
+  const [page, setPage] = useState(1);
   const [selectedDish, setSelectedDish] = useState<TDishes>();
   const dispatch = useAppDispatch();
   const {
@@ -22,9 +25,9 @@ export default function Dishes() {
     isError: isGetError,
     error,
     isSuccess: isGetSuccess,
-    data: { data = [] } = {},
+    data: { data = [], count = 0 } = {},
     refetch,
-  } = useGetDishesQuery();
+  } = useGetDishesQuery({query, page});
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
@@ -98,7 +101,17 @@ export default function Dishes() {
           (data.length === 0 ? (
             <BlankScreen name="Dishes" onAdd={onEditModalOpen} />
           ) : (
-            <List data={data} onEdit={handleEdit} onDelete={() => console.log("UnImplemented")} />
+            <>
+              <List data={data} onEdit={handleEdit} onDelete={() => console.log("UnImplemented")} />
+              <div className="mt-4 flex justify-end mb-24 sm:mb-0">
+                <Pagination
+                  showControls
+                  total={Math.ceil(count / limit)}
+                  page={page}
+                  onChange={setPage}
+                />
+              </div>
+            </>
           ))}
         {isGetError && <GetErrorScreen errorMsg={getErrorMessage(error)} onRetry={refetch} />}
         <Button
