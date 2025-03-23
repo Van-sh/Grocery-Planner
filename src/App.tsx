@@ -12,9 +12,9 @@ import { store } from "./store";
 import User from "./user";
 import ChangePassword from "./user/change-password";
 
-const Planner = lazy(()=>import("./planner"));
-const Ingredients = lazy(()=>import("./planner/ingredients"))
-const Dishes = lazy(()=>import("./planner/dishes"))
+const Planner = lazy(() => import("./planner"));
+const Ingredients = lazy(() => import("./planner/ingredients"));
+const Dishes = lazy(() => import("./planner/dishes"));
 
 function App() {
   return (

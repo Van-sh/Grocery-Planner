@@ -7,29 +7,29 @@ const API_URL = process.env.REACT_APP_API_URL;
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/auth` }),
-  endpoints: build => ({
+  endpoints: (build) => ({
     login: build.mutation<TUserResponse, TSigninFormData>({
-      query: body => ({
+      query: (body) => ({
         url: "/login",
         method: "POST",
-        body
-      })
+        body,
+      }),
     }),
     signup: build.mutation<TUserResponse, TSignupFormData>({
-      query: body => ({
+      query: (body) => ({
         url: "/signup",
         method: "POST",
-        body
-      })
+        body,
+      }),
     }),
     google: build.mutation<TUserResponse, CredentialResponse>({
-      query: credentialResponse => ({
+      query: (credentialResponse) => ({
         url: "/google",
         method: "POST",
-        body: credentialResponse
-      })
-    })
-  })
+        body: credentialResponse,
+      }),
+    }),
+  }),
 });
 
 export const { useLoginMutation, useSignupMutation, useGoogleMutation } = authApi;

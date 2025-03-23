@@ -10,7 +10,7 @@ type AuthState = {
 const initialState: AuthState = {
   userDetails: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : undefined,
   isLoginModalOpen: false,
-  isSignUpModalOpen: false
+  isSignUpModalOpen: false,
 };
 
 export const authSlice = createSlice({
@@ -23,27 +23,34 @@ export const authSlice = createSlice({
       document.cookie = `auth=${jwt}`;
       localStorage.setItem("user", JSON.stringify(userDetails));
     },
-    openLoginModal: state => {
+    openLoginModal: (state) => {
       state.isLoginModalOpen = true;
       state.isSignUpModalOpen = false;
     },
-    closeLoginModal: state => {
+    closeLoginModal: (state) => {
       state.isLoginModalOpen = false;
     },
-    openSignupModal: state => {
+    openSignupModal: (state) => {
       state.isLoginModalOpen = false;
       state.isSignUpModalOpen = true;
     },
-    closeSignupModal: state => {
+    closeSignupModal: (state) => {
       state.isSignUpModalOpen = false;
     },
-    logOut: state => {
+    logOut: (state) => {
       state.userDetails = undefined;
       document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       localStorage.removeItem("user");
-    }
-  }
+    },
+  },
 });
 
-export const { addUserDetails, openLoginModal, closeLoginModal, openSignupModal, closeSignupModal, logOut } = authSlice.actions;
+export const {
+  addUserDetails,
+  openLoginModal,
+  closeLoginModal,
+  openSignupModal,
+  closeSignupModal,
+  logOut,
+} = authSlice.actions;
 export default authSlice.reducer;

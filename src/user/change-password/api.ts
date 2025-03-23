@@ -8,21 +8,21 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_URL}/auth`,
-    prepareHeaders: headers => {
+    prepareHeaders: (headers) => {
       const token = readCookie("auth");
       if (token) headers.set("Authorization", `Bearer ${token}`);
       return headers;
-    }
+    },
   }),
-  endpoints: build => ({
+  endpoints: (build) => ({
     changePassword: build.mutation<TChangePasswordResponse, TChangePasswordFormData>({
-      query: body => ({
+      query: (body) => ({
         url: "/change-password",
         method: "POST",
-        body
-      })
-    })
-  })
+        body,
+      }),
+    }),
+  }),
 });
 
 export const { useChangePasswordMutation } = authApi;

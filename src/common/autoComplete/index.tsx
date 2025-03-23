@@ -2,14 +2,15 @@ import { Input, SlotsToClasses } from "@nextui-org/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 
-type Option = {_id: string, name: string}
+type Option = { _id: string; name: string; description?: string };
 
 type Props = {
   label?: React.ReactNode;
   placeholder?: string;
   variant?: "flat" | "bordered" | "faded" | "underlined";
   name?: string;
-  onBlur?: React.FocusEventHandler<HTMLInputElement> & ((e: React.FocusEvent<Element, Element>) => void);
+  onBlur?: React.FocusEventHandler<HTMLInputElement> &
+    ((e: React.FocusEvent<Element, Element>) => void);
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   value?: string;
   onSelect?: (value: string) => void;
@@ -42,7 +43,7 @@ export default function Autocomplete({
   isInvalid,
   errorMessage,
   classNames,
-  options
+  options,
 }: Props) {
   const cleanOptions = useMemo(
     () =>
@@ -58,14 +59,19 @@ export default function Autocomplete({
   const [selected, setSelected] = useState<false | number>(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const updateSuggestions = useCallback((value: string) => {
-    if (value.length > 0) {
-      const filteredSuggestions = cleanOptions.filter(suggestion => suggestion.name.toLowerCase().includes(value.toLowerCase()));
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions(cleanOptions);
-    }
-  }, [cleanOptions]);
+  const updateSuggestions = useCallback(
+    (value: string) => {
+      if (value.length > 0) {
+        const filteredSuggestions = cleanOptions.filter((suggestion) =>
+          suggestion.name.toLowerCase().includes(value.toLowerCase()),
+        );
+        setSuggestions(filteredSuggestions);
+      } else {
+        setSuggestions(cleanOptions);
+      }
+    },
+    [cleanOptions],
+  );
 
   const handleBlur = (e: React.FocusEvent<Element, Element>) => {
     setTimeout(() => {
@@ -135,10 +141,10 @@ export default function Autocomplete({
   };
 
   useEffect(() => {
-      if (cleanOptions.length > 0) {
-        updateSuggestions(inputValue);
-      }
-    }, [cleanOptions, inputValue, updateSuggestions]);
+    if (cleanOptions.length > 0) {
+      updateSuggestions(inputValue);
+    }
+  }, [cleanOptions, inputValue, updateSuggestions]);
 
   return (
     <div className="relative">
@@ -174,7 +180,12 @@ export default function Autocomplete({
                   onClick={() => select(index)}
                   onMouseOver={() => setHover(index)}
                 >
-                  <span className="flex-1 text-small font-normal truncate">{suggestion.name}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-left">{suggestion.name}</p>
+                    {suggestion.description && (
+                      <p className="text-xs text-default-500 text-left">{suggestion.description}</p>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>

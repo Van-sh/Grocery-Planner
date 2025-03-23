@@ -8,23 +8,23 @@ module.exports = {
       keyframes: {
         "toast-in-left": {
           from: { transform: "translateX(-100%)" },
-          to: { transform: "translateX(0)" }
-        }
+          to: { transform: "translateX(0)" },
+        },
       },
       animation: {
-        "toast-in-left": "toast-in-left 0.25s"
+        "toast-in-left": "toast-in-left 0.25s",
       },
       transitionProperty: {
-        toast: "transform, opacity, box-shadow"
+        toast: "transform, opacity, box-shadow",
       },
       transitionDuration: {
-        toast: "0.25s"
-      }
-    }
+        toast: "0.25s",
+      },
+    },
   },
   plugins: [
     nextui({
-      prefix: "gp"
-    })
-  ]
+      prefix: "gp",
+    }),
+  ],
 };

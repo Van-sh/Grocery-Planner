@@ -20,7 +20,13 @@ export default function GroceryIcon({ width = 100, height = 100, bgColor = "#66a
           strokeWidth="0"
         ></path>
       </g>
-      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" stroke="#CCCCCC" strokeWidth="0.56823"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="#CCCCCC"
+        strokeWidth="0.56823"
+      ></g>
       <g id="SVGRepo_iconCarrier">
         {" "}
         <g>
