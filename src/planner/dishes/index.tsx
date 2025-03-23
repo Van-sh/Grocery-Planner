@@ -12,11 +12,12 @@ import { type TDishes } from "./types";
 
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
+import Search from "../../common/search";
 import CreateForm from "./createForm";
 
-const limit = 10
+const limit = 10;
 export default function Dishes() {
-  const [query] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const [selectedDish, setSelectedDish] = useState<TDishes>();
   const dispatch = useAppDispatch();
@@ -27,7 +28,7 @@ export default function Dishes() {
     isSuccess: isGetSuccess,
     data: { data = [], count = 0 } = {},
     refetch,
-  } = useGetDishesQuery({query, page});
+  } = useGetDishesQuery({ query, page });
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
@@ -96,6 +97,8 @@ export default function Dishes() {
     <div className="flex justify-center">
       <div className="max-w-[1024px] w-full px-6">
         <h1 className="text-2xl">Dishes</h1>
+        <Search name="Ingredients" query={query} setQuery={setQuery} />
+
         {isLoading && <Loader />}
         {isGetSuccess &&
           (data.length === 0 ? (
