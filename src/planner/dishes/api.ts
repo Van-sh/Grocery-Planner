@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { readCookie } from "../../common/cookieHelper";
-import { TDishesGetAllQuery, type TDishesBase, type TDishesResponse } from "./types";
+import { type TDishesBase, type TDishesGetAllQuery, type TDishesResponse } from "./types";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
