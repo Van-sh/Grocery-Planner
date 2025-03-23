@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { readCookie } from "../../common/cookieHelper";
-import { type TDishesBase, type TDishesResponse } from "./types";
+import { type TDishesBase, type TDishesGetAllQuery, type TDishesResponse } from "./types";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -15,8 +15,13 @@ export const dishesApi = createApi({
     },
   }),
   endpoints: (build) => ({
-    getDishes: build.query<TDishesResponse, void>({
-      query: () => "",
+    getDishes: build.query<TDishesResponse, TDishesGetAllQuery>({
+      query: (query) => {
+        const searchQueries = new URLSearchParams({ page: query.page.toString() });
+        if (query.query) searchQueries.append("q", query.query);
+
+        return `?${searchQueries.toString()}`;
+      },
     }),
     createDish: build.mutation<TDishesBase, TDishesBase>({
       query: (data) => ({
