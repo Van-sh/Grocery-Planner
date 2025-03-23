@@ -41,7 +41,7 @@ export default function ChangePassword() {
       resetForm();
       dispatch(
         addToast({
-          message: data?.data?.message || "Password changed successfully",
+          message: data?.message || "Password changed successfully",
           type: "success",
           autoClose: true,
         }),
@@ -59,7 +59,7 @@ export default function ChangePassword() {
   }, [status, error, data, resetForm, dispatch]);
 
   return (
-    <div className="mt-6">
+    <>
       <h1 className="text-2xl mb-6">Change Your Password</h1>
 
       <form className="flex flex-col gap-y-2 max-w-[400px]" onSubmit={handleSubmit}>
@@ -100,6 +100,6 @@ export default function ChangePassword() {
           Change Password
         </Button>
       </form>
-    </div>
+    </>
   );
 }

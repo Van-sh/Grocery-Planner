@@ -27,6 +27,6 @@ export type TUserResponse = {
 };
 
 export type TAddUserDetails = {
-  userDetails: TUserData;
-  jwt: string;
+  userDetails?: TUserData;
+  jwt?: string;
 };
