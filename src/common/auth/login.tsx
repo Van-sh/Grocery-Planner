@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { useCallback, useEffect } from "react";
 import * as yup from "yup";
 import GroceryIcon from "../../assets/groceryIcon";
+import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
 import { useGoogleMutation, useLoginMutation } from "./api";
 import { addUserDetails } from "./slice";
@@ -16,18 +17,18 @@ type Props = {
 
 const schema = yup.object({
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required"),
+  password: yup.string().required("Password is required")
 });
 
 export default function Login({ onSignup, onClose }: Props) {
   const dispatch = useAppDispatch();
-  const [login, { data: loginData, status: loginStatus }] = useLoginMutation();
+  const [login, { data: loginData, error: loginError, isError: isLoginError, status: loginStatus }] = useLoginMutation();
   const [google, { data: googleData, status: googleStatus }] = useGoogleMutation();
 
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: schema,
-    onSubmit: login,
+    onSubmit: login
   });
 
   const handleLoginSuccess = useCallback(
@@ -40,22 +41,21 @@ export default function Login({ onSignup, onClose }: Props) {
         window.location.reload();
       }, 200);
     },
-    [dispatch, onClose],
+    [dispatch, onClose]
   );
 
   useEffect(() => {
     if (loginStatus === "fulfilled") {
       handleLoginSuccess(loginData!);
-    } else if (loginStatus === "rejected") {
-      // Handle login error
     }
-  }, [loginData, loginStatus, handleLoginSuccess]);
+  }, [loginData, loginError, loginStatus, handleLoginSuccess]);
 
   useEffect(() => {
     if (googleStatus === "fulfilled") {
       handleLoginSuccess(googleData!);
     } else if (googleStatus === "rejected") {
-      // Handle google login error
+      // TODO: Handle google login error.
+      // I am not getting this error right now. Please handle when you see this error.
     }
   }, [googleData, googleStatus, handleLoginSuccess]);
 
@@ -90,6 +90,8 @@ export default function Login({ onSignup, onClose }: Props) {
         <p className="mx-4">OR</p>
         <div className="w-full border-slate-300 border-t h-0" />
       </div>
+
+      {isLoginError && <div className="py-1 px-2 mb-4 bg-danger rounded text-white text-center">{getErrorMessage(loginError)}</div>}
 
       <form className="flex flex-col gap-y-2 mb-4" onSubmit={formik.handleSubmit}>
         <Input

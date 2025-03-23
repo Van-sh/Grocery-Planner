@@ -10,7 +10,7 @@ import {
   NavbarItem,
   NavbarMenu,
   NavbarMenuItem,
-  NavbarMenuToggle,
+  NavbarMenuToggle
 } from "@nextui-org/react";
 import { useState } from "react";
 import { type RootState, useAppDispatch, useAppSelector } from "../store";
@@ -24,17 +24,18 @@ import { createSelector } from "@reduxjs/toolkit";
 const menuItems = [
   {
     label: "Dashboard",
-    href: "",
+    href: ""
   },
   {
     label: "Ingredients",
-    href: "/ingredients",
+    href: "/ingredients"
   },
   {
     label: "Dishes",
-    href: "/dishes",
-  },
+    href: "/dishes"
+  }
 ];
+
 
 const selectIsLoginModalOpen = (state: RootState) => state.auth.isLoginModalOpen;
 const selectIsSignupModalOpen = (state: RootState) => state.auth.isSignUpModalOpen;
@@ -80,7 +81,7 @@ export default function NavBar() {
           </NavbarBrand>
         </NavbarContent>
         <NavbarMenu>
-          {menuItems.map((item) => (
+          {menuItems.map(item => (
             <NavbarMenuItem key={item.label}>
               <Link color={"foreground"} className="w-full" href={`/planner${item.href}`} size="lg">
                 {item.label}
@@ -126,14 +127,7 @@ export default function NavBar() {
         </ModalContent>
       </Modal>
 
-      <Modal
-        isOpen={isLoginModalOpen}
-        onClose={hideLoginModal}
-        placement="top-center"
-        scrollBehavior="outside"
-        className="my-1"
-        size="lg"
-      >
+      <Modal isOpen={isLoginModalOpen} onClose={hideLoginModal} placement="top-center" scrollBehavior="outside" className="my-1" size="lg">
         <ModalContent>
           {() => (
             <ModalBody>
