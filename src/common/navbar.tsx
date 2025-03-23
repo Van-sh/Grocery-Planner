@@ -13,12 +13,13 @@ import {
   NavbarMenuToggle
 } from "@nextui-org/react";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store";
+import { type RootState, useAppDispatch, useAppSelector } from "../store";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
 import UserMenu from "./auth/userMenu";
 import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } from "./auth/slice";
+import { createSelector } from "@reduxjs/toolkit";
 
 const menuItems = [
   {
@@ -35,12 +36,23 @@ const menuItems = [
   }
 ];
 
+
+const selectIsLoginModalOpen = (state: RootState) => state.auth.isLoginModalOpen;
+const selectIsSignupModalOpen = (state: RootState) => state.auth.isSignUpModalOpen;
+
+const selectIsAuthModalOpen = createSelector(
+  [selectIsLoginModalOpen, selectIsSignupModalOpen],
+  (isLoginModalOpen, isSignupModalOpen) => ({
+    isLoginModalOpen,
+    isSignupModalOpen,
+  }),
+);
+
+// TODO: Add confirmation modal for logout
+
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(state => ({
-    isLoginModalOpen: state.auth.isLoginModalOpen,
-    isSignupModalOpen: state.auth.isSignUpModalOpen
-  }));
+  const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(selectIsAuthModalOpen);
   const dispatch = useAppDispatch();
 
   const showSignupModal = () => {
