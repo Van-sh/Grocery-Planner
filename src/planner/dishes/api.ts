@@ -37,7 +37,13 @@ export const dishesApi = createApi({
         body: data,
       }),
     }),
+    deleteDish: build.mutation<void, string>({
+      query: (id) => ({
+        url: `/${id}`,
+        method: "DELETE",
+      }),
+    })
   }),
 });
 
-export const { useGetDishesQuery, useCreateDishMutation, useUpdateDishMutation } = dishesApi;
+export const { useGetDishesQuery, useCreateDishMutation, useUpdateDishMutation, useDeleteDishMutation } = dishesApi;
