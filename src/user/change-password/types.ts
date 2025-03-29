@@ -11,10 +11,11 @@ export type TChangePasswordResponse = {
 };
 
 export type TEditUserDetailsFormData = {
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   oldEmail: string;
-  email: string;
+  email?: string;
+  picture?: string;
 };
 
 export type TEditUserDetailsResponse = {
