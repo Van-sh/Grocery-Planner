@@ -24,7 +24,7 @@ export default function ImageCropperModal({
   onModalClose,
   imgSrc,
   aspectRatio,
-  onUpload
+  onUpload,
 }: Props) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [crop, setCrop] = useState<Crop>();
@@ -77,7 +77,6 @@ export default function ImageCropperModal({
     reader.readAsDataURL(blob);
     reader.onloadend = function () {
       onUpload(reader.result as string);
-      onModalClose();
     };
   }
 

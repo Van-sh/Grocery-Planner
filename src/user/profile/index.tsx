@@ -65,7 +65,6 @@ export default function Profile() {
 
   const handleDeletePicture = () => {
     editUserDetails({ picture: "", oldEmail: userDetails?.email || "" });
-    hideImageOptionsModal();
   };
 
   const handleSuccess = useCallback(
@@ -79,6 +78,8 @@ export default function Profile() {
           autoClose: true,
         }),
       );
+      hideImageOptionsModal();
+      hideImageCropperModal();
     },
     [dispatch],
   );
@@ -91,6 +92,8 @@ export default function Profile() {
         autoClose: true,
       }),
     );
+    hideImageOptionsModal();
+    hideImageCropperModal();
   }, [dispatch, error]);
 
   useEffect(() => {
