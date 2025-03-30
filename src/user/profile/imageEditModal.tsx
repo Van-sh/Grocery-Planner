@@ -67,7 +67,7 @@ export default function ImageEditModal({
                 {oldImgSrc ? (
                   <Listbox aria-label="Listbox menu with icons" variant="faded">
                     <ListboxItem
-                      key="new"
+                      key="update"
                       startContent={<EditIcon {...iconProps} />}
                       onClick={handleImageUpload}
                       textValue="Upload Image"
@@ -81,7 +81,7 @@ export default function ImageEditModal({
                       />
                     </ListboxItem>
                     <ListboxItem
-                      key="new"
+                      key="delete"
                       startContent={<DeleteIcon {...iconProps} />}
                       onClick={showDeleteConfirmationModal}
                       textValue="Upload Image"

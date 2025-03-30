@@ -1,6 +1,6 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@nextui-org/react";
 import { useRef, useState } from "react";
-import ReactCrop, { centerCrop, Crop, makeAspectCrop, PixelCrop } from "react-image-crop";
+import ReactCrop, { centerCrop, convertToPixelCrop, Crop, makeAspectCrop, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
 type Props = {
@@ -37,7 +37,9 @@ export default function ImageCropperModal({
   function handleImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     if (aspectRatio) {
       const { width, height } = e.currentTarget;
-      setCrop(centerAspectCrop(width, height, aspectRatio));
+      const newCrop = centerAspectCrop(width, height, aspectRatio);
+      setCrop(newCrop);
+      setCompletedCrop(convertToPixelCrop(newCrop, width, height));
     }
   }
 
