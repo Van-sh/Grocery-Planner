@@ -11,6 +11,7 @@ import Toast from "./common/toast";
 import { store } from "./store";
 import User from "./user";
 import ChangePassword from "./user/change-password";
+import Profile from "./user/profile";
 
 const Planner = lazy(() => import("./planner"));
 const Ingredients = lazy(() => import("./planner/ingredients"));
@@ -33,8 +34,8 @@ function App() {
                   <Route path="dishes" element={<Dishes />} />
                 </Route>
                 <Route path="user" element={<User />}>
+                  <Route path="profile" element={<Profile />} />
                   <Route path="change-password" element={<ChangePassword />} />
-                  <Route path="section1" element={<div>Coming Soon...</div>} />
                 </Route>
               </Route>
             </Routes>

@@ -16,12 +16,14 @@ export default function User() {
     <Navigate to="change-password" />
   ) : (
     <div className="flex justify-center">
-      <div className="max-w-[1024px] w-full px-6">
+      <div className="max-w-3xl w-full px-6">
         <Tabs selectedKey={pathname} onSelectionChange={handleSelectionChange}>
+          <Tab key="profile" title="Profile" />
           <Tab key="change-password" title="Change Password" />
-          <Tab key="section1" title="Coming Soon..." />
         </Tabs>
-        <Outlet />
+        <div className="mt-6">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

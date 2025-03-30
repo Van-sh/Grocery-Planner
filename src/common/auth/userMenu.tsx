@@ -46,7 +46,7 @@ export default function UserMenu() {
             <p className="font-semibold">Signed in as</p>
             <p className="font-semibold">{userDetails?.email}</p>
           </DropdownItem>
-          <DropdownItem key="profile">Profile</DropdownItem>
+          <DropdownItem key="profile" href="/user/profile">Profile</DropdownItem>
           <DropdownItem key="change-password" href="/user/change-password">
             Change Password
           </DropdownItem>

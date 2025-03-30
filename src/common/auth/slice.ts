@@ -19,9 +19,13 @@ export const authSlice = createSlice({
   reducers: {
     addUserDetails: (state, { payload }: PayloadAction<TAddUserDetails>) => {
       const { userDetails, jwt } = payload;
-      state.userDetails = userDetails;
-      document.cookie = `auth=${jwt}`;
-      localStorage.setItem("user", JSON.stringify(userDetails));
+      if (userDetails) {
+        state.userDetails = userDetails;
+        localStorage.setItem("user", JSON.stringify(userDetails));
+      }
+      if (jwt) {
+        document.cookie = `auth=${jwt}; path=/`;
+      }
     },
     openLoginModal: (state) => {
       state.isLoginModalOpen = true;
