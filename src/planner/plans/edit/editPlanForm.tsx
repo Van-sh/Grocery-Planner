@@ -29,7 +29,7 @@ export default function EditPlanForm({ data }: Props) {
     <form onSubmit={formik.handleSubmit} autoComplete="false" className="w-full px-4 md:px-6">
       <div className="flex justify-between items-start mt-6 gap-4">
         <Input
-          className="max-w-lg"
+          className="max-w-3xl"
           size="sm"
           label="Plan Name"
           placeholder="E.g. Keto plan, detox plan etc."
