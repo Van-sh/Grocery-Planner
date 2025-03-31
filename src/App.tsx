@@ -17,6 +17,7 @@ const Planner = lazy(() => import("./planner"));
 const Ingredients = lazy(() => import("./planner/ingredients"));
 const Dishes = lazy(() => import("./planner/dishes"));
 const Plans = lazy(() => import("./planner/plans"));
+const EditPlan = lazy(() => import("./planner/plans/edit"));
 
 function App() {
   return (
@@ -33,7 +34,10 @@ function App() {
                   <Route index element={<div>Planner</div>} />
                   <Route path="ingredients" element={<Ingredients />} />
                   <Route path="dishes" element={<Dishes />} />
-                  <Route path="plans" element={<Plans />} />
+                  <Route path="plans">
+                    <Route index element={<Plans />} />
+                    <Route path="edit/:id" element={<EditPlan />} />
+                  </Route>
                 </Route>
                 <Route path="user" element={<User />}>
                   <Route path="profile" element={<Profile />} />

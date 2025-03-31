@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { readCookie } from "../../common/cookieHelper";
-import { TPlansGetAllQuery, TPlansResponse } from "./types";
+import { TCreatePlanBase, TPlanResponse, TPlansGetAllQuery, TPlansResponse } from "./types";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -23,7 +23,17 @@ export const plansApi = createApi({
         return `?${searchQueries.toString()}`;
       },
     }),
+    getPlan: build.query<TPlanResponse, string>({
+      query: (id) => `/${id}`,
+    }),
+    createPlans: build.mutation<TPlanResponse, TCreatePlanBase>({
+      query: (data) => ({
+        url: "",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetPlansQuery } = plansApi;
+export const { useGetPlansQuery, useGetPlanQuery, useCreatePlansMutation } = plansApi;
