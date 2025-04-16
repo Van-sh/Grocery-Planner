@@ -131,7 +131,7 @@ export default function Dishes() {
   return (
     <div className="flex justify-center">
       <div className="max-w-[1024px] w-full px-6">
-        <h1 className="text-2xl">Dishes</h1>
+        <h1 className="text-2xl mb-6">Dishes</h1>
         <Search name="Ingredients" query={query} setQuery={setQuery} />
 
         {isLoading && <Loader />}
