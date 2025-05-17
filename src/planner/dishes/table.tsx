@@ -11,6 +11,7 @@ import {
 import { TDishes } from "./types";
 import EditIcon from "../../assets/editIcon";
 import DeleteIcon from "../../assets/deleteIcon";
+import EyeIcon from "../../assets/eyeIcon";
 
 type Props = {
   data: TDishes[];
@@ -42,6 +43,14 @@ export default function DishesTable({ data, onEdit, onDelete }: Props) {
       case "actions":
         return (
           <div className="flex items-center gap-2">
+            <Tooltip content="Details">
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => console.log("Detailed view unimplemented")}
+              >
+                <EyeIcon />
+              </span>
+            </Tooltip>
             <Tooltip content="Edit">
               <span
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
