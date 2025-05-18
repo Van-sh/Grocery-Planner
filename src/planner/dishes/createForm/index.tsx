@@ -172,6 +172,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       await refetchIngredients();
     })();
   }, [queryList, refetchIngredients]);
+  
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="false">
       <ModalHeader>{initialValues ? "Edit" : "Add New"} Dish</ModalHeader>

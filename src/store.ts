@@ -5,6 +5,7 @@ import authSliceReducer from "./common/auth/slice";
 import toastSliceReducer from "./common/toast/slice";
 import { dishesApi } from "./planner/dishes/api";
 import { ingredientsApi } from "./planner/ingredients/api";
+import { plansApi } from "./planner/plans/api";
 
 export const store = configureStore({
   reducer: {
@@ -13,12 +14,14 @@ export const store = configureStore({
     authApi: authApi.reducer,
     dishesApi: dishesApi.reducer,
     ingredientsApi: ingredientsApi.reducer,
+    plansApi: plansApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       authApi.middleware,
       dishesApi.middleware,
       ingredientsApi.middleware,
+      plansApi.middleware,
     ),
 });
 
