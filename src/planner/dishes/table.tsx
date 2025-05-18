@@ -15,6 +15,7 @@ import EyeIcon from "../../assets/eyeIcon";
 
 type Props = {
   data: TDishes[];
+  onDetails: (data: TDishes) => void;
   onEdit: (data: TDishes) => void;
   onDelete: (id: string) => void;
 };
@@ -27,7 +28,7 @@ const columns = [
   { name: "", key: "actions" },
 ];
 
-export default function DishesTable({ data, onEdit, onDelete }: Props) {
+export default function DishesTable({ data, onDetails, onEdit, onDelete }: Props) {
   const renderCell = (item: TDishes, columnKey: string | number) => {
     const value = getKeyValue(item, columnKey);
 
@@ -46,7 +47,7 @@ export default function DishesTable({ data, onEdit, onDelete }: Props) {
             <Tooltip content="Details">
               <span
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => console.log("Detailed view unimplemented")}
+                onClick={() => onDetails(item)}
               >
                 <EyeIcon />
               </span>

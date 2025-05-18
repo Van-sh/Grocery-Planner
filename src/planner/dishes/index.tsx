@@ -140,7 +140,12 @@ export default function Dishes() {
             <BlankScreen name="Dishes" onAdd={onEditModalOpen} />
           ) : (
             <>
-              <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
+              <List
+                data={data}
+                onDetails={() => console.log("Unimplemented")}
+                onEdit={handleEdit}
+                onDelete={showDeleteModal}
+              />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
                   showControls
