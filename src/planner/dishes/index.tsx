@@ -189,7 +189,7 @@ export default function Dishes() {
           placement="top-center"
           scrollBehavior="outside"
         >
-          <ModalContent><DetailedView /></ModalContent>
+          <ModalContent><DetailedView value={selectedDish}/></ModalContent>
         </Modal>
 
         <Modal

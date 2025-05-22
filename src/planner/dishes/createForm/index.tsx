@@ -19,7 +19,7 @@ import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
-import { type TPreparation, type TIngredients } from "../../ingredients/types";
+import { type TIngredients , preparationToString } from "../../ingredients/types";
 import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
 
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
@@ -136,24 +136,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
             : ingredient.preparations.map(preparationToString).join(", "),
       };
     });
-  }
-
-  function preparationToString(preparation: TPreparation): string {
-    function shortenTimeUnits(unit: string): string {
-      switch (unit) {
-        case "days":
-          return "d";
-        case "minutes":
-          return "min";
-        case "hours":
-          return "h";
-        default:
-          return unit;
-      }
-    }
-    return (
-      preparation.category + ":" + preparation.timeAmount + shortenTimeUnits(preparation.timeUnits)
-    );
   }
 
   const formik = useFormik({
