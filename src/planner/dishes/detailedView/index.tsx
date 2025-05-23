@@ -11,21 +11,23 @@ export default function DetailedView({ value }: Props) {
     <>
       <ModalHeader>{value?.name}</ModalHeader>
       <ModalBody>
-        <p>Ingredients:</p>
+        <p>
+          <b>Ingredients:</b>
+        </p>
         <table>
           {value?.ingredients.map((ingredient) => (
             <tr>
-              <td>
-                {ingredient.ingredient.name}
-                {ingredient.ingredient.preparations.map(preparationToString).join(", ")}
-              </td>
+              <td>{ingredient.ingredient.name}</td>
+              <td>{ingredient.ingredient.preparations.map(preparationToString).join(", ")}</td>
               <td>{ingredient.amount}</td>
               <td>{ingredient.measurement_unit}</td>
             </tr>
           ))}
         </table>
 
-        <p>Recipe: </p>
+        <p>
+          <b>Recipe: </b>
+        </p>
         {value?.recipe}
       </ModalBody>
     </>
