@@ -38,5 +38,3 @@ export type TIngredientsGetAllQuery = {
   page: number;
   query: string;
 };
-
-
