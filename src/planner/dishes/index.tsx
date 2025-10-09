@@ -15,6 +15,7 @@ import BlankScreen from "../../common/blankScreen";
 import Search from "../../common/search";
 import CreateForm from "./createForm";
 import ConfirmationModal from "../../common/confirmationModal";
+import DetailedView from "./detailedView";
 
 const limit = 10;
 export default function Dishes() {
@@ -35,7 +36,12 @@ export default function Dishes() {
   const [update, { isLoading: isUpdateLoading, status: updateStatus }] = useUpdateDishMutation();
   const [deleteD, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeleteDishMutation();
 
-  
+
+  const {
+    isOpen: isDetailsModalOpen,
+    onOpen: onDetailsModalOpen,
+    onClose: onDetailsModalClose,
+  } = useDisclosure();
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
@@ -47,7 +53,12 @@ export default function Dishes() {
     onClose: onDeleteModalClose,
   } = useDisclosure();
 
-  const handleClose = useCallback(() => {
+  const handleDetailsClose = useCallback(() => {
+    onDetailsModalClose();
+    setSelectedDish(undefined);
+  }, [onDetailsModalClose]);
+
+  const handleEditClose = useCallback(() => {
     onEditModalClose();
     setSelectedDish(undefined);
   }, [onEditModalClose]);
@@ -79,6 +90,11 @@ export default function Dishes() {
     [dispatch],
   );
 
+  const handleDetails = (item: TDishes) => {
+    setSelectedDish(item);
+    onDetailsModalOpen();
+  };
+
   const handleEdit = (item: TDishes) => {
     setSelectedDish(item);
     onEditModalOpen();
@@ -102,21 +118,21 @@ export default function Dishes() {
 
   useEffect(() => {
     if (createStatus === "fulfilled") {
-      handleClose();
+      handleEditClose();
       handleMutationSuccess("created");
     } else if (createStatus === "rejected") {
       handleMutationError("create");
     }
-  }, [createStatus, handleClose, handleMutationSuccess, handleMutationError]);
+  }, [createStatus, handleEditClose, handleMutationSuccess, handleMutationError]);
 
   useEffect(() => {
     if (updateStatus === "fulfilled") {
-      handleClose();
+      handleEditClose();
       handleMutationSuccess("updated");
     } else if (updateStatus === "rejected") {
       handleMutationError("update");
     }
-  }, [updateStatus, handleClose, handleMutationSuccess, handleMutationError]);
+  }, [updateStatus, handleEditClose, handleMutationSuccess, handleMutationError]);
 
   useEffect(() => {
     if (deleteStatus === "fulfilled") {
@@ -140,7 +156,12 @@ export default function Dishes() {
             <BlankScreen name="Dishes" onAdd={onEditModalOpen} />
           ) : (
             <>
-              <List data={data} onEdit={handleEdit} onDelete={showDeleteModal} />
+              <List
+                data={data}
+                onDetails={handleDetails}
+                onEdit={handleEdit}
+                onDelete={showDeleteModal}
+              />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
                   showControls
@@ -163,8 +184,17 @@ export default function Dishes() {
         </Button>
 
         <Modal
+          isOpen={isDetailsModalOpen}
+          onClose={handleDetailsClose}
+          placement="top-center"
+          scrollBehavior="outside"
+        >
+          <ModalContent><DetailedView value={selectedDish}/></ModalContent>
+        </Modal>
+
+        <Modal
           isOpen={isEditModalOpen}
-          onClose={handleClose}
+          onClose={handleEditClose}
           isDismissable={false}
           isKeyboardDismissDisabled
           placement="top-center"
@@ -175,7 +205,7 @@ export default function Dishes() {
               <CreateForm
                 initialValues={selectedDish}
                 isLoading={isCreateLoading || isUpdateLoading}
-                onClose={handleClose}
+                onClose={handleEditClose}
                 onCreate={(data, id) => {
                   id ? update({ data, id }) : create(data);
                 }}

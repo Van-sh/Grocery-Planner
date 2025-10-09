@@ -2,14 +2,16 @@ import { Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/rea
 import { TDishes } from "./types";
 import EditIcon from "../../assets/editIcon";
 import DeleteIcon from "../../assets/deleteIcon";
+import EyeIcon from "../../assets/eyeIcon";
 
 type Props = {
   data: TDishes[];
+  onDetails: (data: TDishes) => void;
   onEdit: (data: TDishes) => void;
   onDelete: (id: string) => void;
 };
 
-export default function DishesCards({ data, onEdit, onDelete }: Props) {
+export default function DishesCards({ data, onDetails, onEdit, onDelete }: Props) {
   return (
     <>
       {data.map((dish) => (
@@ -34,6 +36,13 @@ export default function DishesCards({ data, onEdit, onDelete }: Props) {
           </CardBody>
           <Divider />
           <CardFooter className="justify-between">
+            <div
+              className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1"
+              onClick={() => onDetails(dish)}
+            >
+              <EyeIcon />
+              Details
+            </div>
             <div
               className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1"
               onClick={() => onEdit(dish)}
