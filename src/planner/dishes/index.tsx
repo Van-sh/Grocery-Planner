@@ -6,7 +6,7 @@ import Loader from "../../common/loader";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
-import { useCreateDishMutation, useGetDishesQuery, useUpdateDishMutation } from "./api";
+import { useCreateDishMutation, useGetDishesQuery, useUpdateDishMutation, useDeleteDishMutation } from "./api";
 import List from "./list";
 import { type TDishes } from "./types";
 
@@ -14,6 +14,8 @@ import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import Search from "../../common/search";
 import CreateForm from "./createForm";
+import ConfirmationModal from "../../common/confirmationModal";
+import DetailedView from "./detailedView";
 
 const limit = 10;
 export default function Dishes() {
@@ -29,16 +31,34 @@ export default function Dishes() {
     data: { data = [], count = 0 } = {},
     refetch,
   } = useGetDishesQuery({ query, page });
+
+  const [create, { isLoading: isCreateLoading, status: createStatus }] = useCreateDishMutation();
+  const [update, { isLoading: isUpdateLoading, status: updateStatus }] = useUpdateDishMutation();
+  const [deleteD, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeleteDishMutation();
+
+
+  const {
+    isOpen: isDetailsModalOpen,
+    onOpen: onDetailsModalOpen,
+    onClose: onDetailsModalClose,
+  } = useDisclosure();
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
     onClose: onEditModalClose,
   } = useDisclosure();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
 
-  const [create, { isLoading: isCreateLoading, status: createStatus }] = useCreateDishMutation();
-  const [update, { isLoading: isUpdateLoading, status: updateStatus }] = useUpdateDishMutation();
+  const handleDetailsClose = useCallback(() => {
+    onDetailsModalClose();
+    setSelectedDish(undefined);
+  }, [onDetailsModalClose]);
 
-  const handleClose = useCallback(() => {
+  const handleEditClose = useCallback(() => {
     onEditModalClose();
     setSelectedDish(undefined);
   }, [onEditModalClose]);
@@ -70,28 +90,59 @@ export default function Dishes() {
     [dispatch],
   );
 
+  const handleDetails = (item: TDishes) => {
+    setSelectedDish(item);
+    onDetailsModalOpen();
+  };
+
   const handleEdit = (item: TDishes) => {
     setSelectedDish(item);
     onEditModalOpen();
   };
 
+  const showDeleteModal = (id: string) => {
+    setSelectedDish({ _id: id } as TDishes);
+    onDeleteModalOpen();
+  };
+
+  const handleDelete = (id: string) => {
+    deleteD(id);
+  };
+
+  useEffect(() => {
+    if (!isLoading) {
+      const pages = Math.ceil(count / limit);
+      if (page > pages) setPage(Math.max(1, pages));
+    }
+  }, [data, count, page, isLoading]);
+
   useEffect(() => {
     if (createStatus === "fulfilled") {
-      handleClose();
+      handleEditClose();
       handleMutationSuccess("created");
     } else if (createStatus === "rejected") {
       handleMutationError("create");
     }
-  }, [createStatus, handleClose, handleMutationSuccess, handleMutationError]);
+  }, [createStatus, handleEditClose, handleMutationSuccess, handleMutationError]);
 
   useEffect(() => {
     if (updateStatus === "fulfilled") {
-      handleClose();
+      handleEditClose();
       handleMutationSuccess("updated");
     } else if (updateStatus === "rejected") {
       handleMutationError("update");
     }
-  }, [updateStatus, handleClose, handleMutationSuccess, handleMutationError]);
+  }, [updateStatus, handleEditClose, handleMutationSuccess, handleMutationError]);
+
+  useEffect(() => {
+    if (deleteStatus === "fulfilled") {
+      onDeleteModalClose();
+      setSelectedDish(undefined);
+      handleMutationSuccess("deleted");
+    } else if (deleteStatus === "rejected") {
+      handleMutationError("delete");
+    }
+  }, [deleteStatus, onDeleteModalClose, handleMutationSuccess, handleMutationError]);
 
   return (
     <div className="flex justify-center">
@@ -105,7 +156,12 @@ export default function Dishes() {
             <BlankScreen name="Dishes" onAdd={onEditModalOpen} />
           ) : (
             <>
-              <List data={data} onEdit={handleEdit} onDelete={() => console.log("UnImplemented")} />
+              <List
+                data={data}
+                onDetails={handleDetails}
+                onEdit={handleEdit}
+                onDelete={showDeleteModal}
+              />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
                   showControls
@@ -128,8 +184,17 @@ export default function Dishes() {
         </Button>
 
         <Modal
+          isOpen={isDetailsModalOpen}
+          onClose={handleDetailsClose}
+          placement="top-center"
+          scrollBehavior="outside"
+        >
+          <ModalContent><DetailedView value={selectedDish}/></ModalContent>
+        </Modal>
+
+        <Modal
           isOpen={isEditModalOpen}
-          onClose={handleClose}
+          onClose={handleEditClose}
           isDismissable={false}
           isKeyboardDismissDisabled
           placement="top-center"
@@ -140,7 +205,7 @@ export default function Dishes() {
               <CreateForm
                 initialValues={selectedDish}
                 isLoading={isCreateLoading || isUpdateLoading}
-                onClose={handleClose}
+                onClose={handleEditClose}
                 onCreate={(data, id) => {
                   id ? update({ data, id }) : create(data);
                 }}
@@ -148,6 +213,14 @@ export default function Dishes() {
             )}
           </ModalContent>
         </Modal>
+
+        <ConfirmationModal
+          isModalOpen={isDeleteModalOpen}
+          onModalClose={onDeleteModalClose}
+          onYesClick={() => handleDelete(selectedDish!._id)}
+          isLoading={isDeleteLoading}
+          message="Are you sure you want to delete this dish?"
+        />
       </div>
     </div>
   );
