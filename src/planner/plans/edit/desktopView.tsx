@@ -1,9 +1,14 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "@nextui-org/react";
 import { days } from "./constants";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { TDays } from "./types";
 
-export default function DesktopView() {
+type Props = {
+  openCreatePlanModal: (days: TDays) => void;
+};
+
+export default function DesktopView({ openCreatePlanModal }: Props) {
   return (
     <div className="mt-10 flex gap-1 h-[calc(100vh-11.5rem)]">
       {days.map((day) => (
@@ -20,7 +25,7 @@ export default function DesktopView() {
               color="primary"
               fullWidth
               startContent={<FontAwesomeIcon icon={faPlus} />}
-              onClick={() => console.log(day)}
+              onClick={() => openCreatePlanModal(day)}
             >
               Add Meal
             </Button>

@@ -20,7 +20,7 @@ export default function EditPlan() {
   return (
     <>
       {isLoading && <Loader />}
-      {isGetSuccess && <EditPlanForm data={data} />}
+      {isGetSuccess && <EditPlanForm data={data} refetch={refetch} />}
       {isGetError && <GetErrorScreen errorMsg={getErrorMessage(error)} onRetry={refetch} />}
     </>
   );

@@ -28,6 +28,7 @@ export default function CreateForm({ isModalOpen, isLoading, onClose, onCreate }
     initialValues: {
       name: "",
       isPrivate: false,
+      isActive: true,
     } as TCreatePlanBase,
     validationSchema: schema,
     onSubmit: (values) => {
@@ -59,6 +60,7 @@ export default function CreateForm({ isModalOpen, isLoading, onClose, onCreate }
                 errorMessage={formik.errors.name}
               />
               <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
+              <Checkbox {...formik.getFieldProps("isActive")} defaultSelected={formik.values.isActive}>Is Active</Checkbox>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
                   Close

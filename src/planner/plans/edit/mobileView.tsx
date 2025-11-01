@@ -1,14 +1,19 @@
 import { Accordion, AccordionItem, Button } from "@nextui-org/react";
 import { days } from "./constants";
 import PlusIcon from "../../../assets/plus";
+import { TDays } from "./types";
 
-export default function MobileView() {
+type Props = {
+  openCreatePlanModal: (days: TDays) => void;
+};
+
+export default function MobileView({ openCreatePlanModal }: Props) {
   return (
     <Accordion
       isCompact
       selectionMode="multiple"
       variant="splitted"
-      className="px-0 pt-10"
+      className="px-0 py-10"
       defaultExpandedKeys={days}
     >
       {days.map((day) => (
@@ -18,7 +23,7 @@ export default function MobileView() {
             color="primary"
             fullWidth
             startContent={<PlusIcon />}
-            onClick={() => console.log(day)}
+            onClick={() => openCreatePlanModal(day)}
           >
             Add Meal
           </Button>

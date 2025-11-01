@@ -1,3 +1,5 @@
+import { days } from "./constants";
+
 export enum EMealType {
   "wakeup" = "Wake Up",
   "breakfast" = "Breakfast",
@@ -11,4 +13,21 @@ export enum EMealType {
 export type TMeal = {
   mealType: EMealType | string;
   name: string;
-}
+};
+
+export type TDays = (typeof days)[number];
+
+export type TMealDishBase = {
+  dish: { _id: string; name: string };
+};
+
+export type TCreateMealBase = {
+  mealType: EMealType | string;
+  dishes: TMealDishBase[];
+  isPrivate?: boolean;
+};
+
+export type TMealBase = TCreateMealBase & {
+  day: TDays;
+  planId: string;
+};
