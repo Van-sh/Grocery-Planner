@@ -26,3 +26,5 @@ export const emojis = [
   "😩",
   "😫",
 ];
+
+export const defaultUser = { id: "", name: "", fName: "", lName: "" };

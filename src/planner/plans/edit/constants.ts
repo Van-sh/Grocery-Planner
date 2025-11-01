@@ -1,3 +1,4 @@
+import { defaultUser } from "../../../constants";
 import { TPlans } from "../types";
 
 export const days = [
@@ -16,8 +17,8 @@ export const defaultPlan: TPlans = {
   isActive: true,
   meals: {},
   createdAt: "",
-  createdBy: "",
+  createdBy: defaultUser,
   updatedAt: "",
-  updatedBy: "",
-  _id: ""
+  updatedBy: defaultUser,
+  _id: "",
 };

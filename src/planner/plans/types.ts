@@ -1,3 +1,4 @@
+import { TUser } from "../../common/types";
 import { TDays, TMeal } from "./edit/types";
 
 export type TCreatePlanBase = {
@@ -13,9 +14,9 @@ export type TPlansBase = TCreatePlanBase & {
 export type TPlans = TPlansBase & {
   _id: string;
   createdAt: string;
-  createdBy: string;
+  createdBy: TUser;
   updatedAt: string;
-  updatedBy: string;
+  updatedBy: TUser;
 };
 
 export type TPlansResponse = {
