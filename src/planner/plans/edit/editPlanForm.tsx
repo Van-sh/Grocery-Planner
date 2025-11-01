@@ -6,7 +6,7 @@ import { addToast } from "../../../common/toast/slice";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
 import { useCreateMealMutation } from "../api";
-import { TCreatePlanBase, TPlansBase } from "../types";
+import { TCreatePlanBase, TPlans } from "../types";
 import AddMeal from "./addMeal";
 import DesktopView from "./desktopView";
 import MobileView from "./mobileView";
@@ -17,7 +17,7 @@ export const schema = yup.object({
 });
 
 type Props = {
-  data: TPlansBase;
+  data: TPlans;
   refetch: any;
 };
 

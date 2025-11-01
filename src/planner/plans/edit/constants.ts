@@ -1,4 +1,4 @@
-import { TPlansBase } from "../types";
+import { TPlans } from "../types";
 
 export const days = [
   "Monday",
@@ -10,9 +10,14 @@ export const days = [
   "Sunday",
 ] as const;
 
-export const defaultPlan: TPlansBase = {
+export const defaultPlan: TPlans = {
   name: "",
   isPrivate: false,
   isActive: true,
-  meals: {}
+  meals: {},
+  createdAt: "",
+  createdBy: "",
+  updatedAt: "",
+  updatedBy: "",
+  _id: ""
 };
