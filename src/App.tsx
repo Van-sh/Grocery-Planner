@@ -1,6 +1,6 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -36,7 +36,14 @@ function App() {
                   <Route path="dishes" element={<Dishes />} />
                   <Route path="plans">
                     <Route index element={<Plans />} />
-                    <Route path="edit/:id" element={<EditPlan />} />
+                    <Route
+                      path="edit/:id"
+                      element={
+                        <Suspense>
+                          <EditPlan />
+                        </Suspense>
+                      }
+                    />
                   </Route>
                 </Route>
                 <Route path="user" element={<User />}>
