@@ -177,8 +177,8 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
           <FieldArray name="ingredients">
             {({ push, remove }) => (
               <>
-                {formik.values.ingredients.map((_, index) => (
-                  <div key={index} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.ingredients.map(({ ingredient: { _id } }, index) => (
+                  <div key={_id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Ingredient"
                       placeholder="Chana, Coriander, etc."
