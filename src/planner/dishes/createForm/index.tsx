@@ -90,18 +90,18 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const [getIngredients] = useLazyGetIngredientsQuery();
   const refetchIngredient = useCallback(
     async (newQuery: string, index: number) => {
-      // if there is a pending request, abort it before calling new api
-      // if (searchControllerRef.current) {
-      //   searchControllerRef.current.abort();
-      // }
+      const preferCachedValues = true;
 
-      // Prefer Cached Values
-      const getIngredientsPromise = getIngredients({ query: newQuery, page: 1 }, true);
+      const getIngredientsPromise = getIngredients(
+        { query: newQuery, page: 1 },
+        preferCachedValues,
+      );
       searchControllerRef.current = getIngredientsPromise;
 
       const { data, requestId } = await getIngredientsPromise;
       console.log(`${newQuery}: ${requestId}`);
       const dish = data?.data ?? [];
+      // only update if the response is from the current request
       if ((await searchControllerRef.current).requestId === requestId) {
         setIngredientsData([
           ...ingredientsData.slice(0, index),
