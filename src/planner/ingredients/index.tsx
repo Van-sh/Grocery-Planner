@@ -28,7 +28,7 @@ export default function Ingredients() {
   const {
     isLoading,
     isError: isGetError,
-    error,
+    error,  
     isSuccess: isGetSuccess,
     data: { data = [], count = 0 } = {},
     refetch,
