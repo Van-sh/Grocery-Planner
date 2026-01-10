@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import { readCookie } from "../../common/cookieHelper";
 import { type TDishesBase, type TDishesGetAllQuery, type TDishesResponse } from "./types";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const dishesApi = createApi({
   reducerPath: "dishesApi",
@@ -42,8 +43,13 @@ export const dishesApi = createApi({
         url: `/${id}`,
         method: "DELETE",
       }),
-    })
+    }),
   }),
 });
 
-export const { useGetDishesQuery, useCreateDishMutation, useUpdateDishMutation, useDeleteDishMutation } = dishesApi;
+export const {
+  useGetDishesQuery,
+  useCreateDishMutation,
+  useUpdateDishMutation,
+  useDeleteDishMutation,
+} = dishesApi;

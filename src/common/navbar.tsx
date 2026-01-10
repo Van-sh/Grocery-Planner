@@ -10,32 +10,32 @@ import {
   NavbarItem,
   NavbarMenu,
   NavbarMenuItem,
-  NavbarMenuToggle
-} from "@nextui-org/react";
+  NavbarMenuToggle,
+} from "@heroui/react";
+import { createSelector } from "@reduxjs/toolkit";
 import { useState } from "react";
-import { type RootState, useAppDispatch, useAppSelector } from "../store";
+
+import { useAppDispatch, useAppSelector, type RootState } from "../store";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
-import UserMenu from "./auth/userMenu";
 import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } from "./auth/slice";
-import { createSelector } from "@reduxjs/toolkit";
+import UserMenu from "./auth/userMenu";
 
 const menuItems = [
   {
     label: "Dashboard",
-    href: ""
+    href: "",
   },
   {
     label: "Ingredients",
-    href: "/ingredients"
+    href: "/ingredients",
   },
   {
     label: "Dishes",
-    href: "/dishes"
-  }
+    href: "/dishes",
+  },
 ];
-
 
 const selectIsLoginModalOpen = (state: RootState) => state.auth.isLoginModalOpen;
 const selectIsSignupModalOpen = (state: RootState) => state.auth.isSignUpModalOpen;
@@ -81,7 +81,7 @@ export default function NavBar() {
           </NavbarBrand>
         </NavbarContent>
         <NavbarMenu>
-          {menuItems.map(item => (
+          {menuItems.map((item) => (
             <NavbarMenuItem key={item.label}>
               <Link color={"foreground"} className="w-full" href={`/planner${item.href}`} size="lg">
                 {item.label}
@@ -127,7 +127,14 @@ export default function NavBar() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isLoginModalOpen} onClose={hideLoginModal} placement="top-center" scrollBehavior="outside" className="my-1" size="lg">
+      <Modal
+        isOpen={isLoginModalOpen}
+        onClose={hideLoginModal}
+        placement="top-center"
+        scrollBehavior="outside"
+        className="my-1"
+        size="lg"
+      >
         <ModalContent>
           {() => (
             <ModalBody>

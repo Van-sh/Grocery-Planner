@@ -1,8 +1,9 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TSigninFormData, TSignupFormData, TUserResponse } from "./types";
 import { CredentialResponse } from "@react-oauth/google";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const API_URL = process.env.REACT_APP_API_URL;
+import { TSigninFormData, TSignupFormData, TUserResponse } from "./types";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const authApi = createApi({
   reducerPath: "authApi",

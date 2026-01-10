@@ -11,7 +11,7 @@ import {
   Select,
   SelectItem,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
@@ -262,9 +262,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       classNames={{ trigger: ["bg-white"] }}
                     >
                       {measurementUnits.map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
+                        <SelectItem key={unit}>{unit}</SelectItem>
                       ))}
                     </Select>
 

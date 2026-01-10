@@ -1,6 +1,12 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/react";
 import { useRef, useState } from "react";
-import ReactCrop, { centerCrop, convertToPixelCrop, Crop, makeAspectCrop, PixelCrop } from "react-image-crop";
+import ReactCrop, {
+  centerCrop,
+  convertToPixelCrop,
+  Crop,
+  makeAspectCrop,
+  PixelCrop,
+} from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
 type Props = {
@@ -60,7 +66,7 @@ export default function ImageCropperModal({
     if (!ctx) {
       throw new Error("No 2d context");
     }
-    (ctx as any).drawImage(
+    ctx.drawImage(
       image,
       completedCrop.x * scaleX,
       completedCrop.y * scaleY,
@@ -71,11 +77,11 @@ export default function ImageCropperModal({
       completedCrop.width * scaleX,
       completedCrop.height * scaleY,
     );
-    const blob = await (offscreen as any).convertToBlob({
+    const blob = await offscreen.convertToBlob({
       type: "image/png",
     });
 
-    var reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsDataURL(blob);
     reader.onloadend = function () {
       onUpload(reader.result as string);

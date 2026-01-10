@@ -1,26 +1,25 @@
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { lazy } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import "./App.css";
 import NavBar from "./common/navbar";
 import ProtectedRoute from "./common/protectedRoute";
 import Toast from "./common/toast";
 import { store } from "./store";
-import User from "./user";
-import ChangePassword from "./user/change-password";
-import Profile from "./user/profile";
 
-const Planner = lazy(() => import("./planner"));
-const Ingredients = lazy(() => import("./planner/ingredients"));
+const ChangePassword = lazy(() => import("./user/change-password"));
 const Dishes = lazy(() => import("./planner/dishes"));
+const Ingredients = lazy(() => import("./planner/ingredients"));
+const Planner = lazy(() => import("./planner"));
+const Profile = lazy(() => import("./user/profile"));
+const User = lazy(() => import("./user"));
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID || ""}>
-      <NextUIProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_LOGIN_CLIENT_ID || ""}>
+      <HeroUIProvider>
         <Provider store={store}>
           <BrowserRouter>
             <NavBar />
@@ -42,7 +41,7 @@ function App() {
           </BrowserRouter>
           <Toast />
         </Provider>
-      </NextUIProvider>
+      </HeroUIProvider>
     </GoogleOAuthProvider>
   );
 }

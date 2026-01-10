@@ -1,5 +1,6 @@
-import { Input, SlotsToClasses } from "@nextui-org/react";
+import { Input, SlotsToClasses } from "@heroui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+
 import DownChevron from "../../assets/downChevron";
 
 type Option = { _id: string; name: string; description?: string };
@@ -75,7 +76,7 @@ export default function Autocomplete({
 
   const handleBlur = (e: React.FocusEvent<Element, Element>) => {
     setTimeout(() => {
-      onBlur && onBlur(e);
+      if (onBlur) onBlur(e);
       setSuggestions(cleanOptions);
       setHover(false);
       setShowDropdown(false);
@@ -85,17 +86,17 @@ export default function Autocomplete({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    onChange && onChange(e);
+    if (onChange) onChange(e);
 
     updateSuggestions(value);
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    let keyCode = e.keyCode || e.which;
+    const keyCode = e.keyCode || e.which;
     let hover1: false | number = false;
     let selected1: false | number = false;
 
-    keyCode !== 39 && keyCode !== 13 && setShowDropdown(true);
+    if (keyCode !== 39 && keyCode !== 13) setShowDropdown(true);
 
     if (suggestions.length) {
       switch (keyCode) {
@@ -137,7 +138,7 @@ export default function Autocomplete({
     setSuggestions(cleanOptions);
     setSelected(false);
     setShowDropdown(false);
-    onSelect && onSelect(suggestions[index]._id);
+    if (onSelect) onSelect(suggestions[index]._id);
   };
 
   useEffect(() => {

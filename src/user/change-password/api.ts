@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import { readCookie } from "../../common/cookieHelper";
 import {
   TChangePasswordFormData,
@@ -7,7 +8,7 @@ import {
   TEditUserDetailsResponse,
 } from "./types";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const authApi = createApi({
   reducerPath: "authApi",
