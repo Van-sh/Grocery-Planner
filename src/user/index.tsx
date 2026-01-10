@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@nextui-org/react";
+import { Tab, Tabs } from "@heroui/react";
 import { Key } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 

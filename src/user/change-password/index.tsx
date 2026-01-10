@@ -1,7 +1,8 @@
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import * as yup from "yup";
+
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
@@ -62,7 +63,7 @@ export default function ChangePassword() {
     <>
       <h1 className="text-2xl mb-6">Change Your Password</h1>
 
-      <form className="flex flex-col gap-y-2 max-w-[400px]" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-y-2 max-w-100" onSubmit={handleSubmit}>
         <Input
           label="Current Password"
           size="sm"

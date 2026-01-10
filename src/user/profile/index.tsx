@@ -1,4 +1,4 @@
-import { Avatar, Button, Input } from "@nextui-org/react";
+import { Avatar, Button, Input } from "@heroui/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
@@ -114,7 +114,7 @@ export default function Profile() {
               isIconOnly
               size="sm"
               radius="full"
-              className="absolute right-[-5px] bottom-[-5px]"
+              className="absolute -right-1.25 -bottom-1.25"
               onClick={showImageOptionsModal}
             >
               <EditIcon />

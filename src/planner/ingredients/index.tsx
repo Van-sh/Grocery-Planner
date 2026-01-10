@@ -1,5 +1,6 @@
-import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
+
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import ConfirmationModal from "../../common/confirmationModal";
@@ -129,7 +130,7 @@ export default function Ingredients() {
 
   return (
     <div className="flex justify-center">
-      <div className="max-w-[1024px] w-full px-6">
+      <div className="max-w-5xl w-full px-6">
         <h1 className="text-2xl mb-6">Ingredients</h1>
         <Search name="Ingredients" query={query} setQuery={setQuery} />
 
@@ -177,7 +178,8 @@ export default function Ingredients() {
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleClose}
                 onCreate={(data, id) => {
-                  id ? update({ data, id }) : create(data);
+                  if (id) update({ data, id });
+                  else create(data);
                 }}
               />
             )}
@@ -187,7 +189,9 @@ export default function Ingredients() {
         <ConfirmationModal
           isModalOpen={isDeleteModalOpen}
           onModalClose={onDeleteModalClose}
-          onYesClick={() => handleDelete(selectedIngredient!._id)}
+          onYesClick={() => {
+            if (selectedIngredient) handleDelete(selectedIngredient._id);
+          }}
           isLoading={isDeleteLoading}
           message="Are you sure you want to delete this ingredient?"
         />

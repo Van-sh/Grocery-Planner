@@ -11,21 +11,15 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { createSelector } from "@reduxjs/toolkit";
-import { useEffect, useState } from "react";
-import { type RootState, useAppDispatch, useAppSelector } from "../store";
-import { useGetCurrentUserQuery } from "../user/api";
+import { useState } from "react";
+
+import { useAppDispatch, useAppSelector, type RootState } from "../store";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
-import {
-  addUserDetails,
-  closeLoginModal,
-  closeSignupModal,
-  openLoginModal,
-  openSignupModal,
-} from "./auth/slice";
+import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } from "./auth/slice";
 import UserMenu from "./auth/userMenu";
 
 const menuItems = [

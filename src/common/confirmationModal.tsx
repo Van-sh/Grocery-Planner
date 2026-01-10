@@ -1,4 +1,4 @@
-import { Button, Modal, ModalContent } from "@nextui-org/react";
+import { Button, Modal, ModalContent } from "@heroui/react";
 
 type Props = {
   isModalOpen: boolean;

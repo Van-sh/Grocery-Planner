@@ -7,11 +7,12 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from "@nextui-org/react";
-import { TDishes } from "./types";
-import EditIcon from "../../assets/editIcon";
+} from "@heroui/react";
+
 import DeleteIcon from "../../assets/deleteIcon";
+import EditIcon from "../../assets/editIcon";
 import EyeIcon from "../../assets/eyeIcon";
+import { TDishes } from "./types";
 
 type Props = {
   data: TDishes[];
