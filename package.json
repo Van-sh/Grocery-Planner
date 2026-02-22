@@ -29,6 +29,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.11.0",
     "sass": "^1.97.1",
+    "web-vitals": "^5.1.0",
     "yup": "^1.7.1"
   },
   "devDependencies": {

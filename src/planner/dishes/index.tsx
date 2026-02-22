@@ -211,10 +211,7 @@ export default function Dishes() {
                 initialValues={selectedDish}
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleEditClose}
-                onCreate={(data, id) => {
-                  if (id) update({ data, id });
-                  else create(data);
-                }}
+                onCreate={(data, id) => (id ? update({ data, id }) : create(data))}
               />
             )}
           </ModalContent>
