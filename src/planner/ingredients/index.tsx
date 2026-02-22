@@ -177,10 +177,7 @@ export default function Ingredients() {
                 initialValues={selectedIngredient}
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleClose}
-                onCreate={(data, id) => {
-                  if (id) update({ data, id });
-                  else create(data);
-                }}
+                onCreate={(data, id) => (id ? update({ data, id }) : create(data))}
               />
             )}
           </ModalContent>
@@ -189,9 +186,7 @@ export default function Ingredients() {
         <ConfirmationModal
           isModalOpen={isDeleteModalOpen}
           onModalClose={onDeleteModalClose}
-          onYesClick={() => {
-            if (selectedIngredient) handleDelete(selectedIngredient._id);
-          }}
+          onYesClick={() => selectedIngredient && handleDelete(selectedIngredient?._id)}
           isLoading={isDeleteLoading}
           message="Are you sure you want to delete this ingredient?"
         />
