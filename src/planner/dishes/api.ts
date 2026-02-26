@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 import { readCookie } from "../../common/cookieHelper";
 import { type TDishesBase, type TDishesGetAllQuery, type TDishesResponse } from "./types";
 

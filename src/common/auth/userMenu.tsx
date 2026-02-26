@@ -1,6 +1,5 @@
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, User } from "@heroui/react";
 import { useState } from "react";
-
 import { useAppDispatch, useAppSelector } from "../../store";
 import ConfirmationModal from "../confirmationModal";
 import { logOut } from "./slice";

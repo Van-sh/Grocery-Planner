@@ -1,7 +1,7 @@
-import { Input } from "@heroui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useRef, type Dispatch } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Input } from "@heroui/react";
+import { useEffect, useRef, useState, type Dispatch } from "react";
 
 type Props = {
   name?: string;

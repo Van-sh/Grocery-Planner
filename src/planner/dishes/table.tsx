@@ -8,7 +8,6 @@ import {
   TableRow,
   Tooltip,
 } from "@heroui/react";
-
 import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import EyeIcon from "../../assets/eyeIcon";
