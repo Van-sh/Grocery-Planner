@@ -2,7 +2,6 @@ import { Avatar, Button, Input } from "@heroui/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
-
 import EditIcon from "../../assets/editIcon";
 import { addUserDetails } from "../../common/auth/slice";
 import ImageCropperModal from "../../common/imageCropperModal";

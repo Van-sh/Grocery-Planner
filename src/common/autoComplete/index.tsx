@@ -1,6 +1,5 @@
 import { Input, SlotsToClasses } from "@heroui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import DownChevron from "../../assets/downChevron";
 
 type Option = { _id: string; name: string; description?: string };
@@ -76,7 +75,7 @@ export default function Autocomplete({
 
   const handleBlur = (e: React.FocusEvent<Element, Element>) => {
     setTimeout(() => {
-      if (onBlur) onBlur(e);
+      onBlur?.(e);
       setSuggestions(cleanOptions);
       setHover(false);
       setShowDropdown(false);
@@ -86,7 +85,7 @@ export default function Autocomplete({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    if (onChange) onChange(e);
+    onChange?.(e);
 
     updateSuggestions(value);
   };
@@ -138,7 +137,7 @@ export default function Autocomplete({
     setSuggestions(cleanOptions);
     setSelected(false);
     setShowDropdown(false);
-    if (onSelect) onSelect(suggestions[index]._id);
+    onSelect?.(suggestions[index]._id);
   };
 
   useEffect(() => {

@@ -1,6 +1,5 @@
 import { Button } from "@heroui/react";
 import { semanticColors } from "@heroui/theme";
-
 import ExclamationCircleSolid from "../../assets/exclamationCircleSolid";
 import TickCircleSolid from "../../assets/tickCircleSolid";
 import XCircleSolid from "../../assets/xCircleSolid";

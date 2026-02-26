@@ -12,7 +12,6 @@ import {
 } from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import * as yup from "yup";
-
 import Autocomplete from "../../../common/autoComplete";
 import { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
 

@@ -1,7 +1,7 @@
-import { TIngredients } from "./types";
 import { isDesktop } from "../../constants";
-import IngredientTable from "./table";
 import IngredientCards from "./cards";
+import IngredientTable from "./table";
+import { TIngredients } from "./types";
 
 type Props = {
   data: TIngredients[];

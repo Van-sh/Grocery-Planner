@@ -1,6 +1,5 @@
 import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
-
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import ConfirmationModal from "../../common/confirmationModal";
