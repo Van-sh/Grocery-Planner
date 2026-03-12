@@ -111,7 +111,7 @@ export default function EditPlanForm({ data, refetch }: Props) {
         {isDesktop ? (
           <DesktopView openCreatePlanModal={openCreatePlanModal} />
         ) : (
-          <MobileView openCreatePlanModal={openCreatePlanModal} />
+          <MobileView openCreatePlanModal={openCreatePlanModal} data={data} />
         )}
       </form>
 

@@ -18,16 +18,16 @@ import Autocomplete from "../../../common/autoComplete";
 import { debounce } from "../../../common/utils";
 import { useLazyGetDishesQuery } from "../../dishes/api";
 import { TDishes } from "../../dishes/types";
-import { TCreateMealBase, TDays, TMealBase, TMealDishBase } from "./types";
+import { EMealType, TCreateMealBase, TDays, TMealBase, TMealDishBase } from "./types";
 
 export const mealTypes = [
-  { key: "wakeup", label: "Wake Up" },
-  { key: "breakfast", label: "Breakfast" },
-  { key: "midmorning", label: "Mid Morning" },
-  { key: "lunch", label: "Lunch" },
-  { key: "midafternoon", label: "Mid Afternoon Snack" },
-  { key: "dinner", label: "Dinner" },
-  { key: "bedtime", label: "Bed Time" },
+  { key: "wakeup", label: EMealType.wakeup },
+  { key: "breakfast", label: EMealType.breakfast },
+  { key: "midmorning", label: EMealType.midmorning },
+  { key: "lunch", label: EMealType.lunch },
+  { key: "midafternoon", label: EMealType.midafternoon },
+  { key: "dinner", label: EMealType.dinner },
+  { key: "bedtime", label: EMealType.bedtime },
 ];
 
 const schema = yup.object({

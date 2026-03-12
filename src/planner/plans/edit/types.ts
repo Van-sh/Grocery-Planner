@@ -10,9 +10,12 @@ export enum EMealType {
   "bedtime" = "Bed Time",
 }
 
+export type MealTypeKey = keyof typeof EMealType;
+
 export type TMeal = {
-  mealType: EMealType | string;
+  mealType: MealTypeKey;
   name: string;
+  dishes: TMealDishBase[];
 };
 
 export type TDays = (typeof days)[number];
