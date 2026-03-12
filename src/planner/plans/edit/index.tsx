@@ -5,6 +5,7 @@ import { getErrorMessage } from "../../../helper";
 import { useGetPlanQuery } from "../api";
 import { defaultPlan } from "./constants";
 import EditPlanForm from "./editPlanForm";
+import { DataContext } from "./context";
 
 export default function EditPlan() {
   const { id = "" } = useParams();
@@ -20,7 +21,11 @@ export default function EditPlan() {
   return (
     <>
       {isLoading && <Loader />}
-      {isGetSuccess && <EditPlanForm data={data} refetch={refetch} />}
+      {isGetSuccess && (
+        <DataContext.Provider value={{ data }}>
+          <EditPlanForm refetch={refetch} />
+        </DataContext.Provider>
+      )}
       {isGetError && <GetErrorScreen errorMsg={getErrorMessage(error)} onRetry={refetch} />}
     </>
   );

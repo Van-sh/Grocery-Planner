@@ -6,8 +6,9 @@ import { addToast } from "../../../common/toast/slice";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
 import { useCreateMealMutation } from "../api";
-import { TCreatePlanBase, TPlans } from "../types";
+import { TCreatePlanBase } from "../types";
 import AddMeal from "./addMeal";
+import { useData } from "./context";
 import DesktopView from "./desktopView";
 import MobileView from "./mobileView";
 import { TDays } from "./types";
@@ -17,12 +18,12 @@ export const schema = yup.object({
 });
 
 type Props = {
-  data: TPlans;
   refetch: any;
 };
 
-export default function EditPlanForm({ data, refetch }: Props) {
+export default function EditPlanForm({ refetch }: Props) {
   const [selectedDay, setSelectedDay] = useState<TDays>();
+  const { data } = useData();
   const dispatch = useAppDispatch();
 
   const [createMeal, { isLoading: isCreateMealLoading, status: createMealStatus }] =
@@ -111,7 +112,7 @@ export default function EditPlanForm({ data, refetch }: Props) {
         {isDesktop ? (
           <DesktopView openCreatePlanModal={openCreatePlanModal} />
         ) : (
-          <MobileView openCreatePlanModal={openCreatePlanModal} data={data} />
+          <MobileView openCreatePlanModal={openCreatePlanModal} />
         )}
       </form>
 

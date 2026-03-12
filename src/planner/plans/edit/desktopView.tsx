@@ -1,7 +1,8 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@nextui-org/react";
+import { Button, Divider } from "@nextui-org/react";
 import { days } from "./constants";
+import MealCards from "./mealCards";
 import { TDays } from "./types";
 
 type Props = {
@@ -17,7 +18,6 @@ export default function DesktopView({ openCreatePlanModal }: Props) {
           key={day}
         >
           <div className="w-full pb-2 text-sm">{day}</div>
-          <div className="grow">Meals here</div>
           <div className="bg-white">
             <Button
               variant="light"
@@ -30,6 +30,8 @@ export default function DesktopView({ openCreatePlanModal }: Props) {
               Add Meal
             </Button>
           </div>
+          <Divider className="my-2" />
+          <MealCards day={day} />
         </div>
       ))}
     </div>
