@@ -87,9 +87,7 @@ export default function NavBar() {
                 className="w-full"
                 href={`/planner${item.href}`}
                 size="lg"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}
+                onPress={() => setIsMenuOpen(false)}
               >
                 {item.label}
               </Link>
