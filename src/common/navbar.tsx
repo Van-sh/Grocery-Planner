@@ -84,7 +84,7 @@ export default function NavBar() {
 
   return (
     <>
-      <Navbar onMenuOpenChange={setIsMenuOpen}>
+      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
         <NavbarContent>
           <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
           <NavbarBrand>
@@ -94,7 +94,15 @@ export default function NavBar() {
         <NavbarMenu>
           {menuItems.map((item) => (
             <NavbarMenuItem key={item.label}>
-              <Link color={"foreground"} className="w-full" href={`/planner${item.href}`} size="lg">
+              <Link
+                color={"foreground"}
+                className="w-full"
+                href={`/planner${item.href}`}
+                size="lg"
+                onPress={() => {
+                  setIsMenuOpen(false);
+                }}
+              >
                 {item.label}
               </Link>
             </NavbarMenuItem>

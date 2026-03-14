@@ -1,12 +1,9 @@
-import { HeroUIProvider } from "@heroui/react";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { lazy, Suspense } from "react";
-import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavBar from "./common/navbar";
 import ProtectedRoute from "./common/protectedRoute";
 import Toast from "./common/toast";
-import { store } from "./store";
+import Providers from "./providers";
 
 const ChangePassword = lazy(() => import("./user/change-password"));
 const Dishes = lazy(() => import("./planner/dishes"));
@@ -19,37 +16,32 @@ const User = lazy(() => import("./user"));
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_LOGIN_CLIENT_ID || ""}>
-      <HeroUIProvider>
-        <Provider store={store}>
-          <BrowserRouter>
-            <NavBar />
-            <Suspense>
-              <Routes>
-                <Route path="/" element={<div>Hello world!</div>} />
-
-                <Route element={<ProtectedRoute />}>
-                  <Route path="planner" element={<Planner />}>
-                    <Route index element={<div>Planner</div>} />
-                    <Route path="ingredients" element={<Ingredients />} />
-                    <Route path="dishes" element={<Dishes />} />
-                    <Route path="plans">
-                      <Route index element={<Plans />} />
-                      <Route path="edit/:id" element={<EditPlan />} />
-                    </Route>
-                  </Route>
-                  <Route path="user" element={<User />}>
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="change-password" element={<ChangePassword />} />
-                  </Route>
+    <BrowserRouter>
+      <Providers>
+        <NavBar />
+        <Suspense>
+          <Routes>
+            <Route path="/" element={<div>Hello world!</div>} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="planner" element={<Planner />}>
+                <Route index element={<div>Planner</div>} />
+                <Route path="ingredients" element={<Ingredients />} />
+                <Route path="dishes" element={<Dishes />} />
+                <Route path="plans">
+                  <Route index element={<Plans />} />
+                  <Route path="edit/:id" element={<EditPlan />} />
                 </Route>
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-          <Toast />
-        </Provider>
-      </HeroUIProvider>
-    </GoogleOAuthProvider>
+              </Route>
+              <Route path="user" element={<User />}>
+                <Route path="profile" element={<Profile />} />
+                <Route path="change-password" element={<ChangePassword />} />
+              </Route>
+            </Route>
+          </Routes>
+        </Suspense>
+        <Toast />
+      </Providers>
+    </BrowserRouter>
   );
 }
 
