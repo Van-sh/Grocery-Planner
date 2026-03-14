@@ -1,5 +1,5 @@
 import { Button, Link } from "@heroui/react";
-import { useState } from "react";
+import { useRef } from "react";
 import { emojis } from "../../constants";
 import { useAppDispatch } from "../../store";
 import { openLoginModal } from "./slice";
@@ -8,15 +8,12 @@ type Props = { errorMsg?: string };
 const defaultErrorMsg = "Seems like you are not logged in. Please login to continue.";
 
 export default function AuthErrorScreen({ errorMsg = defaultErrorMsg }: Props) {
-  /**
-   * This is using a useState instead of a useRef even though it will never cause rerenders because
-   * using a useRef as useRef(emojis[Math.floor(Math.random() * emojis.length)])
-   * would cause the calculation of Math.floor and Math.random on every rerender.
-   * On the other hand, initializer pattern with useState only does the calculation once
-   * @link https://react.dev/reference/react/useState#avoiding-recreating-the-initial-state
-   */
-  const [emoji] = useState(() => emojis[Math.floor(Math.random() * emojis.length)]);
+  const emoji = useRef("");
   const dispatch = useAppDispatch();
+
+  if (!emoji.current) {
+    emoji.current = emojis[Math.floor(Math.random() * emojis.length)];
+  }
 
   const showLoginModal = () => {
     dispatch(openLoginModal());
@@ -24,7 +21,7 @@ export default function AuthErrorScreen({ errorMsg = defaultErrorMsg }: Props) {
 
   return (
     <main className="text-center px-6 py-24">
-      <p className="text-7xl">{emoji}</p>
+      <p className="text-7xl">{emoji.current}</p>
       <p className="text-3xl mt-4 font-bold">{errorMsg}</p>
       <div className="mt-10">
         <Button color="primary" onClick={showLoginModal}>
