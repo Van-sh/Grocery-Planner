@@ -18,9 +18,9 @@ import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
-import { type TIngredients } from "../../ingredients/types";
+import type { TIngredients } from "../../ingredients/types";
 import { preparationToString } from "../../ingredients/util";
-import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
+import type { TDishIngredientsBase, TDishes, TDishesBase } from "../types";
 
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
 

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TAddUserDetails, TUserData } from "./types";
+import type { TAddUserDetails, TUserData } from "./types";
 
 type AuthState = {
   userDetails?: TUserData;

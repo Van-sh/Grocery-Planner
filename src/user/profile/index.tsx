@@ -9,7 +9,7 @@ import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { useEditUserDetailsMutation } from "../change-password/api";
-import { TEditUserDetailsResponse } from "../change-password/types";
+import type { TEditUserDetailsResponse } from "../change-password/types";
 import ImageEditModal from "./imageEditModal";
 
 const schema = yup.object({

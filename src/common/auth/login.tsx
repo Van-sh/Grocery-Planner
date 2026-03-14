@@ -8,7 +8,7 @@ import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
 import { useGoogleMutation, useLoginMutation } from "./api";
 import { addUserDetails } from "./slice";
-import { TUserResponse } from "./types";
+import type { TUserResponse } from "./types";
 
 type Props = {
   onSignup: () => void;

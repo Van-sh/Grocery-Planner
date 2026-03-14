@@ -1,4 +1,4 @@
-import { Input, SlotsToClasses } from "@heroui/react";
+import { Input, type SlotsToClasses } from "@heroui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 

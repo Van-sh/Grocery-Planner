@@ -1,4 +1,4 @@
-import { type TIngredients } from "../ingredients/types";
+import type { TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
   ingredient: { _id: string; name: string };

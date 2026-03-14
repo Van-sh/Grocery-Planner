@@ -1,6 +1,6 @@
-import { CredentialResponse } from "@react-oauth/google";
+import type { CredentialResponse } from "@react-oauth/google";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TSigninFormData, TSignupFormData, TUserResponse } from "./types";
+import type { TSigninFormData, TSignupFormData, TUserResponse } from "./types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

@@ -1,5 +1,5 @@
 import { Tab, Tabs } from "@heroui/react";
-import { Key } from "react";
+import type { Key } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function User() {

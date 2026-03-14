@@ -1,4 +1,4 @@
-import { TUserData } from "../../common/auth/types";
+import type { TUserData } from "../../common/auth/types";
 
 export type TChangePasswordFormData = {
   currentPassword: string;

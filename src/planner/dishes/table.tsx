@@ -11,7 +11,7 @@ import {
 import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import EyeIcon from "../../assets/eyeIcon";
-import { TDishes } from "./types";
+import type { TDishes } from "./types";
 
 type Props = {
   data: TDishes[];

@@ -1,4 +1,4 @@
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 /**
  * Type predicate to narrow an unknown error to `FetchBaseQueryError`
