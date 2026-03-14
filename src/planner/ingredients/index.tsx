@@ -17,7 +17,7 @@ import {
 } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
-import { TIngredients } from "./types";
+import type { TIngredients } from "./types";
 
 const limit = 10;
 export default function Ingredients() {

@@ -1,0 +1,7 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "js/ts.preferences.organizeImports": {
+    "typeOrder": "last"
+  },
+  "js/ts.preferences.preferTypeOnlyAutoImports": true
+}

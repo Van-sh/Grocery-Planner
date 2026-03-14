@@ -1,7 +1,7 @@
 import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
-import { TIngredients } from "./types";
+import type { TIngredients } from "./types";
 
 type Props = {
   data: TIngredients[];

@@ -13,7 +13,7 @@ import {
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
-import { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
+import type { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
 
 // TODO: Create a dropdown for Unit
 
