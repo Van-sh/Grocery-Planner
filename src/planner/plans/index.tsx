@@ -50,6 +50,7 @@ export default function Plans() {
 
   const handleMutationSuccess = useCallback(
     (action: string) => {
+      refetch();
       dispatch(
         addToast({
           message: `Plan ${action} successfully`,
