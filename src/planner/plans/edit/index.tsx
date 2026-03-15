@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import GetErrorScreen from "../../../common/getErrorScreen";
 import Loader from "../../../common/loader";
+import { DataContext } from "../../../common/mealCards/context";
 import { getErrorMessage } from "../../../helper";
 import { useGetPlanQuery } from "../api";
 import { defaultPlan } from "./constants";
 import EditPlanForm from "./editPlanForm";
-import { DataContext } from "./context";
 
 export default function EditPlan() {
   const { id = "" } = useParams();

@@ -57,9 +57,11 @@ export default function Plans() {
           autoClose: true,
         }),
       );
-      startTransition(() => {
-        navigate(`edit/${createData!.data._id}`);
-      });
+      if (action === "created") {
+        startTransition(() => {
+          navigate(`edit/${createData!.data._id}`);
+        });
+      }
     },
     [dispatch, navigate, createData],
   );

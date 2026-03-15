@@ -2,16 +2,15 @@ import { Button, Input, Modal, ModalContent, useDisclosure } from "@nextui-org/r
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
+import { useData } from "../../../common/mealCards/context";
 import { addToast } from "../../../common/toast/slice";
+import { TCreatePlanBase, TDays } from "../../../common/types";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
 import { useCreateMealMutation } from "../api";
-import { TCreatePlanBase } from "../types";
 import AddMeal from "./addMeal";
-import { useData } from "./context";
 import DesktopView from "./desktopView";
 import MobileView from "./mobileView";
-import { TDays } from "./types";
 
 export const schema = yup.object({
   name: yup.string().required("Name is required"),

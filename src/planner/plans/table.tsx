@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EyeIcon from "../../assets/eyeIcon";
-import { TPlans } from "./types";
+import { TPlans } from "../../common/types";
 
 type Props = {
   data: TPlans[];

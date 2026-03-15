@@ -2,23 +2,24 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
-  Checkbox,
   Divider,
   ModalBody,
   ModalFooter,
   ModalHeader,
   Select,
-  SelectItem,
+  SelectItem
 } from "@nextui-org/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
+import { TDays, TMealDishBase } from "../../../common/types";
 import { debounce } from "../../../common/utils";
+import { EMealType } from "../../../constants";
 import { useLazyGetDishesQuery } from "../../dishes/api";
 import { TDishes } from "../../dishes/types";
-import { EMealType, TCreateMealBase, TDays, TMealBase, TMealDishBase } from "./types";
+import { TCreateMealBase, TMealBase } from "./types";
 
 export const mealTypes = [
   { key: "wakeup", label: EMealType.wakeup },
@@ -32,6 +33,18 @@ export const mealTypes = [
 
 const schema = yup.object({
   mealType: yup.string().required("Meal type is required"),
+  dishes: yup
+    .array()
+    .of(
+      yup.object({
+        dish: yup.object({
+          _id: yup.string().required("Dish ID is required"),
+          name: yup.string().required("Dish name is required"),
+        }),
+      }),
+    )
+    .min(1, "Add at least one dish")
+    .required("Dishes are required"),
 });
 
 type Props = {
@@ -58,7 +71,6 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
     initialValues: {
       mealType: "",
       dishes: [],
-      isPrivate: false,
     } as TCreateMealBase,
     validationSchema: schema,
     onSubmit: (values) => {
@@ -175,7 +187,6 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
             )}
           </FieldArray>
         </FormikProvider>
-        <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
       </ModalBody>
       <ModalFooter>
         <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>

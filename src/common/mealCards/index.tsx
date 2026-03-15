@@ -1,13 +1,16 @@
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
-import { mealTypeMap } from "./constants";
+import { mealTypeMap } from "../../constants";
+import { TDays } from "../types";
 import { useData } from "./context";
 import { getSortedMeals } from "./helper";
-import { TDays } from "./types";
 
 type Props = {
   day: TDays;
 };
 
+/**
+ * While using MealCards, pass meal data in context
+ */
 export default function MealCards({ day }: Props) {
   const { data } = useData();
   const { meals = {} } = data;
@@ -23,7 +26,7 @@ export default function MealCards({ day }: Props) {
           <Divider />
           <CardBody>
             {dishes.map(({ dish }) => (
-              <p>{dish.name}</p>
+              <p key={dish.name}>{dish.name}</p>
             ))}
           </CardBody>
         </Card>

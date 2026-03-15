@@ -1,7 +1,7 @@
+import { TPlans } from "../../common/types";
 import { isDesktop } from "../../constants";
 import PlansCards from "./cards";
 import PlansTable from "./table";
-import { TPlans } from "./types";
 
 type Props = {
   data: TPlans[];

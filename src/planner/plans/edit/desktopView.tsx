@@ -1,9 +1,9 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Divider } from "@nextui-org/react";
-import { days } from "./constants";
-import MealCards from "./mealCards";
-import { TDays } from "./types";
+import MealCards from "../../../common/mealCards";
+import { TDays } from "../../../common/types";
+import { days } from "../../../constants";
 
 type Props = {
   openCreatePlanModal: (days: TDays) => void;
