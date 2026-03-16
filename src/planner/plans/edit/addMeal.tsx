@@ -7,7 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
   Select,
-  SelectItem
+  SelectItem,
 } from "@nextui-org/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useRef, useState } from "react";
@@ -39,7 +39,7 @@ const schema = yup.object({
       yup.object({
         dish: yup.object({
           _id: yup.string().required("Dish ID is required"),
-          name: yup.string().required("Dish name is required"),
+          name: yup.string(),
         }),
       }),
     )
@@ -136,8 +136,8 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
           <FieldArray name="dishes">
             {({ push, remove }) => (
               <>
-                {formik.values.dishes.map((_, index) => (
-                  <div key={index} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.dishes.map(({dish}, index) => (
+                  <div key={dish?._id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Dish"
                       placeholder="Type to Search (E.g. Roti, palak paneer etc.)"
@@ -174,7 +174,11 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
                 ))}
                 <Button
                   variant="bordered"
-                  isDisabled={!!formik.getFieldMeta("ingredients").error}
+                  isDisabled={formik.values.dishes?.some(
+                    (_, i) =>
+                      !!(formik.errors.dishes?.[i] as FormikErrors<TMealDishBase>)?.dish?._id ||
+                      formik.values.dishes[i].dish._id === "",
+                  )}
                   onClick={() => {
                     setDishesData((prevState) => [...prevState, []]);
                     push(defaultDish);
