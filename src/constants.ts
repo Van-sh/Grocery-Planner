@@ -51,15 +51,5 @@ export enum EMealType {
   "bedtime" = "Bed Time",
 }
 
-export const mealTypeMap: Record<keyof typeof EMealType, EMealType> = {
-  wakeup: EMealType.wakeup,
-  breakfast: EMealType.breakfast,
-  midmorning: EMealType.midmorning,
-  lunch: EMealType.lunch,
-  midafternoon: EMealType.midafternoon,
-  dinner: EMealType.dinner,
-  bedtime: EMealType.bedtime,
-};
-
 // mealOrder = ["wakeup", "breakfast", "midmorning", ...] 
 export const mealOrder = Object.keys(EMealType) as (keyof typeof EMealType)[];
