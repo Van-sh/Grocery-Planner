@@ -99,7 +99,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       searchControllerRef.current = getIngredientsPromise;
 
       const { data, requestId } = await getIngredientsPromise;
-      console.log(`${newQuery}: ${requestId}`);
       const dish = data?.data ?? [];
       // only update if the response is from the current request
       if ((await searchControllerRef.current).requestId === requestId) {
