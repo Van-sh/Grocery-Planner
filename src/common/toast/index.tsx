@@ -26,7 +26,7 @@ export default function Toast() {
 
   return data.length ? (
     <div
-      className="fixed p-4 w-full max-w-md max-h-screen overflow-x-hidden overflow-y-auto z-10 top-16 right-0"
+      className="fixed p-4 w-full max-w-md max-h-screen overflow-x-hidden overflow-y-auto z-100 top-16 right-0"
       ref={listRef}
     >
       {data.map(({ id, message, type }, index) => (

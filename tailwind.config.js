@@ -20,6 +20,9 @@ module.exports = {
       transitionDuration: {
         toast: "0.25s",
       },
+      zIndex: {
+        100: "100",
+      },
     },
   },
   plugins: [
