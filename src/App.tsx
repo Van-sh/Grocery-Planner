@@ -3,21 +3,20 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { lazy, Suspense } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 import "./App.css";
 import NavBar from "./common/navbar";
 import ProtectedRoute from "./common/protectedRoute";
 import Toast from "./common/toast";
 import { store } from "./store";
-import User from "./user";
-import ChangePassword from "./user/change-password";
-import Profile from "./user/profile";
 
 const Planner = lazy(() => import("./planner"));
 const Ingredients = lazy(() => import("./planner/ingredients"));
 const Dishes = lazy(() => import("./planner/dishes"));
 const Plans = lazy(() => import("./planner/plans"));
 const EditPlan = lazy(() => import("./planner/plans/edit"));
+const User = lazy(() => import("./user"));
+const ChangePassword = lazy(() => import("./user/change-password"));
+const Profile = lazy(() => import("./user/profile"));
 
 function App() {
   return (

@@ -1,10 +1,13 @@
-export type TUserData = {
+export type TLoginData = {
   authSource: "email" | "nonEmail";
   email: string;
   fName: string;
-  id: string;
+  _id: string;
   lName?: string;
   name: string;
+};
+
+export type TUserData = TLoginData & {
   picture?: string;
 };
 
@@ -21,9 +24,9 @@ export type TSigninFormData = {
   password: "";
 };
 
-export type TUserResponse = {
+export type TLoginResponse = {
   jwt: string;
-  data: TUserData;
+  data: TLoginData;
 };
 
 export type TAddUserDetails = {

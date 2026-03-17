@@ -12,14 +12,21 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { createSelector } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
 import { type RootState, useAppDispatch, useAppSelector } from "../store";
+import { useGetUserDetailsQuery } from "../user/api";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
+import {
+  addUserDetails,
+  closeLoginModal,
+  closeSignupModal,
+  openLoginModal,
+  openSignupModal,
+} from "./auth/slice";
 import UserMenu from "./auth/userMenu";
-import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } from "./auth/slice";
-import { createSelector } from "@reduxjs/toolkit";
 
 const menuItems = [
   {
@@ -56,7 +63,12 @@ const selectIsAuthModalOpen = createSelector(
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(selectIsAuthModalOpen);
+  const userDetails = useAppSelector((state) => state.auth.userDetails);
   const dispatch = useAppDispatch();
+  const isUserLoggedIn = isLoggedIn();
+  const { isSuccess, data: { data } = {} } = useGetUserDetailsQuery(userDetails?._id || "", {
+    skip: !isUserLoggedIn,
+  });
 
   const showSignupModal = () => {
     dispatch(openSignupModal());
@@ -73,6 +85,12 @@ export default function NavBar() {
   const hideLoginModal = () => {
     dispatch(closeLoginModal());
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(addUserDetails({ userDetails: data }));
+    }
+  }, [isSuccess, data, dispatch]);
 
   return (
     <>
@@ -94,7 +112,7 @@ export default function NavBar() {
         </NavbarMenu>
 
         <NavbarContent justify="end">
-          {isLoggedIn() ? (
+          {isUserLoggedIn ? (
             <UserMenu />
           ) : (
             <>
