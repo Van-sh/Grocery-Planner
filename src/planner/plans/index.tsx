@@ -64,7 +64,7 @@ export default function Plans() {
         });
       }
     },
-    [dispatch, navigate, createData],
+    [dispatch, navigate, createData, refetch],
   );
 
   const handleMutationError = useCallback(
