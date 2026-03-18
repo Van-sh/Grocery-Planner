@@ -1,6 +1,6 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -16,6 +16,8 @@ import Profile from "./user/profile";
 const Planner = lazy(() => import("./planner"));
 const Ingredients = lazy(() => import("./planner/ingredients"));
 const Dishes = lazy(() => import("./planner/dishes"));
+const Plans = lazy(() => import("./planner/plans"));
+const EditPlan = lazy(() => import("./planner/plans/edit"));
 
 function App() {
   return (
@@ -24,21 +26,27 @@ function App() {
         <Provider store={store}>
           <BrowserRouter>
             <NavBar />
-            <Routes>
-              <Route path="/" element={<div>Hello world!</div>} />
+            <Suspense>
+              <Routes>
+                <Route path="/" element={<div>Hello world!</div>} />
 
-              <Route element={<ProtectedRoute />}>
-                <Route path="planner" element={<Planner />}>
-                  <Route index element={<div>Planner</div>} />
-                  <Route path="ingredients" element={<Ingredients />} />
-                  <Route path="dishes" element={<Dishes />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="planner" element={<Planner />}>
+                    <Route index element={<div>Planner</div>} />
+                    <Route path="ingredients" element={<Ingredients />} />
+                    <Route path="dishes" element={<Dishes />} />
+                    <Route path="plans">
+                      <Route index element={<Plans />} />
+                      <Route path="edit/:id" element={<EditPlan />} />
+                    </Route>
+                  </Route>
+                  <Route path="user" element={<User />}>
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="change-password" element={<ChangePassword />} />
+                  </Route>
                 </Route>
-                <Route path="user" element={<User />}>
-                  <Route path="profile" element={<Profile />} />
-                  <Route path="change-password" element={<ChangePassword />} />
-                </Route>
-              </Route>
-            </Routes>
+              </Routes>
+            </Suspense>
           </BrowserRouter>
           <Toast />
         </Provider>
