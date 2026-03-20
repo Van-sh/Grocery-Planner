@@ -155,7 +155,7 @@ export default function Ingredients() {
         <Button
           color="primary"
           variant="shadow"
-          className="fixed bottom-8 right-8"
+          className="fixed bottom-8 right-8 z-20"
           onClick={onEditModalOpen}
         >
           <PlusIcon />
