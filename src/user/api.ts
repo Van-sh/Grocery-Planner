@@ -21,9 +21,9 @@ export const userApi = createApi({
     },
   }),
   endpoints: (build) => ({
-    getUserDetails: build.query<TUserResponse, string>({
-      query: (id) => ({
-        url: `/${id}`,
+    getCurrentUser: build.query<TUserResponse, null>({
+      query: () => ({
+        url: `/whoami`,
         method: "GET",
       }),
     }),
@@ -44,5 +44,5 @@ export const userApi = createApi({
   }),
 });
 
-export const { useGetUserDetailsQuery, useChangePasswordMutation, useEditUserDetailsMutation } =
+export const { useGetCurrentUserQuery, useChangePasswordMutation, useEditUserDetailsMutation } =
   userApi;

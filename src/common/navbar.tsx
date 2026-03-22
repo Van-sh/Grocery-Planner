@@ -15,7 +15,7 @@ import {
 import { createSelector } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { type RootState, useAppDispatch, useAppSelector } from "../store";
-import { useGetUserDetailsQuery } from "../user/api";
+import { useGetCurrentUserQuery } from "../user/api";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
@@ -58,15 +58,12 @@ const selectIsAuthModalOpen = createSelector(
   }),
 );
 
-// TODO: Add confirmation modal for logout
-
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLoginModalOpen, isSignupModalOpen } = useAppSelector(selectIsAuthModalOpen);
-  const userDetails = useAppSelector((state) => state.auth.userDetails);
   const dispatch = useAppDispatch();
   const isUserLoggedIn = isLoggedIn();
-  const { isSuccess, data: { data } = {} } = useGetUserDetailsQuery(userDetails?._id || "", {
+  const { isSuccess, data: { data } = {} } = useGetCurrentUserQuery(null, {
     skip: !isUserLoggedIn,
   });
 
