@@ -7,7 +7,13 @@ type Props = { errorMsg: string; onRetry: () => void };
 export default function GetErrorScreen({ errorMsg, onRetry }: Props) {
   const emoji = useRef("");
   if (!emoji.current) {
-    emoji.current = emojis[Math.floor(Math.random() * emojis.length)];
+    emoji.current =
+      emojis[
+        Math.floor(
+          // eslint-disable-next-line react-hooks/purity
+          Math.random() * emojis.length,
+        )
+      ];
   }
 
   return (

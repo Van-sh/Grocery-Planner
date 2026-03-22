@@ -24,7 +24,7 @@ export function getErrorMessage(error: unknown): string {
     // you can access all properties of `FetchBaseQueryError` here
     return "error" in error
       ? error.error
-      : (error.data as any).message || JSON.stringify(error.data);
+      : (error.data as Error).message || JSON.stringify(error.data);
   }
   if (isErrorWithMessage(error)) {
     // you can access a string 'message' property here

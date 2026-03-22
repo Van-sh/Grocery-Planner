@@ -21,7 +21,7 @@ import { useLazyGetDishesQuery } from "../../dishes/api";
 import { TDishes } from "../../dishes/types";
 import { TCreateMealBase, TMealBase } from "./types";
 
-export const mealTypes = [
+const mealTypes = [
   { key: "wakeup", label: EMealType.wakeup },
   { key: "breakfast", label: EMealType.breakfast },
   { key: "midmorning", label: EMealType.midmorning },
@@ -96,7 +96,9 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
   );
 
   const handleSearchChange = debounce(
-    (newQuery: string, index: number) => refetchDishes(newQuery, index),
+    // updates a state when UI needs to be updated
+    // eslint-disable-next-line react-hooks/refs
+    refetchDishes,
     750,
   );
 
