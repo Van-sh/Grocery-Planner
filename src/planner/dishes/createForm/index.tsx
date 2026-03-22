@@ -84,7 +84,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>(null);
 
   const [getIngredients] = useLazyGetIngredientsQuery();
   const refetchIngredient = useCallback(

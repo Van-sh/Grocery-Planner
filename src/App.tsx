@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Loader from "./common/loader";
 import NavBar from "./common/navbar";
 import ProtectedRoute from "./common/protectedRoute";
 import Toast from "./common/toast";
@@ -19,7 +20,7 @@ function App() {
     <BrowserRouter>
       <Providers>
         <NavBar />
-        <Suspense>
+        <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<div>Hello world!</div>} />
             <Route element={<ProtectedRoute />}>
