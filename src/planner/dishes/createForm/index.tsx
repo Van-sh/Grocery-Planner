@@ -13,7 +13,7 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
 
 import Autocomplete from "../../../common/autoComplete";
@@ -61,11 +61,6 @@ const defaultIngredient: TDishIngredientsBase = {
   measurement_unit: "",
 };
 
-const defaultQuery = {
-  query: "",
-  page: 1,
-};
-
 const ingredientInputClasses = {
   inputWrapper: ["bg-white"],
 };
@@ -87,44 +82,46 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     () => (initialValues ? cleanData(initialValues) : undefined),
     [initialValues],
   );
-  const [queryList, setQueryList] = useState<{ query: string; page: number }[]>(
-    initialValues?.ingredients.map((ingredient) => ({
-      query: ingredient.ingredient.name,
-      page: 1,
-    })) ?? [],
-  );
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const ingredientsFetchRef = useRef(0);
+  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>();
 
   const [getIngredients] = useLazyGetIngredientsQuery();
-  const refetchIngredients = useCallback(async () => {
-    const newIngredientsData: TIngredients[][] = Array(queryList.length);
-    const fetchId = ++ingredientsFetchRef.current;
-    const promises = queryList.map(async (query, index) => {
-      const { data: ingredient } = await getIngredients(query);
-      newIngredientsData[index] = ingredient?.data ?? [];
-    });
-    await Promise.all(promises);
-    if (ingredientsFetchRef.current !== fetchId) {
-      // User changed selection while these requests were ongoing; abort so
-      // that we don't squash the state.
-      return;
-    }
-    setIngredientsData(newIngredientsData);
-  }, [getIngredients, queryList]);
+  const refetchIngredient = useCallback(
+    async (newQuery: string, index: number) => {
+      const preferCachedValues = true;
 
-  const setQuery = useMemo(
-    () =>
-      debounce((newQuery: string, index: number) => {
-        const newQueryList = queryList.map((query, queryIndex) =>
-          queryIndex === index ? { query: newQuery, page: 1 } : query,
-        );
-        setQueryList(newQueryList);
-      }, 750),
-    [queryList],
+      const getIngredientsPromise = getIngredients(
+        { query: newQuery, page: 1 },
+        preferCachedValues,
+      );
+      searchControllerRef.current = getIngredientsPromise;
+
+      const { data, requestId } = await getIngredientsPromise;
+      const dish = data?.data ?? [];
+      // only update if the response is from the current request
+      if ((await searchControllerRef.current).requestId === requestId) {
+        setIngredientsData([
+          ...ingredientsData.slice(0, index),
+          dish,
+          ...ingredientsData.slice(index + 1),
+        ]);
+      }
+    },
+    [getIngredients, ingredientsData],
   );
+
+  const handleSearchChange = debounce(refetchIngredient, 750);
+  const handleSearchItemSelect = (value: string, index: number) => {
+    // not updating dish name because it is not needed in api.
+    formik.setFieldValue(`dishes.${index}.dish._id`, value);
+    setIngredientsData([
+      ...ingredientsData.slice(0, index),
+      [],
+      ...ingredientsData.slice(index + 1),
+    ]);
+  };
 
   function ingredientToAutocompleteOption(ingredients: TIngredients[]) {
     return ingredients.map((ingredient) => {
@@ -150,12 +147,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     onSubmit: (values) => onCreate(values, initialValues?._id),
   });
 
-  useEffect(() => {
-    (async function () {
-      await refetchIngredients();
-    })();
-  }, [queryList, refetchIngredients]);
-  
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="false">
       <ModalHeader>{initialValues ? "Edit" : "Add New"} Dish</ModalHeader>
@@ -185,8 +176,8 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
           <FieldArray name="ingredients">
             {({ push, remove }) => (
               <>
-                {formik.values.ingredients.map((_, index) => (
-                  <div key={index} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.ingredients.map(({ ingredient: { _id } }, index) => (
+                  <div key={_id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Ingredient"
                       placeholder="Chana, Coriander, etc."
@@ -210,10 +201,8 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       classNames={ingredientInputClasses}
                       value={formik.values.ingredients[index].ingredient.name}
                       options={ingredientToAutocompleteOption(ingredientsData[index])}
-                      onChange={(event) => setQuery(event.target.value, index)}
-                      onSelect={(value) =>
-                        formik.setFieldValue(`ingredients.${index}.ingredient._id`, value)
-                      }
+                      onChange={(event) => handleSearchChange(event.target.value, index)}
+                      onSelect={(value) => handleSearchItemSelect(value, index)}
                     />
 
                     <Input
@@ -274,7 +263,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                     <Button
                       variant="flat"
                       onClick={() => {
-                        setQueryList((prevState) => prevState.filter((_, i) => i !== index));
                         setIngredientsData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
                       }}
@@ -288,7 +276,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                   variant="bordered"
                   isDisabled={!!formik.getFieldMeta("ingredients").error}
                   onClick={() => {
-                    setQueryList((prevState) => [...prevState, defaultQuery]);
                     setIngredientsData((prevState) => [...prevState, []]);
                     push(defaultIngredient);
                   }}

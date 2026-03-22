@@ -64,7 +64,7 @@ export default function Plans() {
         });
       }
     },
-    [dispatch, navigate, createData],
+    [dispatch, navigate, createData, refetch],
   );
 
   const handleMutationError = useCallback(
@@ -141,7 +141,7 @@ export default function Plans() {
         <Button
           color="primary"
           variant="shadow"
-          className="fixed bottom-8 right-8"
+          className="fixed bottom-8 right-8 z-20"
           onClick={goToAddNewPlanPage}
         >
           <PlusIcon />
