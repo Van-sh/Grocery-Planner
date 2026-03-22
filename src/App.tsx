@@ -9,14 +9,14 @@ import ProtectedRoute from "./common/protectedRoute";
 import Toast from "./common/toast";
 import { store } from "./store";
 
-const Planner = lazy(() => import("./planner"));
-const Ingredients = lazy(() => import("./planner/ingredients"));
-const Dishes = lazy(() => import("./planner/dishes"));
-const Plans = lazy(() => import("./planner/plans"));
-const EditPlan = lazy(() => import("./planner/plans/edit"));
-const User = lazy(() => import("./user"));
 const ChangePassword = lazy(() => import("./user/change-password"));
+const Dishes = lazy(() => import("./planner/dishes"));
+const EditPlan = lazy(() => import("./planner/plans/edit"));
+const Ingredients = lazy(() => import("./planner/ingredients"));
+const Planner = lazy(() => import("./planner"));
+const Plans = lazy(() => import("./planner/plans"));
 const Profile = lazy(() => import("./user/profile"));
+const User = lazy(() => import("./user"));
 
 function App() {
   return (
