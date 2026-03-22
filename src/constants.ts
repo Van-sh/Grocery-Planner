@@ -51,5 +51,5 @@ export enum EMealType {
   "bedtime" = "Bed Time",
 }
 
-// mealOrder = ["wakeup", "breakfast", "midmorning", ...] 
+// mealOrder = ["wakeup", "breakfast", "midmorning", ...]
 export const mealOrder = Object.keys(EMealType) as (keyof typeof EMealType)[];

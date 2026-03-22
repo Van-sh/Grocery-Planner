@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { EMealType } from "../../constants";
 import { TDays } from "../types";
 import { useData } from "./context";

@@ -34,8 +34,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-          REACT_APP_GOOGLE_LOGIN_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_LOGIN_CLIENT_ID }}
+          VITE_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          VITE_GOOGLE_LOGIN_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_LOGIN_CLIENT_ID }}
 
       - name: Rename file 
         run: mv ./build/index.html ./build/200.html

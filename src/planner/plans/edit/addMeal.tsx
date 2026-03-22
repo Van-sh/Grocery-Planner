@@ -8,7 +8,7 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -66,7 +66,7 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
   const { id = "" } = useParams();
   const [dishesData, setDishesData] = useState<TDishes[][]>([]);
   const [getDishes] = useLazyGetDishesQuery();
-  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
   const formik = useFormik({
     initialValues: {
       mealType: "",
@@ -124,9 +124,7 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
           classNames={{ trigger: ["bg-white"] }}
         >
           {mealTypes.map((type) => (
-            <SelectItem key={type.key} value={type.key}>
-              {type.label}
-            </SelectItem>
+            <SelectItem key={type.key}>{type.label}</SelectItem>
           ))}
         </Select>
 
@@ -136,7 +134,7 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
           <FieldArray name="dishes">
             {({ push, remove }) => (
               <>
-                {formik.values.dishes.map(({dish}, index) => (
+                {formik.values.dishes.map(({ dish }, index) => (
                   <div key={dish?._id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Dish"

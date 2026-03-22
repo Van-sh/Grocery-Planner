@@ -10,7 +10,7 @@ export const DataContext = createContext<TDataContext | undefined>(undefined);
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {
-    throw new Error('useData must be used within a DataContextProvider');
+    throw new Error("useData must be used within a DataContextProvider");
   }
   return context;
 };

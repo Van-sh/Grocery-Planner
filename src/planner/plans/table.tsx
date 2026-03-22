@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EyeIcon from "../../assets/eyeIcon";
 import { TPlans } from "../../common/types";

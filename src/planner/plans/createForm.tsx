@@ -1,9 +1,9 @@
-import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@heroui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { TCreatePlanBase } from "../../common/types";
 
-export const schema = yup.object({
+const schema = yup.object({
   name: yup.string().required("Name is required"),
   isPrivate: yup.boolean(),
   isActive: yup.boolean(),

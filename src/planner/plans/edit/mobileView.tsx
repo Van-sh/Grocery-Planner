@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Button } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button } from "@heroui/react";
 import PlusIcon from "../../../assets/plus";
 import MealCards from "../../../common/mealCards";
 import { TDays } from "../../../common/types";
