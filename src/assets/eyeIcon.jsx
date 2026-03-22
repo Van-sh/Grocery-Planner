@@ -26,4 +26,4 @@ export default function EyeIcon(props) {
       />
     </svg>
   );
-};
+}

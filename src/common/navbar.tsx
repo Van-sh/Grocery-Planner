@@ -11,15 +11,15 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-} from "@nextui-org/react";
+} from "@heroui/react";
+import { createSelector } from "@reduxjs/toolkit";
 import { useState } from "react";
-import { type RootState, useAppDispatch, useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector, type RootState } from "../store";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
 import Signup from "./auth/signup";
-import UserMenu from "./auth/userMenu";
 import { closeLoginModal, closeSignupModal, openLoginModal, openSignupModal } from "./auth/slice";
-import { createSelector } from "@reduxjs/toolkit";
+import UserMenu from "./auth/userMenu";
 
 const menuItems = [
   {
@@ -76,7 +76,7 @@ export default function NavBar() {
 
   return (
     <>
-      <Navbar onMenuOpenChange={setIsMenuOpen}>
+      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
         <NavbarContent>
           <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
           <NavbarBrand>
@@ -86,7 +86,13 @@ export default function NavBar() {
         <NavbarMenu>
           {menuItems.map((item) => (
             <NavbarMenuItem key={item.label}>
-              <Link color={"foreground"} className="w-full" href={`/planner${item.href}`} size="lg">
+              <Link
+                color={"foreground"}
+                className="w-full"
+                href={`/planner${item.href}`}
+                size="lg"
+                onPress={() => setIsMenuOpen(false)}
+              >
                 {item.label}
               </Link>
             </NavbarMenuItem>

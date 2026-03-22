@@ -1,4 +1,4 @@
-import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@heroui/react";
 import { startTransition, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PlusIcon from "../../assets/plus";

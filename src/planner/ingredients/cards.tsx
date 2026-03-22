@@ -1,7 +1,7 @@
-import { Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/react";
-import { TIngredients } from "./types";
-import EditIcon from "../../assets/editIcon";
+import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
+import EditIcon from "../../assets/editIcon";
+import type { TIngredients } from "./types";
 
 type Props = {
   data: TIngredients[];

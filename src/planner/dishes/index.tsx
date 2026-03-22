@@ -1,21 +1,24 @@
-import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
-
+import PlusIcon from "../../assets/plus";
+import BlankScreen from "../../common/blankScreen";
+import ConfirmationModal from "../../common/confirmationModal";
 import GetErrorScreen from "../../common/getErrorScreen";
 import Loader from "../../common/loader";
+import Search from "../../common/search";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
-import { useCreateDishMutation, useGetDishesQuery, useUpdateDishMutation, useDeleteDishMutation } from "./api";
-import List from "./list";
-import { type TDishes } from "./types";
-
-import PlusIcon from "../../assets/plus";
-import BlankScreen from "../../common/blankScreen";
-import Search from "../../common/search";
+import {
+  useCreateDishMutation,
+  useDeleteDishMutation,
+  useGetDishesQuery,
+  useUpdateDishMutation,
+} from "./api";
 import CreateForm from "./createForm";
-import ConfirmationModal from "../../common/confirmationModal";
 import DetailedView from "./detailedView";
+import List from "./list";
+import type { TDishes } from "./types";
 
 const limit = 10;
 export default function Dishes() {
@@ -35,7 +38,6 @@ export default function Dishes() {
   const [create, { isLoading: isCreateLoading, status: createStatus }] = useCreateDishMutation();
   const [update, { isLoading: isUpdateLoading, status: updateStatus }] = useUpdateDishMutation();
   const [deleteD, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeleteDishMutation();
-
 
   const {
     isOpen: isDetailsModalOpen,
@@ -146,7 +148,7 @@ export default function Dishes() {
 
   return (
     <div className="flex justify-center">
-      <div className="max-w-[1024px] w-full px-6">
+      <div className="max-w-5xl w-full px-6">
         <h1 className="text-2xl mb-6">Dishes</h1>
         <Search name="Ingredients" query={query} setQuery={setQuery} />
 
@@ -189,7 +191,9 @@ export default function Dishes() {
           placement="top-center"
           scrollBehavior="outside"
         >
-          <ModalContent><DetailedView value={selectedDish}/></ModalContent>
+          <ModalContent>
+            <DetailedView value={selectedDish} />
+          </ModalContent>
         </Modal>
 
         <Modal
@@ -206,9 +210,7 @@ export default function Dishes() {
                 initialValues={selectedDish}
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleEditClose}
-                onCreate={(data, id) => {
-                  id ? update({ data, id }) : create(data);
-                }}
+                onCreate={(data, id) => (id ? update({ data, id }) : create(data))}
               />
             )}
           </ModalContent>
@@ -217,7 +219,7 @@ export default function Dishes() {
         <ConfirmationModal
           isModalOpen={isDeleteModalOpen}
           onModalClose={onDeleteModalClose}
-          onYesClick={() => handleDelete(selectedDish!._id)}
+          onYesClick={() => selectedDish && handleDelete(selectedDish._id)}
           isLoading={isDeleteLoading}
           message="Are you sure you want to delete this dish?"
         />

@@ -1,4 +1,4 @@
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
 import { useCallback, useEffect } from "react";
@@ -8,7 +8,7 @@ import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
 import { useGoogleMutation, useSignupMutation } from "./api";
 import { addUserDetails } from "./slice";
-import { TUserResponse } from "./types";
+import type { TUserResponse } from "./types";
 
 type Props = {
   onLogin: () => void;
@@ -23,12 +23,15 @@ const schema = yup.object({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), undefined], "Passwords must match")
-    .required("Confirm Password is required")
+    .required("Confirm Password is required"),
 });
 
 export default function Signup({ onLogin, onClose }: Props) {
   const dispatch = useAppDispatch();
-  const [signup, { data: signupData, error: signupError, isError: isSignupError, status: signupStatus }] = useSignupMutation();
+  const [
+    signup,
+    { data: signupData, error: signupError, isError: isSignupError, status: signupStatus },
+  ] = useSignupMutation();
   const [google, { data: googleData, status: googleStatus }] = useGoogleMutation();
 
   const formik = useFormik({
@@ -37,10 +40,10 @@ export default function Signup({ onLogin, onClose }: Props) {
       lastName: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit: signup
+    onSubmit: signup,
   });
 
   const handleSignupSuccess = useCallback(
@@ -53,7 +56,7 @@ export default function Signup({ onLogin, onClose }: Props) {
         window.location.reload();
       }, 200);
     },
-    [dispatch, onClose]
+    [dispatch, onClose],
   );
 
   useEffect(() => {
@@ -103,7 +106,9 @@ export default function Signup({ onLogin, onClose }: Props) {
         <div className="w-full border-slate-300 border-t h-0" />
       </div>
 
-      {isSignupError && <p className="text-red-500 text-sm text-center">{getErrorMessage(signupError)}</p>}
+      {isSignupError && (
+        <p className="text-red-500 text-sm text-center">{getErrorMessage(signupError)}</p>
+      )}
 
       <form className="flex flex-col gap-y-2 mb-4" onSubmit={formik.handleSubmit}>
         <div className="flex gap-x-4">

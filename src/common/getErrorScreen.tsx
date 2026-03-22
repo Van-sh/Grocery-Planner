@@ -1,11 +1,20 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { useRef } from "react";
 import { emojis } from "../constants";
 
 type Props = { errorMsg: string; onRetry: () => void };
 
 export default function GetErrorScreen({ errorMsg, onRetry }: Props) {
-  const emoji = useRef(emojis[Math.floor(Math.random() * emojis.length)]);
+  const emoji = useRef("");
+  if (!emoji.current) {
+    emoji.current =
+      emojis[
+        Math.floor(
+          // eslint-disable-next-line react-hooks/purity
+          Math.random() * emojis.length,
+        )
+      ];
+  }
 
   return (
     <main className="text-center px-6 py-24">

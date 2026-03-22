@@ -1,4 +1,4 @@
-import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalContent, Pagination, useDisclosure } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
@@ -17,7 +17,7 @@ import {
 } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
-import { TIngredients } from "./types";
+import type { TIngredients } from "./types";
 
 const limit = 10;
 export default function Ingredients() {
@@ -28,7 +28,7 @@ export default function Ingredients() {
   const {
     isLoading,
     isError: isGetError,
-    error,  
+    error,
     isSuccess: isGetSuccess,
     data: { data = [], count = 0 } = {},
     refetch,
@@ -129,7 +129,7 @@ export default function Ingredients() {
 
   return (
     <div className="flex justify-center">
-      <div className="max-w-[1024px] w-full px-6">
+      <div className="max-w-5xl w-full px-6">
         <h1 className="text-2xl mb-6">Ingredients</h1>
         <Search name="Ingredients" query={query} setQuery={setQuery} />
 
@@ -176,9 +176,7 @@ export default function Ingredients() {
                 initialValues={selectedIngredient}
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleClose}
-                onCreate={(data, id) => {
-                  id ? update({ data, id }) : create(data);
-                }}
+                onCreate={(data, id) => (id ? update({ data, id }) : create(data))}
               />
             )}
           </ModalContent>
@@ -187,7 +185,7 @@ export default function Ingredients() {
         <ConfirmationModal
           isModalOpen={isDeleteModalOpen}
           onModalClose={onDeleteModalClose}
-          onYesClick={() => handleDelete(selectedIngredient!._id)}
+          onYesClick={() => selectedIngredient && handleDelete(selectedIngredient?._id)}
           isLoading={isDeleteLoading}
           message="Are you sure you want to delete this ingredient?"
         />

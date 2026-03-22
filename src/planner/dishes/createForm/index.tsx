@@ -11,17 +11,16 @@ import {
   Select,
   SelectItem,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
-
 import Autocomplete from "../../../common/autoComplete";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
-import { type TIngredients } from "../../ingredients/types";
+import type { TIngredients } from "../../ingredients/types";
 import { preparationToString } from "../../ingredients/util";
-import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
+import type { TDishIngredientsBase, TDishes, TDishesBase } from "../types";
 
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
 
@@ -85,7 +84,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>(null);
 
   const [getIngredients] = useLazyGetIngredientsQuery();
   const refetchIngredient = useCallback(
@@ -112,7 +111,12 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     [getIngredients, ingredientsData],
   );
 
-  const handleSearchChange = debounce(refetchIngredient, 750);
+  const handleSearchChange = debounce(
+    // updates a state when UI needs to be updated
+    // eslint-disable-next-line react-hooks/refs
+    refetchIngredient,
+    750,
+  );
   const handleSearchItemSelect = (value: string, index: number) => {
     // not updating dish name because it is not needed in api.
     formik.setFieldValue(`dishes.${index}.dish._id`, value);
@@ -252,9 +256,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       classNames={{ trigger: ["bg-white"] }}
                     >
                       {measurementUnits.map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
+                        <SelectItem key={unit}>{unit}</SelectItem>
                       ))}
                     </Select>
 

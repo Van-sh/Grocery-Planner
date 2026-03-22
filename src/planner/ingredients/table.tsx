@@ -1,4 +1,3 @@
-import { TIngredients } from "./types";
 import {
   Table,
   TableBody,
@@ -8,9 +7,10 @@ import {
   TableRow,
   Tooltip,
   getKeyValue,
-} from "@nextui-org/react";
-import EditIcon from "../../assets/editIcon";
+} from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
+import EditIcon from "../../assets/editIcon";
+import type { TIngredients } from "./types";
 
 type Props = {
   data: TIngredients[];

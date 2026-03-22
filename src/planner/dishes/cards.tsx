@@ -1,8 +1,8 @@
-import { Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/react";
-import { TDishes } from "./types";
-import EditIcon from "../../assets/editIcon";
+import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
+import EditIcon from "../../assets/editIcon";
 import EyeIcon from "../../assets/eyeIcon";
+import type { TDishes } from "./types";
 
 type Props = {
   data: TDishes[];

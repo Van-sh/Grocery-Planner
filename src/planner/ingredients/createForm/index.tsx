@@ -1,3 +1,4 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
@@ -8,12 +9,11 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from "@nextui-org/react";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import * as yup from "yup";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
+import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
-import { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
+import type { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
 
 // TODO: Create a dropdown for Unit
 
@@ -183,9 +183,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       classNames={{ trigger: ["bg-white"] }}
                     >
                       {preparationUnits.map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
+                        <SelectItem key={unit}>{unit}</SelectItem>
                       ))}
                     </Select>
 

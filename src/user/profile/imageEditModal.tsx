@@ -1,8 +1,8 @@
-import { Listbox, ListboxItem, Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { Listbox, ListboxItem, Modal, ModalBody, ModalContent } from "@heroui/react";
 import { ChangeEvent, useRef, useState } from "react";
+import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import PlusIcon from "../../assets/plus";
-import DeleteIcon from "../../assets/deleteIcon";
 import ConfirmationModal from "../../common/confirmationModal";
 
 type Props = {

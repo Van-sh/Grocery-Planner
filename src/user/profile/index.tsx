@@ -1,16 +1,16 @@
-import { Avatar, Button, Input } from "@nextui-org/react";
+import { Avatar, Button, Input } from "@heroui/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
+import EditIcon from "../../assets/editIcon";
 import { addUserDetails } from "../../common/auth/slice";
 import ImageCropperModal from "../../common/imageCropperModal";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { useEditUserDetailsMutation } from "../change-password/api";
-import { TEditUserDetailsResponse } from "../change-password/types";
+import type { TEditUserDetailsResponse } from "../change-password/types";
 import ImageEditModal from "./imageEditModal";
-import EditIcon from "../../assets/editIcon";
 
 const schema = yup.object({
   firstName: yup.string().required("First Name is required"),
@@ -114,7 +114,7 @@ export default function Profile() {
               isIconOnly
               size="sm"
               radius="full"
-              className="absolute right-[-5px] bottom-[-5px]"
+              className="absolute -right-1.25 -bottom-1.25"
               onClick={showImageOptionsModal}
             >
               <EditIcon />
