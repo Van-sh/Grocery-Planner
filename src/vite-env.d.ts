@@ -3,7 +3,7 @@
 interface ViteTypeOptions {
   // By adding this line, you can make the type of ImportMetaEnv strict
   // to disallow unknown keys.
-  // strictImportMetaEnv: unknown
+  strictImportMetaEnv: unknown
 }
 
 // This does not cause parsing, avoid using non-string types

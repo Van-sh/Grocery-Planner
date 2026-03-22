@@ -12,7 +12,13 @@ export default function AuthErrorScreen({ errorMsg = defaultErrorMsg }: Props) {
   const dispatch = useAppDispatch();
 
   if (!emoji.current) {
-    emoji.current = emojis[Math.floor(Math.random() * emojis.length)];
+    emoji.current =
+      emojis[
+        Math.floor(
+          // eslint-disable-next-line react-hooks/purity
+          Math.random() * emojis.length,
+        )
+      ];
   }
 
   const showLoginModal = () => {
