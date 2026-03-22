@@ -11,6 +11,8 @@ const Ingredients = lazy(() => import("./planner/ingredients"));
 const Planner = lazy(() => import("./planner"));
 const Profile = lazy(() => import("./user/profile"));
 const User = lazy(() => import("./user"));
+const Plans = lazy(() => import("./planner/plans"));
+const EditPlan = lazy(() => import("./planner/plans/edit"));
 
 function App() {
   return (

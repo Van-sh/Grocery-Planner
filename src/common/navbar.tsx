@@ -27,12 +27,16 @@ const menuItems = [
     href: "",
   },
   {
-    label: "Ingredients",
-    href: "/ingredients",
+    label: "Plans",
+    href: "/plans",
   },
   {
     label: "Dishes",
     href: "/dishes",
+  },
+  {
+    label: "Ingredients",
+    href: "/ingredients",
   },
 ];
 

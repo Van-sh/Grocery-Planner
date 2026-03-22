@@ -1,3 +1,5 @@
+import { TUser } from "../../common/types";
+
 export type TPreparationBase = {
   category: string;
   timeAmount: number;
@@ -11,13 +13,6 @@ export type TPreparation = TPreparationBase & {
 export type TIngredientsBase = {
   name: string;
   preparations: TPreparationBase[];
-};
-
-type TUser = {
-  id: string;
-  name: string;
-  fName: string;
-  lName: string;
 };
 
 export type TIngredients = TIngredientsBase & {

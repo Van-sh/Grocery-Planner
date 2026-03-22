@@ -46,9 +46,4 @@ export const dishesApi = createApi({
   }),
 });
 
-export const {
-  useGetDishesQuery,
-  useCreateDishMutation,
-  useUpdateDishMutation,
-  useDeleteDishMutation,
-} = dishesApi;
+export const { useLazyGetDishesQuery, useGetDishesQuery, useCreateDishMutation, useUpdateDishMutation, useDeleteDishMutation } = dishesApi;

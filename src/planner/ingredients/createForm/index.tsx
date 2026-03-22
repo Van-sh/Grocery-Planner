@@ -113,8 +113,8 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
           <FieldArray name="preparations">
             {({ push, remove }) => (
               <>
-                {formik.values.preparations.map((_, index) => (
-                  <div key={index} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.preparations.map(({ category }, index) => (
+                  <div key={category} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Preparation type"
                       placeholder="Fried, Boiled, etc."

@@ -1,4 +1,5 @@
-import type { TIngredients } from "../ingredients/types";
+import { TUser } from "../../common/types";
+import { type TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
   ingredient: { _id: string; name: string };
@@ -15,13 +16,6 @@ export type TDishesBase = {
 
 export type TDishIngredients = Omit<TDishIngredientsBase, "ingredient"> & {
   ingredient: TIngredients;
-};
-
-type TUser = {
-  id: string;
-  name: string;
-  fName: string;
-  lName: string;
 };
 
 export type TDishes = Omit<TDishesBase, "ingredients"> & {
