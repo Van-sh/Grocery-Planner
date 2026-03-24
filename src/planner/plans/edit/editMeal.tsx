@@ -13,8 +13,8 @@ import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
-import Autocomplete from "../../../common/autoComplete";
-import { TDays, TMealDishBase } from "../../../common/types";
+import Autocomplete, { Option } from "../../../common/autoComplete";
+import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { EMealType } from "../../../constants";
 import { useLazyGetDishesQuery } from "../../dishes/api";
@@ -50,7 +50,9 @@ const schema = yup.object({
 type Props = {
   isLoading: boolean;
   day: TDays;
-  onCreate: (data: TMealBase) => void;
+  mealType?: MealTypeKey;
+  dishes?: TMealDishBase[];
+  onUpdate: (data: TMealBase) => void;
   onClose: () => void;
 };
 
@@ -62,21 +64,31 @@ const dishInputClasses = {
   inputWrapper: ["bg-white"],
 };
 
-export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
+export default function EditMeal({
+  isLoading,
+  day,
+  mealType,
+  dishes = [],
+  onUpdate,
+  onClose,
+}: Props) {
   const { id = "" } = useParams();
-  const [dishesData, setDishesData] = useState<TDishes[][]>([]);
+  const [dishesData, setDishesData] = useState<Option[][]>(dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
   const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>();
   const formik = useFormik({
     initialValues: {
-      mealType: "",
-      dishes: [],
+      mealType: mealType || "",
+      dishes,
     } as TCreateMealBase,
     validationSchema: schema,
     onSubmit: (values) => {
-      onCreate({ planId: id, day, ...values });
+      onUpdate({ planId: id, day, ...values });
     },
   });
+
+  const dishToAutoCompleteOption = (dishes: TDishes[]): Option[] =>
+    dishes.map(({ _id, name }) => ({ _id, name }));
 
   const refetchDishes = useCallback(
     async (newQuery: string, index: number) => {
@@ -89,8 +101,10 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
       searchControllerRef.current = getDishesPromise;
 
       const { data } = await getDishesPromise;
-      const dish = data?.data ?? [];
-      setDishesData([...dishesData.slice(0, index), dish, ...dishesData.slice(index + 1)]);
+      const dishes = data?.data ?? [];
+      const option = dishToAutoCompleteOption(dishes);
+
+      setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
     },
     [getDishes, dishesData],
   );
@@ -99,9 +113,6 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
     (newQuery: string, index: number) => refetchDishes(newQuery, index),
     750,
   );
-
-  const dishToAutoCompleteOption = (dishes: TDishes[]) =>
-    dishes.map(({ _id, name }) => ({ _id, name }));
 
   const handleSearchItemSelect = (value: string, index: number) => {
     // not updating dish name because it is not needed in api.
@@ -136,8 +147,8 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
           <FieldArray name="dishes">
             {({ push, remove }) => (
               <>
-                {formik.values.dishes.map(({dish}, index) => (
-                  <div key={dish?._id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.dishes.map(({ dish: { _id } }, index) => (
+                  <div key={_id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Dish"
                       placeholder="Type to Search (E.g. Roti, palak paneer etc.)"
@@ -154,7 +165,7 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
                       }
                       classNames={dishInputClasses}
                       value={formik.values.dishes[index].dish.name}
-                      options={dishToAutoCompleteOption(dishesData[index])}
+                      options={dishesData[index]}
                       onChange={(event) => handleSearchChange(event.target.value, index)}
                       onSelect={(value) => handleSearchItemSelect(value, index)}
                     />

@@ -2,7 +2,7 @@ import { Input, SlotsToClasses } from "@nextui-org/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DownChevron from "../../assets/downChevron";
 
-type Option = { _id: string; name: string; description?: string };
+export type Option = { _id: string; name: string; description?: string };
 
 type Props = {
   label?: React.ReactNode;

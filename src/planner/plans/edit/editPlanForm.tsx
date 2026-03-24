@@ -4,12 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
 import { useData } from "../../../common/mealCards/context";
 import { addToast } from "../../../common/toast/slice";
-import { TCreatePlanBase, TDays } from "../../../common/types";
+import { MealTypeKey, TCreatePlanBase, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
-import { useCreateMealMutation } from "../api";
-import AddMeal from "./addMeal";
+import { useUpdateMealMutation } from "../api";
 import DesktopView from "./desktopView";
+import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
 
 export const schema = yup.object({
@@ -22,11 +22,15 @@ type Props = {
 
 export default function EditPlanForm({ refetch }: Props) {
   const [selectedDay, setSelectedDay] = useState<TDays>();
+  const [selectedMealType, setSelectedMealType] = useState<MealTypeKey>();
+  const [selectedDishes, setSelectedDishes] = useState<TMealDishBase[]>();
   const { data } = useData();
   const dispatch = useAppDispatch();
 
-  const [createMeal, { isLoading: isCreateMealLoading, status: createMealStatus }] =
-    useCreateMealMutation();
+  const [
+    updateMeal,
+    { isLoading: isUpdateMealLoading, isSuccess: isUpdateMealSuccess, isError: isUpdateMealError },
+  ] = useUpdateMealMutation();
 
   const formik = useFormik({
     initialValues: {
@@ -75,19 +79,34 @@ export default function EditPlanForm({ refetch }: Props) {
     onEditModalOpen();
   };
 
+  const openEditPlanModal = (day: TDays, mealType: MealTypeKey, dishes: TMealDishBase[]) => {
+    setSelectedDay(day);
+    setSelectedMealType(mealType);
+    setSelectedDishes(dishes);
+    onEditModalOpen();
+  };
+
   const handleCreateClose = useCallback(() => {
     onEditModalClose();
     setSelectedDay(undefined);
+    setSelectedMealType(undefined);
+    setSelectedDishes(undefined);
   }, [onEditModalClose]);
 
   useEffect(() => {
-    if (createMealStatus === "fulfilled") {
+    if (isUpdateMealSuccess) {
       handleCreateClose();
       handleMutationSuccess("created");
-    } else if (createMealStatus === "rejected") {
+    } else if (isUpdateMealError) {
       handleMutationError("create");
     }
-  }, [createMealStatus, handleCreateClose, handleMutationError, handleMutationSuccess]);
+  }, [
+    isUpdateMealSuccess,
+    isUpdateMealError,
+    handleCreateClose,
+    handleMutationError,
+    handleMutationSuccess,
+  ]);
 
   return (
     <>
@@ -109,9 +128,15 @@ export default function EditPlanForm({ refetch }: Props) {
         </div>
 
         {isDesktop ? (
-          <DesktopView openCreatePlanModal={openCreatePlanModal} />
+          <DesktopView
+            openCreatePlanModal={openCreatePlanModal}
+            openEditPlanModal={openEditPlanModal}
+          />
         ) : (
-          <MobileView openCreatePlanModal={openCreatePlanModal} />
+          <MobileView
+            openCreatePlanModal={openCreatePlanModal}
+            openEditPlanModal={openEditPlanModal}
+          />
         )}
       </form>
 
@@ -125,10 +150,12 @@ export default function EditPlanForm({ refetch }: Props) {
       >
         <ModalContent>
           {() => (
-            <AddMeal
-              isLoading={isCreateMealLoading}
+            <EditMeal
+              isLoading={isUpdateMealLoading}
               day={selectedDay!}
-              onCreate={createMeal}
+              mealType={selectedMealType}
+              dishes={selectedDishes}
+              onUpdate={updateMeal}
               onClose={handleCreateClose}
             />
           )}
