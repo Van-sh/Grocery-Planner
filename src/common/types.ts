@@ -1,4 +1,5 @@
 import { days, EMealType } from "../constants";
+import { Option } from "./autoComplete";
 
 export type TUser = {
   id: string;
@@ -10,7 +11,7 @@ export type TUser = {
 export type TDays = (typeof days)[number];
 
 export type TMealDishBase = {
-  dish: { _id: string; name: string };
+  dish: Option;
 };
 
 export type MealTypeKey = keyof typeof EMealType;

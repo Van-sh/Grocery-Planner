@@ -2,7 +2,7 @@ import { TDays, TMealDishBase } from "../../../common/types";
 import { EMealType } from "../../../constants";
 
 export type TCreateMealBase = {
-  mealType: EMealType | string;
+  mealType: EMealType | "";
   dishes: TMealDishBase[];
   isPrivate?: boolean;
 };

@@ -1,8 +1,9 @@
+import { Option } from "../../common/autoComplete";
 import { TUser } from "../../common/types";
 import { type TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
-  ingredient: { _id: string; name: string };
+  ingredient: Option;
   measurement_unit: "" | "cup" | "tablespoon" | "teaspoon" | "gm" | "ml";
   amount: number;
 };
