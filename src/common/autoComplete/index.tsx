@@ -56,7 +56,6 @@ export default function Autocomplete({
   const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<Option[]>(cleanOptions);
   const [hover, setHover] = useState<false | number>(false);
-  const [selected, setSelected] = useState<false | number>(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const updateSuggestions = useCallback(
@@ -124,7 +123,6 @@ export default function Autocomplete({
       }
 
       if (selected1 === false) {
-        setSelected(false);
         setHover(hover1);
       } else {
         select(selected1);
@@ -135,7 +133,6 @@ export default function Autocomplete({
   const select = (index: number) => {
     setInputValue(suggestions[index].name);
     setSuggestions(cleanOptions);
-    setSelected(false);
     setShowDropdown(false);
     onSelect && onSelect(suggestions[index]._id);
   };
@@ -160,6 +157,7 @@ export default function Autocomplete({
         onKeyUp={handleKeyUp}
         onFocus={() => setShowDropdown(true)}
         isInvalid={isInvalid}
+        errorMessage={errorMessage}
         classNames={classNames}
         value={inputValue}
         endContent={<DownChevron />}
@@ -175,7 +173,7 @@ export default function Autocomplete({
               {suggestions.map((suggestion, index) => (
                 <li
                   className="flex gap-2 items-center justify-between px-2 py-1.5 rounded-small cursor-pointer data-[hover=true]:transition-colors data-[hover=true]:bg-default data-[hover=true]:text-default-foreground"
-                  data-hover={hover === index || (hover === false && selected === index)}
+                  data-hover={hover === index}
                   key={suggestion._id}
                   onClick={() => select(index)}
                   onMouseOver={() => setHover(index)}
@@ -192,7 +190,6 @@ export default function Autocomplete({
           </div>
         </div>
       )}
-      {isInvalid && errorMessage && <div className="p-1 text-tiny text-danger">{errorMessage}</div>}
     </div>
   );
 }
