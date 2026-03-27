@@ -32,7 +32,7 @@ export default function DesktopView({ openCreatePlanModal }: Props) {
           </div>
           <Divider className="mt-2" />
           <div className="w-full overflow-y-auto p-2">
-          <MealCards day={day} />
+            <MealCards day={day} />
           </div>
         </div>
       ))}
