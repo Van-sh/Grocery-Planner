@@ -136,7 +136,7 @@ export default function AddMeal({ isLoading, day, onCreate, onClose }: Props) {
           <FieldArray name="dishes">
             {({ push, remove }) => (
               <>
-                {formik.values.dishes.map(({dish}, index) => (
+                {formik.values.dishes.map(({ dish }, index) => (
                   <div key={dish?._id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Dish"
