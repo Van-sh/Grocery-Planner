@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
-import { useChangePasswordMutation } from "./api";
+import { useChangePasswordMutation } from "../api";
 
 const schema = yup.object({
   currentPassword: yup.string().required("Current Password is required"),

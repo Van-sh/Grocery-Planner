@@ -2,15 +2,15 @@ import { Avatar, Button, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
+import EditIcon from "../../assets/editIcon";
 import { addUserDetails } from "../../common/auth/slice";
 import ImageCropperModal from "../../common/imageCropperModal";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { useEditUserDetailsMutation } from "../change-password/api";
-import { TEditUserDetailsResponse } from "../change-password/types";
+import { useEditUserDetailsMutation } from "../api";
+import { TEditUserDetailsResponse } from "../types";
 import ImageEditModal from "./imageEditModal";
-import EditIcon from "../../assets/editIcon";
 
 const schema = yup.object({
   firstName: yup.string().required("First Name is required"),
