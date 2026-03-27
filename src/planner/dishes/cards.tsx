@@ -15,7 +15,7 @@ export default function DishesCards({ data, onDetails, onEdit, onDelete }: Props
   return (
     <>
       {data.map((dish) => (
-        <Card className="mt-4">
+        <Card className="mt-4" key={dish._id}>
           <CardHeader>
             <p className="text-lg">{dish.name}</p>
           </CardHeader>
