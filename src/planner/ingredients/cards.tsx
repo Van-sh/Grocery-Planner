@@ -13,7 +13,7 @@ export default function IngredientCards({ data, onEdit, onDelete }: Props) {
   return (
     <>
       {data.map((ingredient) => (
-        <Card className="mt-4">
+        <Card className="mt-4" key={ingredient._id}>
           <CardHeader>
             <p className="text-lg">{ingredient.name}</p>
           </CardHeader>
