@@ -1,4 +1,4 @@
-import { TUserData } from "../../common/auth/types";
+import { TUserData } from "../common/auth/types";
 
 export type TChangePasswordFormData = {
   currentPassword: string;
@@ -16,6 +16,10 @@ export type TEditUserDetailsFormData = {
   oldEmail: string;
   email?: string;
   picture?: string;
+};
+
+export type TUserResponse = {
+  data: TUserData;
 };
 
 export type TEditUserDetailsResponse = {

@@ -8,7 +8,7 @@ import { getErrorMessage } from "../../helper";
 import { useAppDispatch } from "../../store";
 import { useGoogleMutation, useSignupMutation } from "./api";
 import { addUserDetails } from "./slice";
-import { TUserResponse } from "./types";
+import { TLoginResponse } from "./types";
 
 type Props = {
   onLogin: () => void;
@@ -44,7 +44,7 @@ export default function Signup({ onLogin, onClose }: Props) {
   });
 
   const handleSignupSuccess = useCallback(
-    (data: TUserResponse) => {
+    (data: TLoginResponse) => {
       const { jwt, data: userDetails } = data;
       dispatch(addUserDetails({ userDetails, jwt }));
       onClose();
