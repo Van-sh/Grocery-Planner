@@ -19,15 +19,17 @@ export default function MealCards({ day }: Props) {
   return (
     <>
       {dayMeals.map(({ mealType, dishes }) => (
-        <Card className="mb-2 w-full" key={mealType}>
+        <Card className="mb-2" key={mealType}>
           <CardHeader className="bg-secondary/10">
             <p className="text-sm text-secondary">{EMealType[mealType]}</p>
           </CardHeader>
           <Divider />
           <CardBody>
-            {dishes.map(({ dish }) => (
-              <p key={dish.name}>{dish.name}</p>
-            ))}
+            <ul className="list-disc ps-4">
+              {dishes.map(({ dish }) => (
+                <li key={dish.name}>{dish.name}</li>
+              ))}
+            </ul>
           </CardBody>
         </Card>
       ))}
