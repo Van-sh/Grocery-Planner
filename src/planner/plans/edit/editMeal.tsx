@@ -64,6 +64,9 @@ const dishInputClasses = {
   inputWrapper: ["bg-white"],
 };
 
+const dishToAutoCompleteOption = (dishes: TDishes[]): Option[] =>
+  dishes.map(({ _id, name }) => ({ _id, name }));
+
 export default function EditMeal({
   isLoading,
   day,
@@ -73,7 +76,7 @@ export default function EditMeal({
   onClose,
 }: Props) {
   const { id = "" } = useParams();
-  const [dishesData, setDishesData] = useState<Option[][]>(dishes.map(({ dish }) => [dish]));
+  const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
   const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>();
   const formik = useFormik({
@@ -86,9 +89,6 @@ export default function EditMeal({
       onUpdate({ planId: id, day, ...values });
     },
   });
-
-  const dishToAutoCompleteOption = (dishes: TDishes[]): Option[] =>
-    dishes.map(({ _id, name }) => ({ _id, name }));
 
   const refetchDishes = useCallback(
     async (newQuery: string, index: number) => {
