@@ -15,8 +15,8 @@ import {
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
-
 import Autocomplete from "../../../common/autoComplete";
+import type { Prettify } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
 import { type TIngredients } from "../../ingredients/types";
@@ -24,10 +24,12 @@ import { preparationToString } from "../../ingredients/util";
 import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
 
 // Local type that includes fieldId for React keys (never sent to API)
-type TDishIngredientsWithFieldId = TDishIngredientsBase & { fieldId: string };
-type TDishWithIngredientWithFieldId = Omit<TDishesBase, "ingredients"> & {
-  ingredients: TDishIngredientsWithFieldId[];
-};
+type TDishIngredientsWithFieldId = Prettify<TDishIngredientsBase & { fieldId: string }>;
+type TDishFormikData = Prettify<
+  Omit<TDishesBase, "ingredients"> & {
+    ingredients: TDishIngredientsWithFieldId[];
+  }
+>;
 
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
 
@@ -72,7 +74,19 @@ const ingredientInputClasses = {
   inputWrapper: ["bg-white"],
 };
 
-const cleanData = (data: TDishes): TDishesBase => {
+const ingredientToAutocompleteOption = (ingredients: TIngredients[]) =>
+  ingredients.map((ingredient) => {
+    return {
+      _id: ingredient._id,
+      name: ingredient.name,
+      description:
+        ingredient.preparations.length === 0
+          ? ""
+          : ingredient.preparations.map(preparationToString).join(", "),
+    };
+  });
+
+const cleanData = (data: TDishes): TDishFormikData => {
   return {
     name: data.name,
     recipe: data.recipe,
@@ -81,27 +95,24 @@ const cleanData = (data: TDishes): TDishesBase => {
       ingredient: { _id: ingredient.ingredient._id, name: ingredient.ingredient.name },
       amount: ingredient.amount,
       measurement_unit: ingredient.measurement_unit,
+      fieldId: crypto.randomUUID(),
     })),
   };
 };
 
-const cleanFormikData: (
-  data: Omit<TDishesBase, "ingredients"> & { ingredients: TDishIngredientsWithFieldId[] },
-) => TDishesBase = (data) => {
-  return {
-    name: data.name,
-    recipe: data.recipe,
-    isPrivate: data.isPrivate,
-    ingredients: data.ingredients.map((ingredient: TDishIngredientsWithFieldId) => ({
-      ingredient: ingredient.ingredient,
-      amount: ingredient.amount,
-      measurement_unit: ingredient.measurement_unit,
-    })),
-  };
-};
+const cleanFormikData = (data: TDishFormikData): TDishesBase => ({
+  name: data.name,
+  recipe: data.recipe,
+  isPrivate: data.isPrivate,
+  ingredients: data.ingredients.map((ingredient: TDishIngredientsWithFieldId) => ({
+    ingredient: ingredient.ingredient,
+    amount: ingredient.amount,
+    measurement_unit: ingredient.measurement_unit,
+  })),
+});
 
 export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
-  const initial: TDishesBase | undefined = useMemo(
+  const initial = useMemo<TDishFormikData | undefined>(
     () => (initialValues ? cleanData(initialValues) : undefined),
     [initialValues],
   );
@@ -145,30 +156,13 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       ...ingredientsData.slice(index + 1),
     ]);
   };
-
-  function ingredientToAutocompleteOption(ingredients: TIngredients[]) {
-    return ingredients.map((ingredient) => {
-      return {
-        _id: ingredient._id,
-        name: ingredient.name,
-        description:
-          ingredient.preparations.length === 0
-            ? ""
-            : ingredient.preparations.map(preparationToString).join(", "),
-      };
-    });
-  }
-
-  const formik = useFormik({
+  const formik = useFormik<TDishFormikData>({
     initialValues: {
       name: initial?.name || "",
       recipe: initial?.recipe || "",
-      ingredients: (initial?.ingredients || []).map((ing) => ({
-        ...ing,
-        fieldId: crypto.randomUUID(),
-      })) as TDishIngredientsWithFieldId[],
+      ingredients: initial?.ingredients || [],
       isPrivate: initial?.isPrivate || false,
-    } as TDishWithIngredientWithFieldId,
+    },
     validationSchema: schema,
     onSubmit: (values) => onCreate(cleanFormikData(values), initialValues?._id),
   });

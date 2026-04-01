@@ -1,6 +1,8 @@
 import { days, EMealType } from "../constants";
 import { Option } from "./autoComplete";
 
+export type Prettify<T> = { [K in keyof T]: T[K] } & {};
+
 export type TUser = {
   id: string;
   name: string;
