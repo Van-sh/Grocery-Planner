@@ -48,9 +48,11 @@ export default function MealCards({ day, isEditable = false, onEdit }: Props) {
           </CardHeader>
           <Divider />
           <CardBody>
-            {dishes.map(({ dish }) => (
-              <p key={dish.name}>{dish.name}</p>
-            ))}
+            <ul className="list-disc ps-4">
+              {dishes.map(({ dish }) => (
+                <li key={dish.name}>{dish.name}</li>
+              ))}
+            </ul>
           </CardBody>
         </Card>
       ))}
