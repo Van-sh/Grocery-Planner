@@ -17,7 +17,7 @@ import {
 } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
-import type { TIngredients } from "./types";
+import type { TIngredients, TIngredientsBase } from "./types";
 
 const limit = 10;
 export default function Ingredients() {
@@ -82,6 +82,9 @@ export default function Ingredients() {
     setSelectedIngredient(item);
     onEditModalOpen();
   };
+
+  const handleEditMutation = (data: TIngredientsBase, id?: string) =>
+    id ? update({ data, id }) : create(data);
 
   const showDeleteModal = (id: string) => {
     setSelectedIngredient({ _id: id } as TIngredients);
@@ -176,7 +179,7 @@ export default function Ingredients() {
                 initialValues={selectedIngredient}
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleClose}
-                onCreate={(data, id) => (id ? update({ data, id }) : create(data))}
+                onCreate={handleEditMutation}
               />
             )}
           </ModalContent>

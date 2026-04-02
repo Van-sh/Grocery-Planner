@@ -1,25 +1,14 @@
 import { Button, Link } from "@heroui/react";
-import { useRef } from "react";
-import { emojis } from "../../constants";
 import { useAppDispatch } from "../../store";
+import { useRandomEmojiRef } from "../useRandomEmoji";
 import { openLoginModal } from "./slice";
 
 type Props = { errorMsg?: string };
 const defaultErrorMsg = "Seems like you are not logged in. Please login to continue.";
 
 export default function AuthErrorScreen({ errorMsg = defaultErrorMsg }: Props) {
-  const emoji = useRef("");
+  const emoji = useRandomEmojiRef();
   const dispatch = useAppDispatch();
-
-  if (!emoji.current) {
-    emoji.current =
-      emojis[
-        Math.floor(
-          // eslint-disable-next-line react-hooks/purity
-          Math.random() * emojis.length,
-        )
-      ];
-  }
 
   const showLoginModal = () => {
     dispatch(openLoginModal());

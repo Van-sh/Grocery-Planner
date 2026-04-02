@@ -18,7 +18,7 @@ import {
 import CreateForm from "./createForm";
 import DetailedView from "./detailedView";
 import List from "./list";
-import type { TDishes } from "./types";
+import type { TDishes, TDishesBase } from "./types";
 
 const limit = 10;
 export default function Dishes() {
@@ -101,6 +101,9 @@ export default function Dishes() {
     setSelectedDish(item);
     onEditModalOpen();
   };
+
+  const handleEditMutation = (data: TDishesBase, id?: string) =>
+    id ? update({ data, id }) : create(data);
 
   const showDeleteModal = (id: string) => {
     setSelectedDish({ _id: id } as TDishes);
@@ -210,7 +213,7 @@ export default function Dishes() {
                 initialValues={selectedDish}
                 isLoading={isCreateLoading || isUpdateLoading}
                 onClose={handleEditClose}
-                onCreate={(data, id) => (id ? update({ data, id }) : create(data))}
+                onCreate={handleEditMutation}
               />
             )}
           </ModalContent>
