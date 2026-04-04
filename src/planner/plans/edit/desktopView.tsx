@@ -2,14 +2,15 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Divider } from "@nextui-org/react";
 import MealCards from "../../../common/mealCards";
-import { TDays } from "../../../common/types";
+import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
 import { days } from "../../../constants";
 
 type Props = {
-  openCreatePlanModal: (days: TDays) => void;
+  openCreatePlanModal: (day: TDays) => void;
+  openEditPlanModal: (day: TDays, mealType: MealTypeKey, dishes: TMealDishBase[]) => void;
 };
 
-export default function DesktopView({ openCreatePlanModal }: Props) {
+export default function DesktopView({ openCreatePlanModal, openEditPlanModal }: Props) {
   return (
     <div className="mt-10 flex gap-1 h-[calc(100vh-11.5rem)]">
       {days.map((day) => (
@@ -32,7 +33,7 @@ export default function DesktopView({ openCreatePlanModal }: Props) {
           </div>
           <Divider className="mt-2" />
           <div className="w-full overflow-y-auto p-2">
-            <MealCards day={day} />
+            <MealCards day={day} isEditable onEdit={openEditPlanModal} />
           </div>
         </div>
       ))}

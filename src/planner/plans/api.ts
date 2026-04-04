@@ -41,7 +41,7 @@ export const plansApi = createApi({
         method: "DELETE",
       }),
     }),
-    createMeal: build.mutation<TMealBase, TMealBase>({
+    updateMeal: build.mutation<TMealBase, TMealBase>({
       query: ({ planId, ...data }) => ({
         url: `/${planId}/meals`,
         method: "POST",
@@ -56,5 +56,5 @@ export const {
   useGetPlanQuery,
   useCreatePlansMutation,
   useDeletePlanMutation,
-  useCreateMealMutation,
+  useUpdateMealMutation,
 } = plansApi;
