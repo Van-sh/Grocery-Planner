@@ -10,7 +10,7 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import Autocomplete, { Option } from "../../../common/autoComplete";
@@ -76,6 +76,12 @@ const dishInputClasses = {
 const dishToAutoCompleteOption = (dishes: TDishes[]) =>
   dishes.map(({ _id, name }) => ({ _id, name }));
 
+const prepareDishes = (dishes: TMealDishBase[]): TMealDishesWithFieldId[] =>
+  dishes.map((dish) => ({
+    dish: dish.dish,
+    fieldId: crypto.randomUUID(),
+  }));
+
 const cleanFormikData = (data: TMealFormikData): TCreateMealBase => ({
   mealType: data.mealType,
   isPrivate: data.isPrivate,
@@ -93,13 +99,14 @@ export default function EditMeal({
   onClose,
 }: Props) {
   const { id = "" } = useParams();
+  const initialDishes = useMemo(() => (dishes ? prepareDishes(dishes) : undefined), [dishes]);
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
-  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
   const formik = useFormik<TMealFormikData>({
     initialValues: {
-      mealType: mealType || "",
-      dishes,
+      mealType: mealType ? EMealType[mealType] : "",
+      dishes: initialDishes || [],
     },
     validationSchema: schema,
     onSubmit: (values) => {
@@ -117,11 +124,13 @@ export default function EditMeal({
       const getDishesPromise = getDishes({ query: newQuery, page: 1 });
       searchControllerRef.current = getDishesPromise;
 
-      const { data } = await getDishesPromise;
+      const { data, requestId } = await getDishesPromise;
       const dishes = data?.data ?? [];
       const option = dishToAutoCompleteOption(dishes);
-
-      setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      // only update if the response is from the current request
+      if ((await searchControllerRef.current).requestId === requestId) {
+        setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      }
     },
     [getDishes, dishesData],
   );

@@ -86,7 +86,7 @@ const ingredientToAutocompleteOption = (ingredients: TIngredients[]) =>
     };
   });
 
-const cleanData = (data: TDishes): TDishFormikData => {
+const prepareInitialData = (data: TDishes): TDishFormikData => {
   return {
     name: data.name,
     recipe: data.recipe,
@@ -113,13 +113,13 @@ const cleanFormikData = (data: TDishFormikData): TDishesBase => ({
 
 export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
   const initial = useMemo<TDishFormikData | undefined>(
-    () => (initialValues ? cleanData(initialValues) : undefined),
+    () => (initialValues ? prepareInitialData(initialValues) : undefined),
     [initialValues],
   );
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>(null);
 
   const [getIngredients] = useLazyGetIngredientsQuery();
   const refetchIngredient = useCallback(
