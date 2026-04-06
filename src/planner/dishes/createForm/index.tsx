@@ -15,13 +15,21 @@ import {
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
-
 import Autocomplete from "../../../common/autoComplete";
+import type { Prettify } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
 import { type TIngredients } from "../../ingredients/types";
 import { preparationToString } from "../../ingredients/util";
 import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
+
+// Local type that includes fieldId for React keys (never sent to API)
+type TDishIngredientsWithFieldId = Prettify<TDishIngredientsBase & { fieldId: string }>;
+type TDishFormikData = Prettify<
+  Omit<TDishesBase, "ingredients"> & {
+    ingredients: TDishIngredientsWithFieldId[];
+  }
+>;
 
 const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
 
@@ -49,43 +57,69 @@ const schema = yup.object({
 });
 
 type Props = {
-  initialValues?: TDishes; // pass to edit a form
+  initialValues?: TDishes;
   isLoading?: boolean;
   onClose: () => void;
   onCreate: (data: TDishesBase, id?: string) => void;
 };
 
-const defaultIngredient: TDishIngredientsBase = {
+const createDefaultIngredient = (): TDishIngredientsWithFieldId => ({
   ingredient: { _id: "", name: "" },
   amount: 0,
   measurement_unit: "",
-};
+  fieldId: crypto.randomUUID(),
+});
 
 const ingredientInputClasses = {
   inputWrapper: ["bg-white"],
 };
 
-const cleanData: (data: TDishes) => TDishesBase = (data: TDishes) => {
+const ingredientToAutocompleteOption = (ingredients: TIngredients[]) =>
+  ingredients.map((ingredient) => {
+    return {
+      _id: ingredient._id,
+      name: ingredient.name,
+      description:
+        ingredient.preparations.length === 0
+          ? ""
+          : ingredient.preparations.map(preparationToString).join(", "),
+    };
+  });
+
+const prepareInitialData = (data: TDishes): TDishFormikData => {
   return {
-    ...data,
-    ingredients: data.ingredients.map((ingredient) => {
-      return {
-        ...ingredient,
-        ingredient: { _id: ingredient.ingredient._id, name: ingredient.ingredient.name },
-      };
-    }),
+    name: data.name,
+    recipe: data.recipe,
+    isPrivate: data.isPrivate,
+    ingredients: data.ingredients.map((ingredient) => ({
+      ingredient: { _id: ingredient.ingredient._id, name: ingredient.ingredient.name },
+      amount: ingredient.amount,
+      measurement_unit: ingredient.measurement_unit,
+      fieldId: crypto.randomUUID(),
+    })),
   };
 };
 
+const cleanFormikData = (data: TDishFormikData): TDishesBase => ({
+  name: data.name,
+  recipe: data.recipe,
+  isPrivate: data.isPrivate,
+  ingredients: data.ingredients.map((ingredient: TDishIngredientsWithFieldId) => ({
+    ingredient: ingredient.ingredient,
+    amount: ingredient.amount,
+    measurement_unit: ingredient.measurement_unit,
+  })),
+});
+
 export default function CreateForm({ initialValues, isLoading, onClose, onCreate }: Props) {
-  const initial: TDishesBase | undefined = useMemo(
-    () => (initialValues ? cleanData(initialValues) : undefined),
+  const initial = useMemo<TDishFormikData | undefined>(
+    () => (initialValues ? prepareInitialData(initialValues) : undefined),
     [initialValues],
   );
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>(null);
 
   const [getIngredients] = useLazyGetIngredientsQuery();
   const refetchIngredient = useCallback(
@@ -115,36 +149,22 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const handleSearchChange = debounce(refetchIngredient, 750);
   const handleSearchItemSelect = (value: string, index: number) => {
     // not updating dish name because it is not needed in api.
-    formik.setFieldValue(`dishes.${index}.dish._id`, value);
+    formik.setFieldValue(`ingredients.${index}.ingredient._id`, value);
     setIngredientsData([
       ...ingredientsData.slice(0, index),
       [],
       ...ingredientsData.slice(index + 1),
     ]);
   };
-
-  function ingredientToAutocompleteOption(ingredients: TIngredients[]) {
-    return ingredients.map((ingredient) => {
-      return {
-        _id: ingredient._id,
-        name: ingredient.name,
-        description:
-          ingredient.preparations.length === 0
-            ? ""
-            : ingredient.preparations.map(preparationToString).join(", "),
-      };
-    });
-  }
-
-  const formik = useFormik({
+  const formik = useFormik<TDishFormikData>({
     initialValues: {
       name: initial?.name || "",
       recipe: initial?.recipe || "",
       ingredients: initial?.ingredients || [],
       isPrivate: initial?.isPrivate || false,
-    } as TDishesBase,
+    },
     validationSchema: schema,
-    onSubmit: (values) => onCreate(values, initialValues?._id),
+    onSubmit: (values) => onCreate(cleanFormikData(values), initialValues?._id),
   });
 
   return (
@@ -176,8 +196,8 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
           <FieldArray name="ingredients">
             {({ push, remove }) => (
               <>
-                {formik.values.ingredients.map(({ ingredient: { _id } }, index) => (
-                  <div key={_id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.ingredients.map(({ fieldId }, index) => (
+                  <div key={fieldId} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Ingredient"
                       placeholder="Chana, Coriander, etc."
@@ -277,7 +297,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                   isDisabled={!!formik.getFieldMeta("ingredients").error}
                   onClick={() => {
                     setIngredientsData((prevState) => [...prevState, []]);
-                    push(defaultIngredient);
+                    push(createDefaultIngredient());
                   }}
                 >
                   <FontAwesomeIcon icon={faPlus} />

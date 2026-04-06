@@ -10,16 +10,25 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import Autocomplete, { Option } from "../../../common/autoComplete";
-import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
+import { MealTypeKey, TDays, TMealDishBase, type Prettify } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { EMealType } from "../../../constants";
 import { useLazyGetDishesQuery } from "../../dishes/api";
 import { TDishes } from "../../dishes/types";
 import { TCreateMealBase, TMealBase } from "./types";
+
+// Local type that includes fieldId for React keys (never sent to API)
+type TMealDishesWithFieldId = Prettify<TMealDishBase & { fieldId: string }>;
+type TMealFormikData = Prettify<
+  Omit<TCreateMealBase, "mealType" | "dishes"> & {
+    mealType: MealTypeKey | "";
+    dishes: TMealDishesWithFieldId[];
+  }
+>;
 
 export const mealTypes = [
   { key: "wakeup", label: EMealType.wakeup },
@@ -56,16 +65,31 @@ type Props = {
   onClose: () => void;
 };
 
-const defaultDish: TMealDishBase = {
+const createDefaultDish = (): TMealDishesWithFieldId => ({
   dish: { _id: "", name: "" },
-};
+  fieldId: crypto.randomUUID(),
+});
 
 const dishInputClasses = {
   inputWrapper: ["bg-white"],
 };
 
-const dishToAutoCompleteOption = (dishes: TDishes[]): Option[] =>
+const dishToAutoCompleteOption = (dishes: TDishes[]) =>
   dishes.map(({ _id, name }) => ({ _id, name }));
+
+const prepareDishes = (dishes: TMealDishBase[]): TMealDishesWithFieldId[] =>
+  dishes.map((dish) => ({
+    dish: dish.dish,
+    fieldId: crypto.randomUUID(),
+  }));
+
+const cleanFormikData = (data: TMealFormikData): TCreateMealBase => ({
+  mealType: data.mealType ? EMealType[data.mealType] : "",
+  isPrivate: data.isPrivate,
+  dishes: data.dishes.map((dish: TMealDishesWithFieldId) => ({
+    dish: dish.dish,
+  })),
+});
 
 export default function EditMeal({
   isLoading,
@@ -76,17 +100,18 @@ export default function EditMeal({
   onClose,
 }: Props) {
   const { id = "" } = useParams();
+  const initialDishes = useMemo(() => (dishes ? prepareDishes(dishes) : undefined), [dishes]);
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
-  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>();
-  const formik = useFormik({
+  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
+  const formik = useFormik<TMealFormikData>({
     initialValues: {
       mealType: mealType || "",
-      dishes,
-    } as TCreateMealBase,
+      dishes: initialDishes || [],
+    },
     validationSchema: schema,
     onSubmit: (values) => {
-      onUpdate({ planId: id, day, ...values });
+      onUpdate({ planId: id, day, ...cleanFormikData(values) });
     },
   });
 
@@ -100,11 +125,13 @@ export default function EditMeal({
       const getDishesPromise = getDishes({ query: newQuery, page: 1 });
       searchControllerRef.current = getDishesPromise;
 
-      const { data } = await getDishesPromise;
+      const { data, requestId } = await getDishesPromise;
       const dishes = data?.data ?? [];
       const option = dishToAutoCompleteOption(dishes);
-
-      setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      // only update if the response is from the current request
+      if ((await searchControllerRef.current).requestId === requestId) {
+        setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      }
     },
     [getDishes, dishesData],
   );
@@ -147,8 +174,8 @@ export default function EditMeal({
           <FieldArray name="dishes">
             {({ push, remove }) => (
               <>
-                {formik.values.dishes.map(({ dish: { _id } }, index) => (
-                  <div key={_id} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                {formik.values.dishes.map(({ fieldId }, index) => (
+                  <div key={fieldId} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
                     <Autocomplete
                       label="Dish"
                       placeholder="Type to Search (E.g. Roti, palak paneer etc.)"
@@ -192,7 +219,7 @@ export default function EditMeal({
                   )}
                   onClick={() => {
                     setDishesData((prevState) => [...prevState, []]);
-                    push(defaultDish);
+                    push(createDefaultDish());
                   }}
                 >
                   <FontAwesomeIcon icon={faPlus} />
