@@ -24,7 +24,8 @@ import { TCreateMealBase, TMealBase } from "./types";
 // Local type that includes fieldId for React keys (never sent to API)
 type TMealDishesWithFieldId = Prettify<TMealDishBase & { fieldId: string }>;
 type TMealFormikData = Prettify<
-  Omit<TCreateMealBase, "dishes"> & {
+  Omit<TCreateMealBase, "mealType" | "dishes"> & {
+    mealType: MealTypeKey | "";
     dishes: TMealDishesWithFieldId[];
   }
 >;
@@ -83,7 +84,7 @@ const prepareDishes = (dishes: TMealDishBase[]): TMealDishesWithFieldId[] =>
   }));
 
 const cleanFormikData = (data: TMealFormikData): TCreateMealBase => ({
-  mealType: data.mealType,
+  mealType: data.mealType ? EMealType[data.mealType] : "",
   isPrivate: data.isPrivate,
   dishes: data.dishes.map((dish: TMealDishesWithFieldId) => ({
     dish: dish.dish,
@@ -105,7 +106,7 @@ export default function EditMeal({
   const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
   const formik = useFormik<TMealFormikData>({
     initialValues: {
-      mealType: mealType ? EMealType[mealType] : "",
+      mealType: mealType || "",
       dishes: initialDishes || [],
     },
     validationSchema: schema,
