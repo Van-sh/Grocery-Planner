@@ -104,9 +104,13 @@ export default function EditMeal({
       const dishes = data?.data ?? [];
       const option = dishToAutoCompleteOption(dishes);
 
-      setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      setDishesData((prevData) => [
+        ...prevData.slice(0, index),
+        option,
+        ...prevData.slice(index + 1),
+      ]);
     },
-    [getDishes, dishesData],
+    [getDishes],
   );
 
   const handleSearchChange = useMemo(

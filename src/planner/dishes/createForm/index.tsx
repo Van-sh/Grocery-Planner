@@ -101,14 +101,14 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       const dish = data?.data ?? [];
       // only update if the response is from the current request
       if ((await searchControllerRef.current).requestId === requestId) {
-        setIngredientsData([
-          ...ingredientsData.slice(0, index),
+        setIngredientsData((prevData) => [
+          ...prevData.slice(0, index),
           dish,
-          ...ingredientsData.slice(index + 1),
+          ...prevData.slice(index + 1),
         ]);
       }
     },
-    [getIngredients, ingredientsData],
+    [getIngredients],
   );
 
   const handleSearchChange = useMemo(

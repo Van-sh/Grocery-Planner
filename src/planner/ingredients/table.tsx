@@ -44,6 +44,7 @@ export default function IngredientTable({ data, onEdit, onDelete }: Props) {
           <div className="flex items-center gap-2">
             <Tooltip content="Edit">
               <button
+                aria-label="edit ingredient"
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onEdit(item)}
               >
@@ -52,6 +53,7 @@ export default function IngredientTable({ data, onEdit, onDelete }: Props) {
             </Tooltip>
             <Tooltip content="Delete">
               <button
+                aria-label="delete ingredient"
                 className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => onDelete(item._id)}
               >

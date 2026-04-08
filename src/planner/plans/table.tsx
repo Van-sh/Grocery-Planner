@@ -41,6 +41,7 @@ export default function PlansTable({ data, onDetails, onDelete }: Props) {
           <div className="flex items-center gap-2">
             <Tooltip content="Details">
               <button
+                aria-label="view plan details"
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onDetails(item._id)}
               >
@@ -49,6 +50,7 @@ export default function PlansTable({ data, onDetails, onDelete }: Props) {
             </Tooltip>
             <Tooltip content="Delete">
               <button
+                aria-label="delete details"
                 className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => onDelete(item._id)}
               >
