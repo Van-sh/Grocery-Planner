@@ -111,11 +111,15 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     [getIngredients, ingredientsData],
   );
 
-  const handleSearchChange = debounce(
-    // updates a state when UI needs to be updated
-    // eslint-disable-next-line react-hooks/refs
-    refetchIngredient,
-    750,
+  const handleSearchChange = useMemo(
+    () =>
+      debounce(
+        // updates a state when UI needs to be updated
+        // eslint-disable-next-line react-hooks/refs
+        refetchIngredient,
+        750,
+      ),
+    [refetchIngredient],
   );
   const handleSearchItemSelect = (value: string, index: number) => {
     // not updating dish name because it is not needed in api.

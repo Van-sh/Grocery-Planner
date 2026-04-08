@@ -10,7 +10,7 @@ import {
   SelectItem,
 } from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import Autocomplete, { Option } from "../../../common/autoComplete";
@@ -109,11 +109,15 @@ export default function EditMeal({
     [getDishes, dishesData],
   );
 
-  const handleSearchChange = debounce(
-    // updates a state when UI needs to be updated
-    // eslint-disable-next-line react-hooks/refs
-    refetchDishes,
-    750,
+  const handleSearchChange = useMemo(
+    () =>
+      debounce(
+        // updates a state when UI needs to be updated
+        // eslint-disable-next-line react-hooks/refs
+        refetchDishes,
+        750,
+      ),
+    [refetchDishes],
   );
 
   const handleSearchItemSelect = (value: string, index: number) => {

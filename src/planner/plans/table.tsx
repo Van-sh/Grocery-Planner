@@ -49,7 +49,7 @@ export default function PlansTable({ data, onDetails, onDelete }: Props) {
             </Tooltip>
             <Tooltip content="Delete">
               <button
-                className="text-lg text-danger cursor-pointer active:opaity-50"
+                className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => onDelete(item._id)}
               >
                 <DeleteIcon />
