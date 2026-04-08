@@ -131,7 +131,7 @@ export default function EditMeal({
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} autoComplete="false">
+    <form onSubmit={formik.handleSubmit} autoComplete="off">
       <ModalHeader>Add New Meal</ModalHeader>
       <ModalBody>
         <Select
@@ -149,7 +149,7 @@ export default function EditMeal({
           ))}
         </Select>
 
-        <div className="text-default-500, text-small">Dishes</div>
+        <div className="text-default-500 text-small">Dishes</div>
 
         <FormikProvider value={formik}>
           <FieldArray name="dishes">

@@ -96,9 +96,9 @@ export default function EditPlanForm({ refetch }: Props) {
   useEffect(() => {
     if (isUpdateMealSuccess) {
       handleCreateClose();
-      handleMutationSuccess("created");
+      handleMutationSuccess("updated");
     } else if (isUpdateMealError) {
-      handleMutationError("create");
+      handleMutationError("update");
     }
   }, [
     isUpdateMealSuccess,
@@ -110,7 +110,7 @@ export default function EditPlanForm({ refetch }: Props) {
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit} autoComplete="false" className="w-full px-4 md:px-6">
+      <form onSubmit={formik.handleSubmit} autoComplete="off" className="w-full px-4 md:px-6">
         <div className="flex justify-between items-start mt-6 gap-4">
           <Input
             className="max-w-3xl"
