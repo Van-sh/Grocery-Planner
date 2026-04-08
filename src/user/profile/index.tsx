@@ -115,7 +115,7 @@ export default function Profile() {
               size="sm"
               radius="full"
               className="absolute -right-1.25 -bottom-1.25"
-              onClick={showImageOptionsModal}
+              onPress={showImageOptionsModal}
             >
               <EditIcon />
             </Button>

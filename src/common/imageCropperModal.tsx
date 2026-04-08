@@ -50,13 +50,13 @@ export default function ImageCropperModal({
   }
 
   async function handleUpload() {
-    const image = imgRef.current!;
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-
+    const image = imgRef.current;
     if (!image || !completedCrop) {
       throw new Error("Crop canvas does not exist");
     }
+
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
 
     const offscreen = new OffscreenCanvas(
       completedCrop.width * scaleX,

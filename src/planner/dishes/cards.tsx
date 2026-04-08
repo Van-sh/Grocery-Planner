@@ -1,4 +1,4 @@
-import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import EyeIcon from "../../assets/eyeIcon";
@@ -36,28 +36,19 @@ export default function DishesCards({ data, onDetails, onEdit, onDelete }: Props
           </CardBody>
           <Divider />
           <CardFooter className="justify-between">
-            <div
-              className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1"
-              onClick={() => onDetails(dish)}
-            >
+            <Button variant="light" onPress={() => onDetails(dish)}>
               <EyeIcon />
               Details
-            </div>
-            <div
-              className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1"
-              onClick={() => onEdit(dish)}
-            >
+            </Button>
+            <Button variant="light" onPress={() => onEdit(dish)}>
               <EditIcon />
               Edit
-            </div>
+            </Button>
             <Divider orientation="vertical" />
-            <div
-              className="text-danger cursor-pointer active:opactiy-50 flex items-center gap-1"
-              onClick={() => onDelete(dish._id)}
-            >
+            <Button variant="light" color="danger" onPress={() => onDelete(dish._id)}>
               <DeleteIcon />
               Delete
-            </div>
+            </Button>
           </CardFooter>
         </Card>
       ))}

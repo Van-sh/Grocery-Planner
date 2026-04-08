@@ -82,7 +82,7 @@ export default function Signup({ onLogin, onClose }: Props) {
       <h1 className="text-2xl text-center">Welcome to Grocery Planner</h1>
       <p className="text-xs mt-2 mb-8 text-center">
         Already have an account?
-        <Button size="sm" className="bg-white p-0 pl-1 min-w-0 h-auto underline" onClick={onLogin}>
+        <Button size="sm" className="bg-white p-0 pl-1 min-w-0 h-auto underline" onPress={onLogin}>
           Log in
         </Button>
       </p>

@@ -29,10 +29,10 @@ export default function ConfirmationModal({
           <div className="p-6">
             <h2 className="text-lg">{message}</h2>
             <div className="flex justify-end gap-4 mt-6">
-              <Button color="danger" onClick={onYesClick} isLoading={isLoading}>
+              <Button color="danger" onPress={onYesClick} isLoading={isLoading}>
                 Yes
               </Button>
-              <Button onClick={onModalClose} isLoading={isLoading}>
+              <Button onPress={onModalClose} isLoading={isLoading}>
                 No
               </Button>
             </div>

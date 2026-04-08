@@ -70,7 +70,7 @@ export default function Login({ onSignup, onClose }: Props) {
       <h1 className="text-2xl text-center">Welcome back</h1>
       <p className="text-xs mt-2 mb-8 text-center">
         Don't have an account?
-        <Button size="sm" className="bg-white p-0 pl-1 min-w-0 h-auto underline" onClick={onSignup}>
+        <Button size="sm" className="bg-white p-0 pl-1 min-w-0 h-auto underline" onPress={onSignup}>
           Sign Up
         </Button>
       </p>

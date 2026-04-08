@@ -26,7 +26,7 @@ export default function DesktopView({ openCreatePlanModal, openEditPlanModal }: 
               color="primary"
               fullWidth
               startContent={<FontAwesomeIcon icon={faPlus} />}
-              onClick={() => openCreatePlanModal(day)}
+              onPress={() => openCreatePlanModal(day)}
             >
               Add Meal
             </Button>

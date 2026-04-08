@@ -174,7 +174,7 @@ export default function EditMeal({
 
                     <Button
                       variant="flat"
-                      onClick={() => {
+                      onPress={() => {
                         setDishesData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
                       }}
@@ -190,7 +190,7 @@ export default function EditMeal({
                       !!(formik.errors.dishes?.[i] as FormikErrors<TMealDishBase>)?.dish?._id ||
                       formik.values.dishes[i].dish._id === "",
                   )}
-                  onClick={() => {
+                  onPress={() => {
                     setDishesData((prevState) => [...prevState, []]);
                     push(defaultDish);
                   }}

@@ -189,7 +189,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
 
                     <Divider />
 
-                    <Button variant="flat" onClick={() => remove(index)}>
+                    <Button variant="flat" onPress={() => remove(index)}>
                       Remove
                     </Button>
                   </div>
@@ -198,7 +198,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                 <Button
                   variant="bordered"
                   isDisabled={!!formik.getFieldMeta("preparations").error}
-                  onClick={() => push(defaultPreparation)}
+                  onPress={() => push(defaultPreparation)}
                 >
                   <FontAwesomeIcon icon={faPlus} />
                   Add Preparation
@@ -209,10 +209,15 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         </FormikProvider>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
+        <Button color="danger" variant="light" onPress={onClose} isDisabled={isLoading}>
           Close
         </Button>
-        <Button type="submit" color="primary" isDisabled={!formik.isValid} isLoading={isLoading}>
+        <Button
+          type="submit"
+          color="primary"
+          isDisabled={!(formik.dirty && formik.isValid)}
+          isLoading={isLoading}
+        >
           Submit
         </Button>
       </ModalFooter>

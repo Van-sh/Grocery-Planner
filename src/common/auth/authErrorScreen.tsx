@@ -19,7 +19,7 @@ export default function AuthErrorScreen({ errorMsg = defaultErrorMsg }: Props) {
       <p className="text-7xl">{emoji.current}</p>
       <p className="text-3xl mt-4 font-bold">{errorMsg}</p>
       <div className="mt-10">
-        <Button color="primary" onClick={showLoginModal}>
+        <Button color="primary" onPress={showLoginModal}>
           Login
         </Button>
         <span className="mx-4">or</span>

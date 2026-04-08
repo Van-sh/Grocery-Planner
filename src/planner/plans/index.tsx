@@ -116,7 +116,7 @@ export default function Plans() {
 
   return (
     <div className="flex justify-center">
-      <div className="max-w-[1024px] w-full px-6">
+      <div className="max-w-5xl w-full px-6">
         <h1 className="text-2xl mb-6">Meal Plans</h1>
         <Search name="Plans" query={query} setQuery={setQuery} />
 
@@ -127,7 +127,7 @@ export default function Plans() {
           ) : (
             <>
               <List data={data} onDetails={handleDetails} onDelete={showDeleteModal} />
-              <div className="mt-4 flex justify-end mb-24 sm-mb-0">
+              <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
                   showControls
                   total={Math.ceil(count / limit)}
@@ -142,7 +142,7 @@ export default function Plans() {
           color="primary"
           variant="shadow"
           className="fixed bottom-8 right-8 z-20"
-          onClick={goToAddNewPlanPage}
+          onPress={goToAddNewPlanPage}
         >
           <PlusIcon />
           Create
@@ -173,7 +173,7 @@ export default function Plans() {
         onModalClose={onDeleteModalClose}
         onYesClick={() => handleDelete(selectedPlan!)}
         isLoading={isDeleteLoading}
-        message="Are you sure you want to delete this dish?"
+        message="Are you sure you want to delete this plan?"
       />
     </div>
   );

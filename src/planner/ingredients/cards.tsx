@@ -1,4 +1,4 @@
-import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import type { TIngredients } from "./types";
@@ -30,21 +30,15 @@ export default function IngredientCards({ data, onEdit, onDelete }: Props) {
           </CardBody>
           <Divider />
           <CardFooter className="justify-between">
-            <div
-              className="text-default-400 cursor-pointer active:opacity-50 flex items-center gap-1"
-              onClick={() => onEdit(ingredient)}
-            >
+            <Button variant="light" onPress={() => onEdit(ingredient)}>
               <EditIcon />
               Edit
-            </div>
+            </Button>
             <Divider orientation="vertical" />
-            <div
-              className="text-danger cursor-pointer active:opacity-50 flex items-center gap-1"
-              onClick={() => onDelete(ingredient._id)}
-            >
+            <Button variant="light" color="danger" onPress={() => onDelete(ingredient._id)}>
               <DeleteIcon />
               Delete
-            </div>
+            </Button>
           </CardFooter>
         </Card>
       ))}

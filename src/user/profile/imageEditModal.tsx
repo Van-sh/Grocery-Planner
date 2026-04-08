@@ -84,7 +84,7 @@ export default function ImageEditModal({
                       key="delete"
                       startContent={<DeleteIcon {...iconProps} />}
                       onClick={showDeleteConfirmationModal}
-                      textValue="Upload Image"
+                      textValue="Delete Image"
                       className="text-danger"
                       color="danger"
                     >

@@ -33,7 +33,7 @@ export default function SingleToast({ message, type = "info", index = 0, onClose
         isIconOnly
         size="sm"
         variant="light"
-        onClick={onClose}
+        onPress={onClose}
       >
         <span className="h-4 w-4">
           <XMark />

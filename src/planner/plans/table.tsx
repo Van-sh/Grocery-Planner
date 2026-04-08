@@ -40,20 +40,20 @@ export default function PlansTable({ data, onDetails, onDelete }: Props) {
         return (
           <div className="flex items-center gap-2">
             <Tooltip content="Details">
-              <span
+              <button
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onDetails(item._id)}
               >
                 <EyeIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip content="Delete">
-              <span
+              <button
                 className="text-lg text-danger cursor-pointer active:opaity-50"
                 onClick={() => onDelete(item._id)}
               >
                 <DeleteIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );

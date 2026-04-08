@@ -120,12 +120,12 @@ export default function NavBar() {
           ) : (
             <>
               <NavbarItem>
-                <Button color="primary" variant="ghost" onClick={showLoginModal}>
+                <Button color="primary" variant="ghost" onPress={showLoginModal}>
                   Log In
                 </Button>
               </NavbarItem>
               <NavbarItem>
-                <Button color="primary" variant="solid" onClick={showSignupModal}>
+                <Button color="primary" variant="solid" onPress={showSignupModal}>
                   Sign Up
                 </Button>
               </NavbarItem>

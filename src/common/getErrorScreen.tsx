@@ -10,7 +10,7 @@ export default function GetErrorScreen({ errorMsg, onRetry }: Props) {
     <main className="text-center px-6 py-24">
       <p className="text-7xl">{emoji.current}</p>
       <p className="text-3xl mt-4 font-bold">{errorMsg}</p>
-      <Button className="mt-10" color="primary" onClick={onRetry}>
+      <Button className="mt-10" color="primary" onPress={onRetry}>
         Retry
       </Button>
     </main>

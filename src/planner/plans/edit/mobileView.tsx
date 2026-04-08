@@ -26,7 +26,7 @@ export default function MobileView({ openCreatePlanModal, openEditPlanModal }: P
             color="primary"
             fullWidth
             startContent={<PlusIcon />}
-            onClick={() => openCreatePlanModal(day)}
+            onPress={() => openCreatePlanModal(day)}
           >
             Add Meal
           </Button>

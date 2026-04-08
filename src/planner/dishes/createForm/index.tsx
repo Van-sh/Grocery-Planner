@@ -264,7 +264,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
 
                     <Button
                       variant="flat"
-                      onClick={() => {
+                      onPress={() => {
                         setIngredientsData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
                       }}
@@ -277,7 +277,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                 <Button
                   variant="bordered"
                   isDisabled={!!formik.getFieldMeta("ingredients").error}
-                  onClick={() => {
+                  onPress={() => {
                     setIngredientsData((prevState) => [...prevState, []]);
                     push(defaultIngredient);
                   }}
@@ -291,7 +291,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         </FormikProvider>
         <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
+          <Button color="danger" variant="light" onPress={onClose} isDisabled={isLoading}>
             Close
           </Button>
           <Button

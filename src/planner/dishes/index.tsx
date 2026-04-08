@@ -182,7 +182,7 @@ export default function Dishes() {
           color="primary"
           variant="shadow"
           className="fixed bottom-8 right-8 z-20"
-          onClick={onEditModalOpen}
+          onPress={onEditModalOpen}
         >
           <PlusIcon />
           Create
