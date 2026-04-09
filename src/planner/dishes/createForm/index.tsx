@@ -88,6 +88,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>();
 
   const [getIngredients] = useLazyGetIngredientsQuery();
+
   const refetchIngredient = useCallback(
     async (newQuery: string, index: number) => {
       const preferCachedValues = true;

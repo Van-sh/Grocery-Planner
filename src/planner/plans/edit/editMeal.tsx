@@ -92,19 +92,19 @@ export default function EditMeal({
 
   const refetchDishes = useCallback(
     async (newQuery: string, index: number) => {
-      // if there is a pending request, abort it before calling new api
-      if (searchControllerRef.current) {
-        searchControllerRef.current.abort();
-      }
+      const preferCachedValues = true;
 
-      const getDishesPromise = getDishes({ query: newQuery, page: 1 });
+      const getDishesPromise = getDishes({ query: newQuery, page: 1 }, preferCachedValues);
       searchControllerRef.current = getDishesPromise;
 
-      const { data } = await getDishesPromise;
+      const { data, requestId } = await getDishesPromise;
       const dishes = data?.data ?? [];
-      const option = dishToAutoCompleteOption(dishes);
 
-      setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      // only update if the response is from the current request
+      if ((await searchControllerRef.current).requestId === requestId) {
+        const option = dishToAutoCompleteOption(dishes);
+        setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      }
     },
     [getDishes, dishesData],
   );
