@@ -1,6 +1,6 @@
-import { Option } from "../../common/autoComplete";
-import { TUser } from "../../common/types";
-import { type TIngredients } from "../ingredients/types";
+import type { Option } from "../../common/autoComplete";
+import type { TUser } from "../../common/types";
+import type { TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
   ingredient: Option;

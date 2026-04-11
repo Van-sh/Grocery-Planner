@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Divider, Tooltip } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Divider, Tooltip } from "@heroui/react";
 import EditIcon from "../../assets/editIcon";
 import { EMealType } from "../../constants";
 import { MealTypeKey, TDays, TMealDishBase } from "../types";

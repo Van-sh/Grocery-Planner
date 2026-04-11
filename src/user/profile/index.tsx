@@ -1,4 +1,4 @@
-import { Avatar, Button, Input } from "@nextui-org/react";
+import { Avatar, Button, Input } from "@heroui/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
@@ -9,7 +9,7 @@ import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { useEditUserDetailsMutation } from "../api";
-import { TEditUserDetailsResponse } from "../types";
+import type { TEditUserDetailsResponse } from "../types";
 import ImageEditModal from "./imageEditModal";
 
 const schema = yup.object({
@@ -114,8 +114,8 @@ export default function Profile() {
               isIconOnly
               size="sm"
               radius="full"
-              className="absolute right-[-5px] bottom-[-5px]"
-              onClick={showImageOptionsModal}
+              className="absolute -right-1.25 -bottom-1.25"
+              onPress={showImageOptionsModal}
             >
               <EditIcon />
             </Button>

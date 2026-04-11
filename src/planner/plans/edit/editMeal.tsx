@@ -8,9 +8,9 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import Autocomplete, { Option } from "../../../common/autoComplete";
@@ -21,7 +21,7 @@ import { useLazyGetDishesQuery } from "../../dishes/api";
 import { TDishes } from "../../dishes/types";
 import { TCreateMealBase, TMealBase } from "./types";
 
-export const mealTypes = [
+const mealTypes = [
   { key: "wakeup", label: EMealType.wakeup },
   { key: "breakfast", label: EMealType.breakfast },
   { key: "midmorning", label: EMealType.midmorning },
@@ -78,7 +78,7 @@ export default function EditMeal({
   const { id = "" } = useParams();
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
-  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>();
+  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
   const formik = useFormik({
     initialValues: {
       mealType: mealType || "",
@@ -104,14 +104,24 @@ export default function EditMeal({
       const dishes = data?.data ?? [];
       const option = dishToAutoCompleteOption(dishes);
 
-      setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+      setDishesData((prevData) => [
+        ...prevData.slice(0, index),
+        option,
+        ...prevData.slice(index + 1),
+      ]);
     },
-    [getDishes, dishesData],
+    [getDishes],
   );
 
-  const handleSearchChange = debounce(
-    (newQuery: string, index: number) => refetchDishes(newQuery, index),
-    750,
+  const handleSearchChange = useMemo(
+    () =>
+      debounce(
+        // updates a state when UI needs to be updated
+        // eslint-disable-next-line react-hooks/refs
+        refetchDishes,
+        750,
+      ),
+    [refetchDishes],
   );
 
   const handleSearchItemSelect = (value: string, index: number) => {
@@ -121,7 +131,7 @@ export default function EditMeal({
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} autoComplete="false">
+    <form onSubmit={formik.handleSubmit} autoComplete="off">
       <ModalHeader>Add New Meal</ModalHeader>
       <ModalBody>
         <Select
@@ -135,13 +145,11 @@ export default function EditMeal({
           classNames={{ trigger: ["bg-white"] }}
         >
           {mealTypes.map((type) => (
-            <SelectItem key={type.key} value={type.key}>
-              {type.label}
-            </SelectItem>
+            <SelectItem key={type.key}>{type.label}</SelectItem>
           ))}
         </Select>
 
-        <div className="text-default-500, text-small">Dishes</div>
+        <div className="text-default-500 text-small">Dishes</div>
 
         <FormikProvider value={formik}>
           <FieldArray name="dishes">
@@ -174,7 +182,7 @@ export default function EditMeal({
 
                     <Button
                       variant="flat"
-                      onClick={() => {
+                      onPress={() => {
                         setDishesData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
                       }}
@@ -190,7 +198,7 @@ export default function EditMeal({
                       !!(formik.errors.dishes?.[i] as FormikErrors<TMealDishBase>)?.dish?._id ||
                       formik.values.dishes[i].dish._id === "",
                   )}
-                  onClick={() => {
+                  onPress={() => {
                     setDishesData((prevState) => [...prevState, []]);
                     push(defaultDish);
                   }}

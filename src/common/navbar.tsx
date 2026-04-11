@@ -11,10 +11,10 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { createSelector } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
-import { type RootState, useAppDispatch, useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector, type RootState } from "../store";
 import { useGetCurrentUserQuery } from "../user/api";
 import { isLoggedIn } from "./auth/helper";
 import Login from "./auth/login";
@@ -91,7 +91,7 @@ export default function NavBar() {
 
   return (
     <>
-      <Navbar onMenuOpenChange={setIsMenuOpen}>
+      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
         <NavbarContent>
           <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
           <NavbarBrand>
@@ -101,7 +101,13 @@ export default function NavBar() {
         <NavbarMenu>
           {menuItems.map((item) => (
             <NavbarMenuItem key={item.label}>
-              <Link color={"foreground"} className="w-full" href={`/planner${item.href}`} size="lg">
+              <Link
+                color={"foreground"}
+                className="w-full"
+                href={`/planner${item.href}`}
+                size="lg"
+                onPress={() => setIsMenuOpen(false)}
+              >
                 {item.label}
               </Link>
             </NavbarMenuItem>
@@ -114,12 +120,12 @@ export default function NavBar() {
           ) : (
             <>
               <NavbarItem>
-                <Button color="primary" variant="ghost" onClick={showLoginModal}>
+                <Button color="primary" variant="ghost" onPress={showLoginModal}>
                   Log In
                 </Button>
               </NavbarItem>
               <NavbarItem>
-                <Button color="primary" variant="solid" onClick={showSignupModal}>
+                <Button color="primary" variant="solid" onPress={showSignupModal}>
                   Sign Up
                 </Button>
               </NavbarItem>
