@@ -1,30 +1,21 @@
 import { Card, CardBody, CardHeader, Divider, Tooltip } from "@heroui/react";
+import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import { EMealType } from "../../constants";
 import { MealTypeKey, TDays, TMealDishBase } from "../types";
 import { useData } from "./context";
 import { getSortedMeals } from "./helper";
 
-type BaseProps = {
+type Props = {
   day: TDays;
+  onEdit?: (day: TDays, mealType: MealTypeKey, dishes: TMealDishBase[]) => void;
+  onDelete?: (day: TDays, mealType: MealTypeKey) => void;
 };
-
-type EditableProps = {
-  isEditable: true;
-  onEdit: (day: TDays, mealType: MealTypeKey, dishes: TMealDishBase[]) => void;
-};
-
-type NonEditableProps = {
-  isEditable?: false;
-  onEdit?: never;
-};
-
-type Props = BaseProps & (EditableProps | NonEditableProps);
 
 /**
  * While using MealCards, pass meal data in context
  */
-export default function MealCards({ day, isEditable = false, onEdit }: Props) {
+export default function MealCards({ day, onEdit, onDelete }: Props) {
   const { data } = useData();
   const { meals = {} } = data;
   const dayMeals = getSortedMeals(meals[day] || []);
@@ -35,15 +26,29 @@ export default function MealCards({ day, isEditable = false, onEdit }: Props) {
         <Card className="mb-2" key={mealType}>
           <CardHeader className="bg-secondary/10 justify-between">
             <p className="text-sm text-secondary">{EMealType[mealType]}</p>
-            {isEditable && (
-              <Tooltip content="Edit">
-                <span
-                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => onEdit!(day, mealType, dishes)}
-                >
-                  <EditIcon />
-                </span>
-              </Tooltip>
+            {(onEdit || onDelete) && (
+              <div className="flex">
+                {onEdit && (
+                  <Tooltip content="Edit">
+                    <span
+                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                      onClick={() => onEdit(day, mealType, dishes)}
+                    >
+                      <EditIcon />
+                    </span>
+                  </Tooltip>
+                )}
+                {onDelete && (
+                  <Tooltip content="Delete">
+                    <span
+                      className="text-lg text-danger cursor-pointer active:opacity-50"
+                      onClick={() => onDelete(day, mealType)}
+                    >
+                      <DeleteIcon />
+                    </span>
+                  </Tooltip>
+                )}
+              </div>
             )}
           </CardHeader>
           <Divider />
