@@ -84,7 +84,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>(null);
+  const searchControllerRef = useRef<Record<number, ReturnType<typeof getIngredients> | null>>({});
 
   const [getIngredients] = useLazyGetIngredientsQuery();
 
@@ -96,12 +96,12 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         { query: newQuery, page: 1 },
         preferCachedValues,
       );
-      searchControllerRef.current = getIngredientsPromise;
+      searchControllerRef.current[index] = getIngredientsPromise;
 
       const { data, requestId } = await getIngredientsPromise;
       const dish = data?.data ?? [];
       // only update if the response is from the current request
-      if ((await searchControllerRef.current).requestId === requestId) {
+      if ((await searchControllerRef.current[index]).requestId === requestId) {
         setIngredientsData((prevData) => [
           ...prevData.slice(0, index),
           dish,

@@ -78,7 +78,7 @@ export default function EditMeal({
   const { id = "" } = useParams();
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
-  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
+  const searchControllerRef = useRef<Record<number, ReturnType<typeof getDishes> | null>>({});
   const formik = useFormik({
     initialValues: {
       mealType: mealType || "",
@@ -95,15 +95,19 @@ export default function EditMeal({
       const preferCachedValues = true;
 
       const getDishesPromise = getDishes({ query: newQuery, page: 1 }, preferCachedValues);
-      searchControllerRef.current = getDishesPromise;
+      searchControllerRef.current[index] = getDishesPromise;
 
       const { data, requestId } = await getDishesPromise;
       const dishes = data?.data ?? [];
 
       // only update if the response is from the current request
-      if ((await searchControllerRef.current).requestId === requestId) {
+      if ((await searchControllerRef.current[index]).requestId === requestId) {
         const option = dishToAutoCompleteOption(dishes);
-        setDishesData([...dishesData.slice(0, index), option, ...dishesData.slice(index + 1)]);
+        setDishesData((prevData) => [
+          ...prevData.slice(0, index),
+          option,
+          ...prevData.slice(index + 1),
+        ]);
       }
     },
     [getDishes],
