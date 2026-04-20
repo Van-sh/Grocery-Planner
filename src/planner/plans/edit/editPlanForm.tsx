@@ -26,6 +26,7 @@ export default function EditPlanForm({ refetch }: Props) {
   const [selectedDay, setSelectedDay] = useState<TDays>();
   const [selectedMealType, setSelectedMealType] = useState<MealTypeKey>();
   const [selectedDishes, setSelectedDishes] = useState<TMealDishBase[]>();
+  const [selectedMealId, setSelectedMealId] = useState<string>();
   const { data } = useData();
   const dispatch = useAppDispatch();
   const { id: planId = "" } = useParams();
@@ -107,16 +108,27 @@ export default function EditPlanForm({ refetch }: Props) {
   }, [onEditModalClose]);
 
   const openDeletePlanConfirmation = (day: TDays, mealType: MealTypeKey) => {
+    const mealId = (data.meals?.[day] || []).find((meal) => meal.mealType === mealType)?._id;
+    if (!planId || !mealId) {
+      dispatch(
+        addToast({
+          message: "Failed to delete meal",
+          type: "error",
+          autoClose: true,
+        }),
+      );
+      return;
+    }
+
     setSelectedDay(day);
     setSelectedMealType(mealType);
+    setSelectedMealId(mealId);
     onDeleteModalOpen();
   };
 
-  const handleDelete = (day: TDays, mealType: MealTypeKey) => {
-    const { meals = {} } = data;
-    const currentDayMeals = meals[day] || [];
-    const mealId = currentDayMeals.find((meal) => meal.mealType === mealType)?._id || "";
-    deleteMeal({ planId, mealId });
+  const handleDelete = () => {
+    if (!planId || !selectedMealId) return;
+    deleteMeal({ planId, mealId: selectedMealId });
   };
 
   useEffect(() => {
@@ -210,9 +222,7 @@ export default function EditPlanForm({ refetch }: Props) {
       <ConfirmationModal
         isModalOpen={isDeleteModalOpen}
         onModalClose={onDeleteModalClose}
-        onYesClick={() =>
-          selectedDay && selectedMealType && handleDelete(selectedDay, selectedMealType)
-        }
+        onYesClick={handleDelete}
         isLoading={isDeleteMealLoading}
         message="Are you sure you want to delete this meal?"
       />
