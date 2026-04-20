@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Button } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button } from "@heroui/react";
 import PlusIcon from "../../../assets/plus";
 import MealCards from "../../../common/mealCards";
 import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
@@ -26,7 +26,7 @@ export default function MobileView({ openCreatePlanModal, openEditPlanModal }: P
             color="primary"
             fullWidth
             startContent={<PlusIcon />}
-            onClick={() => openCreatePlanModal(day)}
+            onPress={() => openCreatePlanModal(day)}
           >
             Add Meal
           </Button>

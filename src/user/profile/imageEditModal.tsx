@@ -1,8 +1,8 @@
-import { Listbox, ListboxItem, Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { Listbox, ListboxItem, Modal, ModalBody, ModalContent } from "@heroui/react";
 import { ChangeEvent, useRef, useState } from "react";
+import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import PlusIcon from "../../assets/plus";
-import DeleteIcon from "../../assets/deleteIcon";
 import ConfirmationModal from "../../common/confirmationModal";
 
 type Props = {
@@ -84,7 +84,7 @@ export default function ImageEditModal({
                       key="delete"
                       startContent={<DeleteIcon {...iconProps} />}
                       onClick={showDeleteConfirmationModal}
-                      textValue="Upload Image"
+                      textValue="Delete Image"
                       className="text-danger"
                       color="danger"
                     >

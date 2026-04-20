@@ -1,9 +1,9 @@
-import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@heroui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { TCreatePlanBase } from "../../common/types";
 
-export const schema = yup.object({
+const schema = yup.object({
   name: yup.string().required("Name is required"),
   isPrivate: yup.boolean(),
   isActive: yup.boolean(),
@@ -29,7 +29,7 @@ export default function CreateForm({ isLoading, onClose, onCreate }: Props) {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} autoComplete="false">
+    <form onSubmit={formik.handleSubmit} autoComplete="off">
       <ModalHeader>Create New Plan</ModalHeader>
       <ModalBody>
         <Input
@@ -46,7 +46,7 @@ export default function CreateForm({ isLoading, onClose, onCreate }: Props) {
           Is Active
         </Checkbox>
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
+          <Button color="danger" variant="light" onPress={onClose} isDisabled={isLoading}>
             Close
           </Button>
           <Button

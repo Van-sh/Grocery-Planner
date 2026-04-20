@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
 import { readCookie } from "../../common/cookieHelper";
+import type { TIngredientsBase, TIngredientsGetAllQuery, TIngredientsResponse } from "./types";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const ingredientsApi = createApi({
   reducerPath: "ingredientsApi",
