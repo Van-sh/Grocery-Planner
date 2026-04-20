@@ -30,22 +30,26 @@ export default function MealCards({ day, onEdit, onDelete }: Props) {
               <div className="flex">
                 {onEdit && (
                   <Tooltip content="Edit">
-                    <span
+                    <button
+                      type="button"
+                      aria-label={`Edit ${EMealType[mealType]} meal`}
                       className="text-lg text-default-400 cursor-pointer active:opacity-50"
                       onClick={() => onEdit(day, mealType, dishes)}
                     >
                       <EditIcon />
-                    </span>
+                    </button>
                   </Tooltip>
                 )}
                 {onDelete && (
                   <Tooltip content="Delete">
-                    <span
+                    <button
+                      type="button"
+                      aria-label={`Delete ${EMealType[mealType]} meal`}
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => onDelete(day, mealType)}
                     >
                       <DeleteIcon />
-                    </span>
+                    </button>
                   </Tooltip>
                 )}
               </div>
