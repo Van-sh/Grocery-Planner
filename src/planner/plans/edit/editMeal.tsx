@@ -75,7 +75,7 @@ export default function EditMeal({
   onUpdate,
   onClose,
 }: Props) {
-  const { id = "" } = useParams();
+  const { planId = "" } = useParams();
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
   const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
@@ -86,7 +86,7 @@ export default function EditMeal({
     } as TCreateMealBase,
     validationSchema: schema,
     onSubmit: (values) => {
-      onUpdate({ planId: id, day, ...values });
+      onUpdate({ planId, day, ...values });
     },
   });
 

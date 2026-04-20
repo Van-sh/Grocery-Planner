@@ -29,7 +29,7 @@ export default function EditPlanForm({ refetch }: Props) {
   const [selectedMealId, setSelectedMealId] = useState<string>();
   const { data } = useData();
   const dispatch = useAppDispatch();
-  const { id: planId = "" } = useParams();
+  const { planId = "" } = useParams();
 
   const [
     updateMeal,
