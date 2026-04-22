@@ -1,13 +1,14 @@
 import { Button, Input, Modal, ModalContent, useDisclosure } from "@heroui/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import { useData } from "../../../common/mealCards/context";
 import { addToast } from "../../../common/toast/slice";
 import { MealTypeKey, TCreatePlanBase, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
-import { useUpdateMealMutation, type useGetPlanQuery } from "../api";
+import { useUpdateMealMutation, useUpdatePlansMutation, type useGetPlanQuery } from "../api";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
@@ -26,7 +27,12 @@ export default function EditPlanForm({ refetch }: Props) {
   const [selectedDishes, setSelectedDishes] = useState<TMealDishBase[]>();
   const { data } = useData();
   const dispatch = useAppDispatch();
+  const { planId = "" } = useParams();
 
+  const [
+    updatePlan,
+    { isLoading: isUpdatePlanLoading, isSuccess: isUpdatePlanSuccess, isError: isUpdatePlanError },
+  ] = useUpdatePlansMutation();
   const [
     updateMeal,
     { isLoading: isUpdateMealLoading, isSuccess: isUpdateMealSuccess, isError: isUpdateMealError },
@@ -38,7 +44,7 @@ export default function EditPlanForm({ refetch }: Props) {
     } as TCreatePlanBase,
     validationSchema: schema,
     onSubmit: (values) => {
-      console.log(values);
+      updatePlan({ id: planId, ...values });
     },
   });
   const {
@@ -94,6 +100,14 @@ export default function EditPlanForm({ refetch }: Props) {
   }, [onEditModalClose]);
 
   useEffect(() => {
+    if (isUpdatePlanSuccess) {
+      handleMutationSuccess("updated");
+    } else if (isUpdatePlanError) {
+      handleMutationError("update");
+    }
+  }, [isUpdatePlanSuccess, isUpdatePlanError, handleMutationSuccess, handleMutationError]);
+
+  useEffect(() => {
     if (isUpdateMealSuccess) {
       handleCreateClose();
       handleMutationSuccess("updated");
@@ -122,7 +136,7 @@ export default function EditPlanForm({ refetch }: Props) {
             isInvalid={formik.touched.name && !!formik.errors.name}
             errorMessage={formik.errors.name}
           />
-          <Button color="primary" size="lg" type="submit">
+          <Button color="primary" size="lg" type="submit" isLoading={isUpdatePlanLoading}>
             Save
           </Button>
         </div>

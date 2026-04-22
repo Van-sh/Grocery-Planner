@@ -35,6 +35,13 @@ export const plansApi = createApi({
         body: data,
       }),
     }),
+    updatePlans: build.mutation<TPlanResponse, TCreatePlanBase & { id: string }>({
+      query: ({ id, ...data }) => ({
+        url: `${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
     deletePlan: build.mutation<void, string>({
       query: (id) => ({
         url: `/${id}`,
@@ -55,6 +62,7 @@ export const {
   useGetPlansQuery,
   useGetPlanQuery,
   useCreatePlansMutation,
+  useUpdatePlansMutation,
   useDeletePlanMutation,
   useUpdateMealMutation,
 } = plansApi;
