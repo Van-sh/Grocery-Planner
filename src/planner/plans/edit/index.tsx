@@ -8,7 +8,7 @@ import { defaultPlan } from "./constants";
 import EditPlanForm from "./editPlanForm";
 
 export default function EditPlan() {
-  const { id = "" } = useParams();
+  const { planId = "" } = useParams();
   const {
     isLoading,
     isError: isGetError,
@@ -16,7 +16,7 @@ export default function EditPlan() {
     isSuccess: isGetSuccess,
     data: { data = defaultPlan } = {},
     refetch,
-  } = useGetPlanQuery(id);
+  } = useGetPlanQuery(planId);
 
   return (
     <>

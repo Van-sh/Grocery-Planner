@@ -20,6 +20,7 @@ export type TMeal = {
   mealType: MealTypeKey;
   name: string;
   dishes: TMealDishBase[];
+  _id: string;
 };
 
 export type TCreatePlanBase = {

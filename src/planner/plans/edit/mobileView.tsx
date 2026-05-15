@@ -7,9 +7,14 @@ import { days } from "../../../constants";
 type Props = {
   openCreatePlanModal: (days: TDays) => void;
   openEditPlanModal: (day: TDays, mealType: MealTypeKey, dishes: TMealDishBase[]) => void;
+  openDeletePlanConfirmation: (day: TDays, mealType: MealTypeKey) => void;
 };
 
-export default function MobileView({ openCreatePlanModal, openEditPlanModal }: Props) {
+export default function MobileView({
+  openCreatePlanModal,
+  openEditPlanModal,
+  openDeletePlanConfirmation,
+}: Props) {
   return (
     <Accordion
       isCompact
@@ -20,7 +25,7 @@ export default function MobileView({ openCreatePlanModal, openEditPlanModal }: P
     >
       {days.map((day) => (
         <AccordionItem key={day} title={day}>
-          <MealCards day={day} isEditable onEdit={openEditPlanModal} />
+          <MealCards day={day} onEdit={openEditPlanModal} onDelete={openDeletePlanConfirmation} />
           <Button
             variant="flat"
             color="primary"
