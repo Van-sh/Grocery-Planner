@@ -78,7 +78,7 @@ export default function EditMeal({
   const { id = "" } = useParams();
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
-  const searchControllerRef = useRef<ReturnType<typeof getDishes> | null>(null);
+  const searchControllerRef = useRef<Record<number, ReturnType<typeof getDishes> | null>>({});
   const formik = useFormik({
     initialValues: {
       mealType: mealType || "",
@@ -92,23 +92,23 @@ export default function EditMeal({
 
   const refetchDishes = useCallback(
     async (newQuery: string, index: number) => {
-      // if there is a pending request, abort it before calling new api
-      if (searchControllerRef.current) {
-        searchControllerRef.current.abort();
-      }
+      const preferCachedValues = true;
 
-      const getDishesPromise = getDishes({ query: newQuery, page: 1 });
-      searchControllerRef.current = getDishesPromise;
+      const getDishesPromise = getDishes({ query: newQuery, page: 1 }, preferCachedValues);
+      searchControllerRef.current[index] = getDishesPromise;
 
-      const { data } = await getDishesPromise;
+      const { data, requestId } = await getDishesPromise;
       const dishes = data?.data ?? [];
-      const option = dishToAutoCompleteOption(dishes);
 
-      setDishesData((prevData) => [
-        ...prevData.slice(0, index),
-        option,
-        ...prevData.slice(index + 1),
-      ]);
+      // only update if the response is from the current request
+      if ((await searchControllerRef.current[index]).requestId === requestId) {
+        const option = dishToAutoCompleteOption(dishes);
+        setDishesData((prevData) => [
+          ...prevData.slice(0, index),
+          option,
+          ...prevData.slice(index + 1),
+        ]);
+      }
     },
     [getDishes],
   );
