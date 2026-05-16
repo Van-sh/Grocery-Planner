@@ -1,16 +1,8 @@
-import { useRef } from "react";
 import { emojis } from "../constants";
+import { useLazyRef } from "./useLazyRef";
 
 export function useRandomEmojiRef() {
-  const emoji = useRef("");
-  if (!emoji.current) {
-    emoji.current =
-      emojis[
-        Math.floor(
-          // eslint-disable-next-line react-hooks/purity
-          Math.random() * emojis.length,
-        )
-      ];
-  }
+  const emoji = useLazyRef(() => emojis[Math.floor(Math.random() * emojis.length)]);
+
   return emoji;
 }

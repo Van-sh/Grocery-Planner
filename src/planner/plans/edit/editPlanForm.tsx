@@ -4,10 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
 import { useData } from "../../../common/mealCards/context";
 import { addToast } from "../../../common/toast/slice";
-import { MealTypeKey, TCreatePlanBase, TDays, TMealDishBase } from "../../../common/types";
+import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
-import { useAppDispatch } from "../../../store";
-import { useUpdateMealMutation, type useGetPlanQuery } from "../api";
+import { getErrorMessage } from "../../../helper";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { userApi } from "../../../user/api";
+import { useStartPlanMutation, useUpdateMealMutation, type useGetPlanQuery } from "../api";
+import StartForm from "../startForm";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
@@ -26,16 +29,29 @@ export default function EditPlanForm({ refetch }: Props) {
   const [selectedDishes, setSelectedDishes] = useState<TMealDishBase[]>();
   const { data } = useData();
   const dispatch = useAppDispatch();
+  const currentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
+  const currentPlanId =
+    typeof currentPlan?.plan === "string" ? currentPlan.plan : currentPlan?.plan?._id;
+  const isCurrentPlanRunning =
+    currentPlanId === data._id && !!currentPlan?.endsAt && new Date(currentPlan.endsAt) > new Date();
 
   const [
     updateMeal,
     { isLoading: isUpdateMealLoading, isSuccess: isUpdateMealSuccess, isError: isUpdateMealError },
   ] = useUpdateMealMutation();
+  const [
+    startPlan,
+    {
+      isLoading: isStartPlanLoading,
+      status: startPlanStatus,
+      error: startPlanError,
+    },
+  ] = useStartPlanMutation();
 
   const formik = useFormik({
     initialValues: {
       name: data.name,
-    } as TCreatePlanBase,
+    },
     validationSchema: schema,
     onSubmit: (values) => {
       console.log(values);
@@ -45,6 +61,11 @@ export default function EditPlanForm({ refetch }: Props) {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
     onClose: onEditModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isStartModalOpen,
+    onOpen: onStartModalOpen,
+    onClose: onStartModalClose,
   } = useDisclosure();
 
   const handleMutationSuccess = useCallback(
@@ -108,6 +129,28 @@ export default function EditPlanForm({ refetch }: Props) {
     handleMutationSuccess,
   ]);
 
+  useEffect(() => {
+    if (startPlanStatus === "fulfilled") {
+      onStartModalClose();
+      dispatch(userApi.endpoints.getCurrentUser.initiate(null, { forceRefetch: true, subscribe: false }));
+      dispatch(
+        addToast({
+          message: "Plan started successfully",
+          type: "success",
+          autoClose: true,
+        }),
+      );
+    } else if (startPlanStatus === "rejected") {
+      dispatch(
+        addToast({
+          message: getErrorMessage(startPlanError) || "Failed to start plan",
+          type: "error",
+          autoClose: true,
+        }),
+      );
+    }
+  }, [dispatch, onStartModalClose, startPlanError, startPlanStatus]);
+
   return (
     <>
       <form onSubmit={formik.handleSubmit} autoComplete="off" className="w-full px-4 md:px-6">
@@ -122,9 +165,14 @@ export default function EditPlanForm({ refetch }: Props) {
             isInvalid={formik.touched.name && !!formik.errors.name}
             errorMessage={formik.errors.name}
           />
-          <Button color="primary" size="lg" type="submit">
-            Save
-          </Button>
+          <div className="flex gap-2">
+            <Button color="secondary" size="lg" type="button" onPress={onStartModalOpen} isDisabled={isStartPlanLoading}>
+              {isCurrentPlanRunning ? "Restart Plan" : "Start Plan"}
+            </Button>
+            <Button color="primary" size="lg" type="submit">
+              Save
+            </Button>
+          </div>
         </div>
 
         {isDesktop ? (
@@ -157,6 +205,25 @@ export default function EditPlanForm({ refetch }: Props) {
               dishes={selectedDishes}
               onUpdate={updateMeal}
               onClose={handleCreateClose}
+            />
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isStartModalOpen}
+        onClose={onStartModalClose}
+        isDismissable={false}
+        isKeyboardDismissDisabled
+        placement="top-center"
+      >
+        <ModalContent>
+          {() => (
+            <StartForm
+              isLoading={isStartPlanLoading}
+              onClose={onStartModalClose}
+              onSubmit={(weeks) => startPlan({ planId: data._id, weeks })}
+              planName={data.name}
             />
           )}
         </ModalContent>
