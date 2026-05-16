@@ -9,18 +9,27 @@ import Loader from "../../common/loader";
 import Search from "../../common/search";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
-import { useAppDispatch } from "../../store";
-import { useCreatePlansMutation, useDeletePlanMutation, useGetPlansQuery } from "./api";
+import { useAppDispatch, useAppSelector } from "../../store";
+import {
+  useCreatePlansMutation,
+  useDeletePlanMutation,
+  useGetPlansQuery,
+  useStartPlanMutation,
+} from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
+import StartForm from "./startForm";
+import { userApi } from "../../user/api";
 
 const limit = 10;
 export default function Plans() {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState<string>();
+  const [selectedPlanName, setSelectedPlanName] = useState("");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const currentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
   const {
     isLoading,
     isError: isGetError,
@@ -32,6 +41,14 @@ export default function Plans() {
   const [create, { data: createData, isLoading: isCreateLoading, status: createStatus }] =
     useCreatePlansMutation();
   const [deleteP, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeletePlanMutation();
+  const [
+    startPlan,
+    {
+      isLoading: isStartPlanLoading,
+      status: startPlanStatus,
+      error: startPlanError,
+    },
+  ] = useStartPlanMutation();
 
   const {
     isOpen: isCreateModalOpen,
@@ -42,6 +59,11 @@ export default function Plans() {
     isOpen: isDeleteModalOpen,
     onOpen: onDeleteModalOpen,
     onClose: onDeleteModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isStartModalOpen,
+    onOpen: onStartModalOpen,
+    onClose: onStartModalClose,
   } = useDisclosure();
 
   const goToAddNewPlanPage = () => {
@@ -91,8 +113,25 @@ export default function Plans() {
     onDeleteModalOpen();
   };
 
+  const showStartModal = (id: string, name: string) => {
+    setSelectedPlan(id);
+    setSelectedPlanName(name);
+    onStartModalOpen();
+  };
+
   const handleDelete = (id: string) => {
     deleteP(id);
+  };
+
+  const handleStartPlanClose = useCallback(() => {
+    setSelectedPlan(undefined);
+    setSelectedPlanName("");
+    onStartModalClose();
+  }, [onStartModalClose]);
+
+  const handleStartPlan = (weeks: number) => {
+    if (!selectedPlan) return;
+    startPlan({ planId: selectedPlan, weeks });
   };
 
   useEffect(() => {
@@ -114,6 +153,28 @@ export default function Plans() {
     }
   }, [deleteStatus, onDeleteModalClose, handleMutationSuccess, handleMutationError]);
 
+  useEffect(() => {
+    if (startPlanStatus === "fulfilled") {
+      handleStartPlanClose();
+      dispatch(userApi.endpoints.getCurrentUser.initiate(null, { forceRefetch: true, subscribe: false }));
+      dispatch(
+        addToast({
+          message: "Plan started successfully",
+          type: "success",
+          autoClose: true,
+        }),
+      );
+    } else if (startPlanStatus === "rejected") {
+      dispatch(
+        addToast({
+          message: getErrorMessage(startPlanError) || "Failed to start plan",
+          type: "error",
+          autoClose: true,
+        }),
+      );
+    }
+  }, [dispatch, handleStartPlanClose, startPlanError, startPlanStatus]);
+
   return (
     <div className="flex justify-center">
       <div className="max-w-5xl w-full px-6">
@@ -126,7 +187,13 @@ export default function Plans() {
             <BlankScreen name="Meal Plans" onAdd={goToAddNewPlanPage} />
           ) : (
             <>
-              <List data={data} onDetails={handleDetails} onDelete={showDeleteModal} />
+              <List
+                data={data}
+                onDetails={handleDetails}
+                onDelete={showDeleteModal}
+                onStart={showStartModal}
+                currentPlan={currentPlan}
+              />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
                   showControls
@@ -163,6 +230,25 @@ export default function Plans() {
               isLoading={isCreateLoading}
               onCreate={create}
               onClose={onCreateModalClose}
+            />
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isStartModalOpen}
+        onClose={handleStartPlanClose}
+        isDismissable={false}
+        isKeyboardDismissDisabled
+        placement="top-center"
+      >
+        <ModalContent>
+          {() => (
+            <StartForm
+              isLoading={isStartPlanLoading}
+              onClose={handleStartPlanClose}
+              onSubmit={handleStartPlan}
+              planName={selectedPlanName}
             />
           )}
         </ModalContent>

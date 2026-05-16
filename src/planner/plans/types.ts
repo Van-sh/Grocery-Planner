@@ -13,3 +13,8 @@ export type TPlansGetAllQuery = {
   page: number;
   query: string;
 };
+
+export type TStartPlanRequest = {
+  planId: string;
+  weeks: number;
+};
