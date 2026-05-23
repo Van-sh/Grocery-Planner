@@ -1,4 +1,4 @@
-import { Button, Input, Modal, ModalContent, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Modal, ModalContent, useDisclosure } from "@heroui/react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
@@ -7,17 +7,17 @@ import { addToast } from "../../../common/toast/slice";
 import { MealTypeKey, TCreatePlanBase, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
-import { useUpdateMealMutation } from "../api";
+import { useUpdateMealMutation, type useGetPlanQuery } from "../api";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
 
-export const schema = yup.object({
+const schema = yup.object({
   name: yup.string().required("Name is required"),
 });
 
 type Props = {
-  refetch: any;
+  refetch: ReturnType<typeof useGetPlanQuery>["refetch"];
 };
 
 export default function EditPlanForm({ refetch }: Props) {
@@ -96,9 +96,9 @@ export default function EditPlanForm({ refetch }: Props) {
   useEffect(() => {
     if (isUpdateMealSuccess) {
       handleCreateClose();
-      handleMutationSuccess("created");
+      handleMutationSuccess("updated");
     } else if (isUpdateMealError) {
-      handleMutationError("create");
+      handleMutationError("update");
     }
   }, [
     isUpdateMealSuccess,
@@ -110,7 +110,7 @@ export default function EditPlanForm({ refetch }: Props) {
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit} autoComplete="false" className="w-full px-4 md:px-6">
+      <form onSubmit={formik.handleSubmit} autoComplete="off" className="w-full px-4 md:px-6">
         <div className="flex justify-between items-start mt-6 gap-4">
           <Input
             className="max-w-3xl"

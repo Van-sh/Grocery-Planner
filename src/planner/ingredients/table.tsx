@@ -1,4 +1,3 @@
-import { TIngredients } from "./types";
 import {
   Table,
   TableBody,
@@ -8,9 +7,10 @@ import {
   TableRow,
   Tooltip,
   getKeyValue,
-} from "@nextui-org/react";
-import EditIcon from "../../assets/editIcon";
+} from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
+import EditIcon from "../../assets/editIcon";
+import type { TIngredients } from "./types";
 
 type Props = {
   data: TIngredients[];
@@ -43,20 +43,22 @@ export default function IngredientTable({ data, onEdit, onDelete }: Props) {
         return (
           <div className="flex items-center gap-2">
             <Tooltip content="Edit">
-              <span
+              <button
+                aria-label="edit ingredient"
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onEdit(item)}
               >
                 <EditIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip content="Delete">
-              <span
+              <button
+                aria-label="delete ingredient"
                 className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => onDelete(item._id)}
               >
                 <DeleteIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );

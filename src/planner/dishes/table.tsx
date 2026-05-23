@@ -7,11 +7,11 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from "@nextui-org/react";
-import { TDishes } from "./types";
-import EditIcon from "../../assets/editIcon";
+} from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
+import EditIcon from "../../assets/editIcon";
 import EyeIcon from "../../assets/eyeIcon";
+import type { TDishes } from "./types";
 
 type Props = {
   data: TDishes[];
@@ -45,28 +45,31 @@ export default function DishesTable({ data, onDetails, onEdit, onDelete }: Props
         return (
           <div className="flex items-center gap-2">
             <Tooltip content="Details">
-              <span
+              <button
+                aria-label="view dish details"
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onDetails(item)}
               >
                 <EyeIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip content="Edit">
-              <span
+              <button
+                aria-label="edit dish"
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onEdit(item)}
               >
                 <EditIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip content="Delete">
-              <span
+              <button
+                aria-label="delete dish"
                 className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => onDelete(item._id)}
               >
                 <DeleteIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );

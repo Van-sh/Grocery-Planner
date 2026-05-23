@@ -1,3 +1,4 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
@@ -8,12 +9,11 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from "@nextui-org/react";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import * as yup from "yup";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
+import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
-import { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
+import type { TIngredients, TIngredientsBase, TPreparationBase } from "../types";
 
 // TODO: Create a dropdown for Unit
 
@@ -94,7 +94,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} autoComplete="false">
+    <form onSubmit={formik.handleSubmit} autoComplete="off">
       <ModalHeader>{initialValues ? "Edit" : "Add New"} Ingredient</ModalHeader>
       <ModalBody>
         <Input
@@ -183,15 +183,13 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       classNames={{ trigger: ["bg-white"] }}
                     >
                       {preparationUnits.map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
+                        <SelectItem key={unit}>{unit}</SelectItem>
                       ))}
                     </Select>
 
                     <Divider />
 
-                    <Button variant="flat" onClick={() => remove(index)}>
+                    <Button variant="flat" onPress={() => remove(index)}>
                       Remove
                     </Button>
                   </div>
@@ -200,7 +198,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                 <Button
                   variant="bordered"
                   isDisabled={!!formik.getFieldMeta("preparations").error}
-                  onClick={() => push(defaultPreparation)}
+                  onPress={() => push(defaultPreparation)}
                 >
                   <FontAwesomeIcon icon={faPlus} />
                   Add Preparation
@@ -211,10 +209,15 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         </FormikProvider>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
+        <Button color="danger" variant="light" onPress={onClose} isDisabled={isLoading}>
           Close
         </Button>
-        <Button type="submit" color="primary" isDisabled={!formik.isValid} isLoading={isLoading}>
+        <Button
+          type="submit"
+          color="primary"
+          isDisabled={!(formik.dirty && formik.isValid)}
+          isLoading={isLoading}
+        >
           Submit
         </Button>
       </ModalFooter>

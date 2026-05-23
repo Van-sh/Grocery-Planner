@@ -1,0 +1,11 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "js/ts.preferences.organizeImports": {
+    "typeOrder": "last"
+  },
+  "js/ts.preferences.preferTypeOnlyAutoImports": true
+}

@@ -1,6 +1,6 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Divider } from "@nextui-org/react";
+import { Button, Divider } from "@heroui/react";
 import MealCards from "../../../common/mealCards";
 import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
 import { days } from "../../../constants";
@@ -26,7 +26,7 @@ export default function DesktopView({ openCreatePlanModal, openEditPlanModal }: 
               color="primary"
               fullWidth
               startContent={<FontAwesomeIcon icon={faPlus} />}
-              onClick={() => openCreatePlanModal(day)}
+              onPress={() => openCreatePlanModal(day)}
             >
               Add Meal
             </Button>

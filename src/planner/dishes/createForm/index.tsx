@@ -11,7 +11,7 @@ import {
   Select,
   SelectItem,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
@@ -19,9 +19,9 @@ import Autocomplete from "../../../common/autoComplete";
 import type { Prettify } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
-import { type TIngredients } from "../../ingredients/types";
+import type { TIngredients } from "../../ingredients/types";
 import { preparationToString } from "../../ingredients/util";
-import { type TDishIngredientsBase, type TDishes, type TDishesBase } from "../types";
+import type { TDishIngredientsBase, TDishes, TDishesBase } from "../types";
 
 // Local type that includes fieldId for React keys (never sent to API)
 type TDishIngredientsWithFieldId = Prettify<TDishIngredientsBase & { fieldId: string }>;
@@ -119,9 +119,10 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
-  const searchControllerRef = useRef<ReturnType<typeof getIngredients> | null>(null);
+  const searchControllerRef = useRef<Record<number, ReturnType<typeof getIngredients> | null>>({});
 
   const [getIngredients] = useLazyGetIngredientsQuery();
+
   const refetchIngredient = useCallback(
     async (newQuery: string, index: number) => {
       const preferCachedValues = true;
@@ -130,23 +131,32 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         { query: newQuery, page: 1 },
         preferCachedValues,
       );
-      searchControllerRef.current = getIngredientsPromise;
+      searchControllerRef.current[index] = getIngredientsPromise;
 
       const { data, requestId } = await getIngredientsPromise;
       const dish = data?.data ?? [];
       // only update if the response is from the current request
-      if ((await searchControllerRef.current).requestId === requestId) {
-        setIngredientsData([
-          ...ingredientsData.slice(0, index),
+      if ((await searchControllerRef.current[index]).requestId === requestId) {
+        setIngredientsData((prevData) => [
+          ...prevData.slice(0, index),
           dish,
-          ...ingredientsData.slice(index + 1),
+          ...prevData.slice(index + 1),
         ]);
       }
     },
-    [getIngredients, ingredientsData],
+    [getIngredients],
   );
 
-  const handleSearchChange = debounce(refetchIngredient, 750);
+  const handleSearchChange = useMemo(
+    () =>
+      debounce(
+        // updates a state when UI needs to be updated
+        // eslint-disable-next-line react-hooks/refs
+        refetchIngredient,
+        750,
+      ),
+    [refetchIngredient],
+  );
   const handleSearchItemSelect = (value: string, index: number) => {
     // not updating dish name because it is not needed in api.
     formik.setFieldValue(`ingredients.${index}.ingredient._id`, value);
@@ -168,7 +178,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} autoComplete="false">
+    <form onSubmit={formik.handleSubmit} autoComplete="off">
       <ModalHeader>{initialValues ? "Edit" : "Add New"} Dish</ModalHeader>
       <ModalBody>
         <Input
@@ -272,9 +282,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       classNames={{ trigger: ["bg-white"] }}
                     >
                       {measurementUnits.map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
+                        <SelectItem key={unit}>{unit}</SelectItem>
                       ))}
                     </Select>
 
@@ -282,7 +290,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
 
                     <Button
                       variant="flat"
-                      onClick={() => {
+                      onPress={() => {
                         setIngredientsData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
                       }}
@@ -295,7 +303,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                 <Button
                   variant="bordered"
                   isDisabled={!!formik.getFieldMeta("ingredients").error}
-                  onClick={() => {
+                  onPress={() => {
                     setIngredientsData((prevState) => [...prevState, []]);
                     push(createDefaultIngredient());
                   }}
@@ -309,7 +317,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         </FormikProvider>
         <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={onClose} isLoading={isLoading}>
+          <Button color="danger" variant="light" onPress={onClose} isDisabled={isLoading}>
             Close
           </Button>
           <Button

@@ -1,6 +1,6 @@
-import { ModalBody, ModalHeader } from "@nextui-org/react";
-import { TDishes } from "../types";
+import { ModalBody, ModalHeader } from "@heroui/react";
 import { preparationToString } from "../../ingredients/util";
+import type { TDishes } from "../types";
 
 type Props = {
   value?: TDishes;
@@ -19,7 +19,9 @@ export default function DetailedView({ value }: Props) {
             <tr key={ingredient.ingredient._id}>
               <td>{ingredient.ingredient.name}</td>
               <td>{ingredient.ingredient.preparations.map(preparationToString).join(", ")}</td>
-              <td>{ingredient.amount} {ingredient.measurement_unit}</td>
+              <td>
+                {ingredient.amount} {ingredient.measurement_unit}
+              </td>
             </tr>
           ))}
         </table>

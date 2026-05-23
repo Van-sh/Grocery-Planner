@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { AppDispatch } from "../../store";
 
 type TToastType = "success" | "error" | "info";
 
@@ -36,7 +37,7 @@ export const toastSlice = createSlice({
   },
 });
 
-export const addToast = (data: TAddToastData) => (dispatch: any) => {
+export const addToast = (data: TAddToastData) => (dispatch: AppDispatch) => {
   const { message, type = "info", autoClose, autoCloseDuration = 3000 } = data;
   const toast: TToastData = { id: Date.now(), message, type };
 

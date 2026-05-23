@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EyeIcon from "../../assets/eyeIcon";
 import { TPlans } from "../../common/types";
@@ -40,20 +40,22 @@ export default function PlansTable({ data, onDetails, onDelete }: Props) {
         return (
           <div className="flex items-center gap-2">
             <Tooltip content="Details">
-              <span
+              <button
+                aria-label="view plan details"
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => onDetails(item._id)}
               >
                 <EyeIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip content="Delete">
-              <span
-                className="text-lg text-danger cursor-pointer active:opaity-50"
+              <button
+                aria-label="delete details"
+                className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => onDelete(item._id)}
               >
                 <DeleteIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );

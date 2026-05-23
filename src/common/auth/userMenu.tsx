@@ -1,4 +1,4 @@
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, User } from "@nextui-org/react";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, User } from "@heroui/react";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import ConfirmationModal from "../confirmationModal";
@@ -46,7 +46,9 @@ export default function UserMenu() {
             <p className="font-semibold">Signed in as</p>
             <p className="font-semibold">{userDetails?.email}</p>
           </DropdownItem>
-          <DropdownItem key="profile" href="/user/profile">Profile</DropdownItem>
+          <DropdownItem key="profile" href="/user/profile">
+            Profile
+          </DropdownItem>
           <DropdownItem key="change-password" href="/user/change-password">
             Change Password
           </DropdownItem>
