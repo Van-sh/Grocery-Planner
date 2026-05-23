@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import PlusIcon from "../../assets/plus";
 import BlankScreen from "../../common/blankScreen";
 import ConfirmationModal from "../../common/confirmationModal";
+import RecipeModal from "../../common/detailedRecipe/modal";
 import GetErrorScreen from "../../common/getErrorScreen";
 import Loader from "../../common/loader";
 import Search from "../../common/search";
@@ -16,7 +17,6 @@ import {
   useUpdateDishMutation,
 } from "./api";
 import CreateForm from "./createForm";
-import DetailedView from "./detailedView";
 import List from "./list";
 import type { TDishes, TDishesBase } from "./types";
 
@@ -188,16 +188,7 @@ export default function Dishes() {
           Create
         </Button>
 
-        <Modal
-          isOpen={isDetailsModalOpen}
-          onClose={handleDetailsClose}
-          placement="top-center"
-          scrollBehavior="outside"
-        >
-          <ModalContent>
-            <DetailedView value={selectedDish} />
-          </ModalContent>
-        </Modal>
+        <RecipeModal dish={selectedDish} isOpen={isDetailsModalOpen} onClose={handleDetailsClose} />
 
         <Modal
           isOpen={isEditModalOpen}
