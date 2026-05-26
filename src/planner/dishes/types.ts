@@ -4,7 +4,7 @@ import type { TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
   ingredient: Option;
-  measurement_unit: "" | "cup" | "tablespoon" | "teaspoon" | "gm" | "ml";
+  measurement_unit: "" | "cup" | "tablespoon" | "teaspoon" | "gm" | "ml" | "number";
   amount: number;
 };
 

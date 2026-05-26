@@ -31,7 +31,7 @@ type TDishFormikData = Prettify<
   }
 >;
 
-const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml"];
+const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml", "number"];
 
 const schema = yup.object({
   name: yup.string().required("Name is required"),
