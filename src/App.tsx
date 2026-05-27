@@ -30,7 +30,7 @@ function App() {
                 <Route path="dishes" element={<Dishes />} />
                 <Route path="plans">
                   <Route index element={<Plans />} />
-                  <Route path="edit/:id" element={<EditPlan />} />
+                  <Route path="edit/:planId" element={<EditPlan />} />
                 </Route>
               </Route>
               <Route path="user" element={<User />}>
