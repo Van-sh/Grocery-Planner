@@ -3,12 +3,18 @@ import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
+import ConfirmationModal from "../../../common/confirmationModal";
 import { useData } from "../../../common/mealCards/context";
 import { addToast } from "../../../common/toast/slice";
 import { MealTypeKey, TCreatePlanBase, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
-import { useUpdateMealMutation, useUpdatePlansMutation, type useGetPlanQuery } from "../api";
+import {
+  useDeleteMealMutation,
+  useUpdateMealMutation,
+  useUpdatePlansMutation,
+  type useGetPlanQuery,
+} from "../api";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
@@ -25,6 +31,7 @@ export default function EditPlanForm({ refetch }: Props) {
   const [selectedDay, setSelectedDay] = useState<TDays>();
   const [selectedMealType, setSelectedMealType] = useState<MealTypeKey>();
   const [selectedDishes, setSelectedDishes] = useState<TMealDishBase[]>();
+  const [selectedMealId, setSelectedMealId] = useState<string>();
   const { data } = useData();
   const dispatch = useAppDispatch();
   const { planId = "" } = useParams();
@@ -37,6 +44,10 @@ export default function EditPlanForm({ refetch }: Props) {
     updateMeal,
     { isLoading: isUpdateMealLoading, isSuccess: isUpdateMealSuccess, isError: isUpdateMealError },
   ] = useUpdateMealMutation();
+  const [
+    deleteMeal,
+    { isLoading: isDeleteMealLoading, isSuccess: isDeleteMealSuccess, isError: isDeleteMealError },
+  ] = useDeleteMealMutation();
 
   const formik = useFormik({
     initialValues: {
@@ -51,6 +62,12 @@ export default function EditPlanForm({ refetch }: Props) {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
     onClose: onEditModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
   } = useDisclosure();
 
   const handleMutationSuccess = useCallback(
@@ -99,6 +116,30 @@ export default function EditPlanForm({ refetch }: Props) {
     setSelectedDishes(undefined);
   }, [onEditModalClose]);
 
+  const openDeletePlanConfirmation = (day: TDays, mealType: MealTypeKey) => {
+    const mealId = (data.meals?.[day] || []).find((meal) => meal.mealType === mealType)?._id;
+    if (!planId || !mealId) {
+      dispatch(
+        addToast({
+          message: "Failed to delete meal",
+          type: "error",
+          autoClose: true,
+        }),
+      );
+      return;
+    }
+
+    setSelectedDay(day);
+    setSelectedMealType(mealType);
+    setSelectedMealId(mealId);
+    onDeleteModalOpen();
+  };
+
+  const handleDelete = () => {
+    if (!planId || !selectedMealId) return;
+    deleteMeal({ planId, mealId: selectedMealId });
+  };
+
   useEffect(() => {
     if (isUpdatePlanSuccess) {
       handleMutationSuccess("updated");
@@ -120,6 +161,23 @@ export default function EditPlanForm({ refetch }: Props) {
     handleCreateClose,
     handleMutationError,
     handleMutationSuccess,
+  ]);
+
+  useEffect(() => {
+    if (isDeleteMealSuccess) {
+      onDeleteModalClose();
+      setSelectedDay(undefined);
+      setSelectedMealType(undefined);
+      handleMutationSuccess("deleted");
+    } else if (isDeleteMealError) {
+      handleMutationError("delete");
+    }
+  }, [
+    isDeleteMealSuccess,
+    isDeleteMealError,
+    onDeleteModalClose,
+    handleMutationSuccess,
+    handleMutationError,
   ]);
 
   return (
@@ -145,11 +203,13 @@ export default function EditPlanForm({ refetch }: Props) {
           <DesktopView
             openCreatePlanModal={openCreatePlanModal}
             openEditPlanModal={openEditPlanModal}
+            openDeletePlanConfirmation={openDeletePlanConfirmation}
           />
         ) : (
           <MobileView
             openCreatePlanModal={openCreatePlanModal}
             openEditPlanModal={openEditPlanModal}
+            openDeletePlanConfirmation={openDeletePlanConfirmation}
           />
         )}
       </form>
@@ -175,6 +235,14 @@ export default function EditPlanForm({ refetch }: Props) {
           )}
         </ModalContent>
       </Modal>
+
+      <ConfirmationModal
+        isModalOpen={isDeleteModalOpen}
+        onModalClose={onDeleteModalClose}
+        onYesClick={handleDelete}
+        isLoading={isDeleteMealLoading}
+        message="Are you sure you want to delete this meal?"
+      />
     </>
   );
 }

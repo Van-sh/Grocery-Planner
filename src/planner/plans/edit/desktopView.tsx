@@ -8,9 +8,14 @@ import { days } from "../../../constants";
 type Props = {
   openCreatePlanModal: (day: TDays) => void;
   openEditPlanModal: (day: TDays, mealType: MealTypeKey, dishes: TMealDishBase[]) => void;
+  openDeletePlanConfirmation: (day: TDays, mealType: MealTypeKey) => void;
 };
 
-export default function DesktopView({ openCreatePlanModal, openEditPlanModal }: Props) {
+export default function DesktopView({
+  openCreatePlanModal,
+  openEditPlanModal,
+  openDeletePlanConfirmation,
+}: Props) {
   return (
     <div className="mt-10 flex gap-1 h-[calc(100vh-11.5rem)]">
       {days.map((day) => (
@@ -33,7 +38,7 @@ export default function DesktopView({ openCreatePlanModal, openEditPlanModal }: 
           </div>
           <Divider className="mt-2" />
           <div className="w-full overflow-y-auto p-2">
-            <MealCards day={day} isEditable onEdit={openEditPlanModal} />
+            <MealCards day={day} onEdit={openEditPlanModal} onDelete={openDeletePlanConfirmation} />
           </div>
         </div>
       ))}
