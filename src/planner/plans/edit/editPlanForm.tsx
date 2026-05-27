@@ -9,7 +9,12 @@ import { addToast } from "../../../common/toast/slice";
 import { MealTypeKey, TCreatePlanBase, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
 import { useAppDispatch } from "../../../store";
-import { useDeleteMealMutation, useUpdateMealMutation, type useGetPlanQuery } from "../api";
+import {
+  useDeleteMealMutation,
+  useUpdateMealMutation,
+  useUpdatePlansMutation,
+  type useGetPlanQuery,
+} from "../api";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
@@ -32,6 +37,10 @@ export default function EditPlanForm({ refetch }: Props) {
   const { planId = "" } = useParams();
 
   const [
+    updatePlan,
+    { isLoading: isUpdatePlanLoading, isSuccess: isUpdatePlanSuccess, isError: isUpdatePlanError },
+  ] = useUpdatePlansMutation();
+  const [
     updateMeal,
     { isLoading: isUpdateMealLoading, isSuccess: isUpdateMealSuccess, isError: isUpdateMealError },
   ] = useUpdateMealMutation();
@@ -46,7 +55,7 @@ export default function EditPlanForm({ refetch }: Props) {
     } as TCreatePlanBase,
     validationSchema: schema,
     onSubmit: (values) => {
-      console.log(values);
+      updatePlan({ id: planId, ...values });
     },
   });
   const {
@@ -132,6 +141,14 @@ export default function EditPlanForm({ refetch }: Props) {
   };
 
   useEffect(() => {
+    if (isUpdatePlanSuccess) {
+      handleMutationSuccess("updated");
+    } else if (isUpdatePlanError) {
+      handleMutationError("update");
+    }
+  }, [isUpdatePlanSuccess, isUpdatePlanError, handleMutationSuccess, handleMutationError]);
+
+  useEffect(() => {
     if (isUpdateMealSuccess) {
       handleCreateClose();
       handleMutationSuccess("updated");
@@ -177,7 +194,7 @@ export default function EditPlanForm({ refetch }: Props) {
             isInvalid={formik.touched.name && !!formik.errors.name}
             errorMessage={formik.errors.name}
           />
-          <Button color="primary" size="lg" type="submit">
+          <Button color="primary" size="lg" type="submit" isLoading={isUpdatePlanLoading}>
             Save
           </Button>
         </div>
