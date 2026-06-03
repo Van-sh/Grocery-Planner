@@ -195,6 +195,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
           label="Recipe"
           placeholder="Insert recipe"
           variant="bordered"
+          maxRows={5}
           {...formik.getFieldProps("recipe")}
           isInvalid={formik.touched.recipe && !!formik.errors.recipe}
           errorMessage={formik.errors.recipe}
@@ -207,7 +208,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
             {({ push, remove }) => (
               <>
                 {formik.values.ingredients.map(({ fieldId }, index) => (
-                  <div key={fieldId} className="bg-gray-100 flex flex-col gap-2 p-2 rounded-lg">
+                  <div key={fieldId} className="bg-gray-100 flex flex-col gap-1 p-2 rounded-lg">
                     <Autocomplete
                       label="Ingredient"
                       placeholder="Chana, Coriander, etc."
@@ -235,56 +236,62 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       onSelect={(value) => handleSearchItemSelect(value, index)}
                     />
 
-                    <Input
-                      label="Amount of ingredient"
-                      variant="bordered"
-                      type="number"
-                      {...formik.getFieldProps(`ingredients.${index}.amount`)}
-                      isInvalid={
-                        formik.touched.ingredients?.[index]?.amount &&
-                        !!(
-                          (formik.errors.ingredients?.[
-                            index
-                          ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).amount
-                      }
-                      errorMessage={
-                        (
-                          (formik.errors.ingredients?.[
-                            index
-                          ] as FormikErrors<TDishIngredientsBase>) || {}
-                        )?.amount
-                      }
-                      classNames={ingredientInputClasses}
-                    />
+                    <div className="flex gap-x-1">
+                      <div className="flex-1 w-0 min-w-0">
+                        <Input
+                          label="Amount of ingredient"
+                          variant="bordered"
+                          type="number"
+                          {...formik.getFieldProps(`ingredients.${index}.amount`)}
+                          isInvalid={
+                            formik.touched.ingredients?.[index]?.amount &&
+                            !!(
+                              (formik.errors.ingredients?.[
+                                index
+                              ] as FormikErrors<TDishIngredientsBase>) || {}
+                            ).amount
+                          }
+                          errorMessage={
+                            (
+                              (formik.errors.ingredients?.[
+                                index
+                              ] as FormikErrors<TDishIngredientsBase>) || {}
+                            )?.amount
+                          }
+                          classNames={ingredientInputClasses}
+                        />
+                      </div>
 
-                    <Select
-                      label="Measurement Unit"
-                      placeholder="cups, tablespoons, grams, etc."
-                      variant="bordered"
-                      selectedKeys={[formik.values.ingredients[index].measurement_unit]}
-                      {...formik.getFieldProps(`ingredients.${index}.measurement_unit`)}
-                      isInvalid={
-                        formik.touched.ingredients?.[index]?.measurement_unit &&
-                        !!(
-                          (formik.errors.ingredients?.[
-                            index
-                          ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).measurement_unit
-                      }
-                      errorMessage={
-                        (
-                          (formik.errors.ingredients?.[
-                            index
-                          ] as FormikErrors<TDishIngredientsBase>) || {}
-                        )?.measurement_unit
-                      }
-                      classNames={{ trigger: ["bg-white"] }}
-                    >
-                      {measurementUnits.map((unit) => (
-                        <SelectItem key={unit}>{unit}</SelectItem>
-                      ))}
-                    </Select>
+                      <div className="flex-1 w-0 min-w-0">
+                        <Select
+                          label="Measurement Unit"
+                          placeholder="cups, grams, etc."
+                          variant="bordered"
+                          selectedKeys={[formik.values.ingredients[index].measurement_unit]}
+                          {...formik.getFieldProps(`ingredients.${index}.measurement_unit`)}
+                          isInvalid={
+                            formik.touched.ingredients?.[index]?.measurement_unit &&
+                            !!(
+                              (formik.errors.ingredients?.[
+                                index
+                              ] as FormikErrors<TDishIngredientsBase>) || {}
+                            ).measurement_unit
+                          }
+                          errorMessage={
+                            (
+                              (formik.errors.ingredients?.[
+                                index
+                              ] as FormikErrors<TDishIngredientsBase>) || {}
+                            )?.measurement_unit
+                          }
+                          classNames={{ trigger: ["bg-white"] }}
+                        >
+                          {measurementUnits.map((unit) => (
+                            <SelectItem key={unit}>{unit}</SelectItem>
+                          ))}
+                        </Select>
+                      </div>
+                    </div>
 
                     <Divider />
 
