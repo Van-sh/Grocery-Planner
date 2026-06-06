@@ -45,6 +45,16 @@ const schema = yup.object({
           name: yup.string(),
         }),
         amount: yup.number().required("Amount is required").min(1, "Amount must be greater than 0"),
+        to: yup
+          .number()
+          .nullable()
+          .when("amount", ([amount], schema) =>
+            schema.test({
+              name: "to-greater-than-amount",
+              message: "To must be greater than Amount",
+              test: (value) => value === undefined || value === null || value > amount,
+            }),
+          ),
         measurement_unit: yup
           .string()
           .oneOf(measurementUnits, "Select a type from dropdown")
@@ -94,6 +104,7 @@ const prepareInitialData = (data: TDishes): TDishFormikData => {
     ingredients: data.ingredients.map((ingredient) => ({
       ingredient: { _id: ingredient.ingredient._id, name: ingredient.ingredient.name },
       amount: ingredient.amount,
+      to: ingredient.to,
       measurement_unit: ingredient.measurement_unit,
       fieldId: crypto.randomUUID(),
     })),
@@ -107,6 +118,7 @@ const cleanFormikData = (data: TDishFormikData): TDishesBase => ({
   ingredients: data.ingredients.map((ingredient: TDishIngredientsWithFieldId) => ({
     ingredient: ingredient.ingredient,
     amount: ingredient.amount,
+    to: ingredient.to,
     measurement_unit: ingredient.measurement_unit,
   })),
 });
@@ -208,7 +220,10 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
             {({ push, remove }) => (
               <>
                 {formik.values.ingredients.map(({ fieldId }, index) => (
-                  <div key={fieldId} className="bg-gray-100 flex flex-col gap-1 p-2 rounded-lg">
+                  <div
+                    key={fieldId}
+                    className="bg-gray-100 flex flex-col sm:flex-row gap-1 p-2 rounded-lg "
+                  >
                     <Autocomplete
                       label="Ingredient"
                       placeholder="Chana, Coriander, etc."
@@ -236,10 +251,10 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       onSelect={(value) => handleSearchItemSelect(value, index)}
                     />
 
-                    <div className="flex gap-x-1">
-                      <div className="flex-1 w-0 min-w-0">
+                    <div className="flex gap-x-1 flex-1">
+                      <div className="flex-1 min-w-0">
                         <Input
-                          label="Amount of ingredient"
+                          label="Amount"
                           variant="bordered"
                           type="number"
                           {...formik.getFieldProps(`ingredients.${index}.amount`)}
@@ -262,9 +277,34 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                         />
                       </div>
 
-                      <div className="flex-1 w-0 min-w-0">
+                      <div className="flex-1 min-w-0">
+                        <Input
+                          label="To (Optional)"
+                          variant="bordered"
+                          type="number"
+                          {...formik.getFieldProps(`ingredients.${index}.to`)}
+                          isInvalid={
+                            formik.touched.ingredients?.[index]?.to &&
+                            !!(
+                              (formik.errors.ingredients?.[
+                                index
+                              ] as FormikErrors<TDishIngredientsBase>) || {}
+                            ).to
+                          }
+                          errorMessage={
+                            (
+                              (formik.errors.ingredients?.[
+                                index
+                              ] as FormikErrors<TDishIngredientsBase>) || {}
+                            )?.to
+                          }
+                          classNames={ingredientInputClasses}
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
                         <Select
-                          label="Measurement Unit"
+                          label="Unit"
                           placeholder="cups, grams, etc."
                           variant="bordered"
                           selectedKeys={[formik.values.ingredients[index].measurement_unit]}
@@ -293,10 +333,11 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                       </div>
                     </div>
 
-                    <Divider />
+                    <Divider className="sm:hidden" />
 
                     <Button
                       variant="flat"
+                      className="sm:h-auto"
                       onPress={() => {
                         setIngredientsData((prevState) => prevState.filter((_, i) => i !== index));
                         remove(index);
