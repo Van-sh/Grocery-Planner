@@ -8,8 +8,7 @@ export type TLoginData = {
 };
 
 export type TCurrentPlan = {
-  plan: string | { _id: string; name: string };
-  weeks: number;
+  plan: { _id: string; name: string };
   startedAt: string;
   endsAt: string;
 };

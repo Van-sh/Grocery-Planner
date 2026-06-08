@@ -2,33 +2,26 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui
 import DeleteIcon from "../../assets/deleteIcon";
 import EyeIcon from "../../assets/eyeIcon";
 import PlayIcon from "../../assets/playIcon";
-import RestartIcon from "../../assets/restartIcon";
+import SquareIcon from "../../assets/squareIcon";
 import { TCurrentPlan } from "../../common/auth/types";
 import { TPlans } from "../../common/types";
-import { useLazyRef } from "../../common/useLazyRef";
+import { useAppSelector } from "../../store";
 
 type Props = {
   data: TPlans[];
   onDetails: (id: string) => void;
   onDelete: (id: string) => void;
-  onStart: (id: string, name: string) => void;
+  onToggle: (id: string, name: string) => void;
   currentPlan?: TCurrentPlan | null;
 };
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
-function getCurrentPlanId(currentPlan?: TCurrentPlan | null) {
-  if (!currentPlan?.plan) return undefined;
-  return typeof currentPlan.plan === "string" ? currentPlan.plan : currentPlan.plan._id;
-}
-
-export default function PlansCards({ data, onDetails, onDelete, onStart, currentPlan }: Props) {
-  const nowRef = useLazyRef(() => Date.now());
-  const currentPlanId = getCurrentPlanId(currentPlan);
+export default function PlansCards({ data, onDetails, onDelete, onToggle }: Props) {
+  const currentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
+  const currentPlanId = currentPlan?.plan?._id;
   const currentPlanEndsAt = currentPlan?.endsAt ? new Date(currentPlan.endsAt) : undefined;
-  // This is fine, re-calculating Date.now() at every render is unnecessary in my opinion
-  // eslint-disable-next-line react-hooks/refs
-  const isCurrentPlanRunning = !!currentPlanEndsAt && currentPlanEndsAt.getTime() > nowRef.current;
+  const isCurrentPlanRunning = !!currentPlanEndsAt && currentPlanEndsAt > new Date();
 
   return (
     <>
@@ -56,11 +49,11 @@ export default function PlansCards({ data, onDetails, onDelete, onStart, current
           </CardBody>
           <Divider />
           <CardFooter className="justify-between">
-            <Button variant="light" color="primary" onPress={() => onStart(plan._id, plan.name)}>
+            <Button variant="light" color="primary" onPress={() => onToggle(plan._id, plan.name)}>
               {currentPlanId === plan._id && isCurrentPlanRunning ? (
                 <>
-                  <RestartIcon />
-                  Restart
+                  <SquareIcon />
+                  Stop
                 </>
               ) : (
                 <>

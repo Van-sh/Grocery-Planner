@@ -15,6 +15,10 @@ export type TPlansGetAllQuery = {
 };
 
 export type TStartPlanRequest = {
-  planId: string;
-  weeks: number;
+  planId: TPlans["_id"];
+  range: { start: Date; end: Date };
+};
+
+export type TStopPlanRequest = {
+  planId: TPlans["_id"];
 };

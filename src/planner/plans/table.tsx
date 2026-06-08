@@ -11,16 +11,16 @@ import {
 import DeleteIcon from "../../assets/deleteIcon";
 import EyeIcon from "../../assets/eyeIcon";
 import PlayIcon from "../../assets/playIcon";
-import RestartIcon from "../../assets/restartIcon";
+import SquareIcon from "../../assets/squareIcon";
 import { TCurrentPlan } from "../../common/auth/types";
 import { TPlans } from "../../common/types";
-import { useLazyRef } from "../../common/useLazyRef";
+import { useAppSelector } from "../../store";
 
 type Props = {
   data: TPlans[];
   onDetails: (id: string) => void;
   onDelete: (id: string) => void;
-  onStart: (id: string, name: string) => void;
+  onToggle: (id: string, name: string) => void;
   currentPlan?: TCurrentPlan | null;
 };
 
@@ -33,21 +33,17 @@ const columns = [
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
-function getCurrentPlanId(currentPlan?: TCurrentPlan | null) {
-  if (!currentPlan?.plan) return undefined;
-  return typeof currentPlan.plan === "string" ? currentPlan.plan : currentPlan.plan._id;
-}
-
-export default function PlansTable({ data, onDetails, onDelete, onStart, currentPlan }: Props) {
-  const nowRef = useLazyRef(() => Date.now());
-  const currentPlanId = getCurrentPlanId(currentPlan);
-  const currentPlanEndsAt = currentPlan?.endsAt ? new Date(currentPlan.endsAt) : undefined;
-  // This is fine, re-calculating Date.now() at every render is unnecessary in my opinion
-  // eslint-disable-next-line react-hooks/refs
-  const isCurrentPlanRunning = !!currentPlanEndsAt && currentPlanEndsAt.getTime() > nowRef.current;
+export default function PlansTable({ data, onDetails, onDelete, onToggle }: Props) {
+  const userCurrentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
+  const userCurrentPlanId = userCurrentPlan?.plan?._id;
+  const userCurrentPlanEndsAt = userCurrentPlan?.endsAt
+    ? new Date(userCurrentPlan.endsAt)
+    : undefined;
+  const isUserCurrentPlanRunning = !!userCurrentPlanEndsAt && userCurrentPlanEndsAt > new Date();
 
   const renderCell = (item: TPlans, columnKey: string | number) => {
     const value = getKeyValue(item, columnKey);
+    const isThisPlanRunning = userCurrentPlanId === item._id && isUserCurrentPlanRunning;
 
     switch (columnKey) {
       case "name":
@@ -55,29 +51,21 @@ export default function PlansTable({ data, onDetails, onDelete, onStart, current
       case "updatedBy":
         return value?.name;
       case "currentPlan":
-        return currentPlanId === item._id && isCurrentPlanRunning ? (
-          `Ends ${dateFormatter.format(currentPlanEndsAt)}`
+        return isThisPlanRunning ? (
+          `Ends ${dateFormatter.format(userCurrentPlanEndsAt)}`
         ) : (
           <span className="text-danger">Not running</span>
         );
       case "actions":
         return (
           <div className="flex items-center gap-2">
-            <Tooltip
-              content={currentPlanId === item._id && isCurrentPlanRunning ? "Restart" : "Start"}
-            >
+            <Tooltip content={isThisPlanRunning ? "Stop" : "Start"}>
               <button
-                aria-label={
-                  currentPlanId === item._id && isCurrentPlanRunning ? "restart plan" : "start plan"
-                }
+                aria-label={isThisPlanRunning ? "stop plan" : "start plan"}
                 className="text-lg text-primary-400 cursor-pointer active:opacity-50"
-                onClick={() => onStart(item._id, item.name)}
+                onClick={() => onToggle(item._id, item.name)}
               >
-                {currentPlanId === item._id && isCurrentPlanRunning ? (
-                  <RestartIcon />
-                ) : (
-                  <PlayIcon />
-                )}
+                {isThisPlanRunning ? <SquareIcon /> : <PlayIcon />}
               </button>
             </Tooltip>
             <Tooltip content="Details">
@@ -106,7 +94,12 @@ export default function PlansTable({ data, onDetails, onDelete, onStart, current
   };
 
   return (
-    <Table aria-label="plans-table" removeWrapper className="mt-6">
+    <Table
+      key={userCurrentPlanId ?? "none"}
+      aria-label="plans-table"
+      removeWrapper
+      className="mt-6"
+    >
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.name}</TableColumn>}
       </TableHeader>

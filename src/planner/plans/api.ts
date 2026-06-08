@@ -1,9 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { readCookie } from "../../common/cookieHelper";
 import { TCreatePlanBase } from "../../common/types";
-import { TDeleteMeal, TMealBase } from "./edit/types";
 import { TUserResponse } from "../../user/types";
-import { TPlanResponse, TPlansGetAllQuery, TPlansResponse, TStartPlanRequest } from "./types";
+import { TDeleteMeal, TMealBase } from "./edit/types";
+import type {
+  TPlanResponse,
+  TPlansGetAllQuery,
+  TPlansResponse,
+  TStartPlanRequest,
+  TStopPlanRequest,
+} from "./types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -49,11 +55,17 @@ export const plansApi = createApi({
         method: "DELETE",
       }),
     }),
-    updateMeal: build.mutation<TMealBase, TMealBase>({
-      query: ({ planId, ...data }) => ({
-        url: `/${planId}/meals`,
+    startPlan: build.mutation<TUserResponse, TStartPlanRequest>({
+      query: ({ planId, range }) => ({
+        url: `/${planId}/start`,
         method: "POST",
-        body: data,
+        body: { range },
+      }),
+    }),
+    stopPlan: build.mutation<TUserResponse, TStopPlanRequest>({
+      query: ({ planId }) => ({
+        url: `/${planId}/stop`,
+        method: "POST",
       }),
     }),
     deleteMeal: build.mutation<void, TDeleteMeal>({
@@ -62,11 +74,11 @@ export const plansApi = createApi({
         method: "DELETE",
       }),
     }),
-    startPlan: build.mutation<TUserResponse, TStartPlanRequest>({
-      query: ({ planId, weeks }) => ({
-        url: `/${planId}/start`,
+    updateMeal: build.mutation<TMealBase, TMealBase>({
+      query: ({ planId, ...data }) => ({
+        url: `/${planId}/meals`,
         method: "POST",
-        body: { weeks },
+        body: data,
       }),
     }),
   }),
@@ -78,7 +90,8 @@ export const {
   useCreatePlansMutation,
   useUpdatePlansMutation,
   useDeletePlanMutation,
+  useStartPlanMutation,
+  useStopPlanMutation,
   useUpdateMealMutation,
   useDeleteMealMutation,
-  useStartPlanMutation,
 } = plansApi;

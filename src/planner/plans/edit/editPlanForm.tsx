@@ -8,11 +8,12 @@ import { useData } from "../../../common/mealCards/context";
 import { addToast } from "../../../common/toast/slice";
 import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
-import { getErrorMessage } from "../../../helper";
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { userApi } from "../../../user/api";
-import { useStartPlanMutation,
+import { useGetCurrentUserQuery } from "../../../user/api";
+import {
   useDeleteMealMutation,
+  useStartPlanMutation,
+  useStopPlanMutation,
   useUpdateMealMutation,
   useUpdatePlansMutation,
   type useGetPlanQuery,
@@ -21,6 +22,7 @@ import StartForm from "../startForm";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
+import { useDateFormatter } from "@react-aria/i18n";
 
 const schema = yup.object({
   name: yup.string().required("Name is required"),
@@ -39,11 +41,15 @@ export default function EditPlanForm({ refetch }: Props) {
   const dispatch = useAppDispatch();
   const { planId = "" } = useParams();
   const currentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
-  const currentPlanId =
-    typeof currentPlan?.plan === "string" ? currentPlan.plan : currentPlan?.plan?._id;
-  const isCurrentPlanRunning =
-    currentPlanId === data._id && !!currentPlan?.endsAt && new Date(currentPlan.endsAt) > new Date();
+  const formatter = useDateFormatter({ dateStyle: "long" });
 
+  const currentPlanId = currentPlan?.plan?._id;
+  const isCurrentPlanRunning =
+    currentPlanId === data._id &&
+    !!currentPlan?.endsAt &&
+    new Date(currentPlan.endsAt) > new Date();
+
+  const { refetch: refetchUser } = useGetCurrentUserQuery(null);
   const [
     updatePlan,
     { isLoading: isUpdatePlanLoading, isSuccess: isUpdatePlanSuccess, isError: isUpdatePlanError },
@@ -58,12 +64,12 @@ export default function EditPlanForm({ refetch }: Props) {
   ] = useDeleteMealMutation();
   const [
     startPlan,
-    {
-      isLoading: isStartPlanLoading,
-      status: startPlanStatus,
-      error: startPlanError,
-    },
+    { isLoading: isStartPlanLoading, isSuccess: isStartPlanSuccess, isError: isStartPlanError },
   ] = useStartPlanMutation();
+  const [
+    stopPlan,
+    { isLoading: isStopPlanLoading, isSuccess: isStopPlanSuccess, isError: isStopPlanError },
+  ] = useStopPlanMutation();
 
   const formik = useFormik({
     initialValues: {
@@ -90,13 +96,18 @@ export default function EditPlanForm({ refetch }: Props) {
     onOpen: onStartModalOpen,
     onClose: onStartModalClose,
   } = useDisclosure();
+  const {
+    isOpen: isStopModalOpen,
+    onOpen: onStopModalOpen,
+    onClose: onStopModalClose,
+  } = useDisclosure();
 
   const handleMutationSuccess = useCallback(
     (action: string) => {
       refetch();
       dispatch(
         addToast({
-          message: `Dish ${action} successfully`,
+          message: `Plan ${action} successfully`,
           type: "success",
           autoClose: true,
         }),
@@ -109,7 +120,7 @@ export default function EditPlanForm({ refetch }: Props) {
     (action: string) => {
       dispatch(
         addToast({
-          message: `Failed to ${action} dish`,
+          message: `Failed to ${action} plan`,
           type: "error",
           autoClose: true,
         }),
@@ -202,26 +213,38 @@ export default function EditPlanForm({ refetch }: Props) {
   ]);
 
   useEffect(() => {
-    if (startPlanStatus === "fulfilled") {
+    if (isStartPlanSuccess) {
       onStartModalClose();
-      dispatch(userApi.endpoints.getCurrentUser.initiate(null, { forceRefetch: true, subscribe: false }));
-      dispatch(
-        addToast({
-          message: "Plan started successfully",
-          type: "success",
-          autoClose: true,
-        }),
-      );
-    } else if (startPlanStatus === "rejected") {
-      dispatch(
-        addToast({
-          message: getErrorMessage(startPlanError) || "Failed to start plan",
-          type: "error",
-          autoClose: true,
-        }),
-      );
+      refetchUser();
+      handleMutationSuccess("started");
+    } else if (isStartPlanError) {
+      handleMutationError("start");
     }
-  }, [dispatch, onStartModalClose, startPlanError, startPlanStatus]);
+  }, [
+    handleMutationError,
+    handleMutationSuccess,
+    isStartPlanError,
+    isStartPlanSuccess,
+    onStartModalClose,
+    refetchUser,
+  ]);
+
+  useEffect(() => {
+    if (isStopPlanSuccess) {
+      onStopModalClose();
+      refetchUser();
+      handleMutationSuccess("Stoped");
+    } else if (isStopPlanError) {
+      handleMutationError("Stop");
+    }
+  }, [
+    handleMutationError,
+    handleMutationSuccess,
+    isStopPlanError,
+    isStopPlanSuccess,
+    onStopModalClose,
+    refetchUser,
+  ]);
 
   return (
     <>
@@ -238,13 +261,23 @@ export default function EditPlanForm({ refetch }: Props) {
             errorMessage={formik.errors.name}
           />
           <div className="flex gap-2">
-            <Button color="secondary" size="lg" type="button" onPress={onStartModalOpen} isDisabled={isStartPlanLoading}>
-              {isCurrentPlanRunning ? "Restart Plan" : "Start Plan"}
+            <Button
+              color={isCurrentPlanRunning ? "danger" : "secondary"}
+              size="lg"
+              type="button"
+              onPress={isCurrentPlanRunning ? onStopModalOpen : onStartModalOpen}
+              isDisabled={isStartPlanLoading}
+            >
+              {isCurrentPlanRunning ? "Stop Plan" : "Start Plan"}
             </Button>
             <Button color="primary" size="lg" type="submit" isLoading={isUpdatePlanLoading}>
               Save
             </Button>
           </div>
+        </div>
+        <div>
+          {currentPlan &&
+            `Active for ${formatter.formatRange(new Date(currentPlan.startedAt), new Date(currentPlan.endsAt))}`}
         </div>
 
         {isDesktop ? (
@@ -296,12 +329,20 @@ export default function EditPlanForm({ refetch }: Props) {
             <StartForm
               isLoading={isStartPlanLoading}
               onClose={onStartModalClose}
-              onSubmit={(weeks) => startPlan({ planId: data._id, weeks })}
+              onSubmit={(range) => startPlan({ planId: data._id, range })}
               planName={data.name}
             />
           )}
         </ModalContent>
       </Modal>
+
+      <ConfirmationModal
+        isModalOpen={isStopModalOpen}
+        onModalClose={onStopModalClose}
+        onYesClick={() => stopPlan({ planId: data._id })}
+        isLoading={isStopPlanLoading}
+        message="Are you sure you want to stop this plan?"
+      />
 
       <ConfirmationModal
         isModalOpen={isDeleteModalOpen}

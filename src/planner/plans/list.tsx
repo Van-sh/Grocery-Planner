@@ -1,4 +1,3 @@
-import { TCurrentPlan } from "../../common/auth/types";
 import { TPlans } from "../../common/types";
 import { isDesktop } from "../../constants";
 import PlansCards from "./cards";
@@ -8,8 +7,7 @@ type Props = {
   data: TPlans[];
   onDetails: (id: string) => void;
   onDelete: (id: string) => void;
-  onStart: (id: string, name: string) => void;
-  currentPlan?: TCurrentPlan | null;
+  onToggle: (id: string, name: string) => void;
 };
 
 export default function List(props: Props) {

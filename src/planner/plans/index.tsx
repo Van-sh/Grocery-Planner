@@ -10,16 +10,18 @@ import Search from "../../common/search";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
 import { useAppDispatch, useAppSelector } from "../../store";
+import { useGetCurrentUserQuery } from "../../user/api";
 import {
   useCreatePlansMutation,
   useDeletePlanMutation,
   useGetPlansQuery,
   useStartPlanMutation,
+  useStopPlanMutation,
 } from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
 import StartForm from "./startForm";
-import { userApi } from "../../user/api";
+import type { TStartPlanRequest } from "./types";
 
 const limit = 10;
 export default function Plans() {
@@ -38,17 +40,18 @@ export default function Plans() {
     data: { data = [], count = 0 } = {},
     refetch,
   } = useGetPlansQuery({ query, page });
+  const { refetch: refetchUser } = useGetCurrentUserQuery(null);
   const [create, { data: createData, isLoading: isCreateLoading, status: createStatus }] =
     useCreatePlansMutation();
   const [deleteP, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeletePlanMutation();
   const [
     startPlan,
-    {
-      isLoading: isStartPlanLoading,
-      status: startPlanStatus,
-      error: startPlanError,
-    },
+    { isLoading: isStartPlanLoading, isSuccess: isStartPlanSuccess, isError: isStartPlanError },
   ] = useStartPlanMutation();
+  const [
+    stopPlan,
+    { isLoading: isStopPlanLoading, isSuccess: isStopPlanSuccess, isError: isStopPlanError },
+  ] = useStopPlanMutation();
 
   const {
     isOpen: isCreateModalOpen,
@@ -64,6 +67,11 @@ export default function Plans() {
     isOpen: isStartModalOpen,
     onOpen: onStartModalOpen,
     onClose: onStartModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isStopModalOpen,
+    onOpen: onStopModalOpen,
+    onClose: onStopModalClose,
   } = useDisclosure();
 
   const goToAddNewPlanPage = () => {
@@ -113,12 +121,6 @@ export default function Plans() {
     onDeleteModalOpen();
   };
 
-  const showStartModal = (id: string, name: string) => {
-    setSelectedPlan(id);
-    setSelectedPlanName(name);
-    onStartModalOpen();
-  };
-
   const handleDelete = (id: string) => {
     deleteP(id);
   };
@@ -129,9 +131,34 @@ export default function Plans() {
     onStartModalClose();
   }, [onStartModalClose]);
 
-  const handleStartPlan = (weeks: number) => {
+  const handleStartPlan = (range: TStartPlanRequest["range"]) => {
     if (!selectedPlan) return;
-    startPlan({ planId: selectedPlan, weeks });
+    startPlan({ planId: selectedPlan, range });
+  };
+
+  const handleStopPlanClose = () => {
+    setSelectedPlan(undefined);
+    setSelectedPlanName("");
+    onStopModalClose();
+  };
+
+  const handleStopPlan = () => {
+    if (!selectedPlan) return;
+    stopPlan({ planId: selectedPlan });
+  };
+
+  const handleToggle = (id: string, name: string) => {
+    const currentPlanId = currentPlan?.plan?._id;
+    const isThisPlanRunning =
+      currentPlanId === id && !!currentPlan?.endsAt && new Date(currentPlan.endsAt) > new Date();
+
+    setSelectedPlan(id);
+    setSelectedPlanName(name);
+    if (isThisPlanRunning) {
+      onStopModalOpen();
+    } else {
+      onStartModalOpen();
+    }
   };
 
   useEffect(() => {
@@ -154,26 +181,38 @@ export default function Plans() {
   }, [deleteStatus, onDeleteModalClose, handleMutationSuccess, handleMutationError]);
 
   useEffect(() => {
-    if (startPlanStatus === "fulfilled") {
-      handleStartPlanClose();
-      dispatch(userApi.endpoints.getCurrentUser.initiate(null, { forceRefetch: true, subscribe: false }));
-      dispatch(
-        addToast({
-          message: "Plan started successfully",
-          type: "success",
-          autoClose: true,
-        }),
-      );
-    } else if (startPlanStatus === "rejected") {
-      dispatch(
-        addToast({
-          message: getErrorMessage(startPlanError) || "Failed to start plan",
-          type: "error",
-          autoClose: true,
-        }),
-      );
+    if (isStartPlanSuccess) {
+      onStartModalClose();
+      refetchUser();
+      handleMutationSuccess("started");
+    } else if (isStartPlanError) {
+      handleMutationError("start");
     }
-  }, [dispatch, handleStartPlanClose, startPlanError, startPlanStatus]);
+  }, [
+    handleMutationError,
+    handleMutationSuccess,
+    isStartPlanError,
+    isStartPlanSuccess,
+    onStartModalClose,
+    refetchUser,
+  ]);
+
+  useEffect(() => {
+    if (isStopPlanSuccess) {
+      onStopModalClose();
+      refetchUser();
+      handleMutationSuccess("stopped");
+    } else if (isStopPlanError) {
+      handleMutationError("stop");
+    }
+  }, [
+    handleMutationError,
+    handleMutationSuccess,
+    isStopPlanError,
+    isStopPlanSuccess,
+    onStopModalClose,
+    refetchUser,
+  ]);
 
   return (
     <div className="flex justify-center">
@@ -191,8 +230,7 @@ export default function Plans() {
                 data={data}
                 onDetails={handleDetails}
                 onDelete={showDeleteModal}
-                onStart={showStartModal}
-                currentPlan={currentPlan}
+                onToggle={handleToggle}
               />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
@@ -260,6 +298,13 @@ export default function Plans() {
         onYesClick={() => handleDelete(selectedPlan!)}
         isLoading={isDeleteLoading}
         message="Are you sure you want to delete this plan?"
+      />
+      <ConfirmationModal
+        isModalOpen={isStopModalOpen}
+        onModalClose={handleStopPlanClose}
+        onYesClick={handleStopPlan}
+        isLoading={isStopPlanLoading}
+        message="Are you sure you want to stop this plan?"
       />
     </div>
   );
