@@ -16,6 +16,7 @@ import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import * as yup from "yup";
 import Autocomplete from "../../../common/autoComplete";
+import HTMLEditor from "../../../common/htmlEditor";
 import type { Prettify } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
@@ -135,6 +136,17 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
 
   const [getIngredients] = useLazyGetIngredientsQuery();
 
+  const formik = useFormik<TDishFormikData>({
+    initialValues: {
+      name: initial?.name || "",
+      recipe: initial?.recipe || "",
+      ingredients: initial?.ingredients || [],
+      isPrivate: initial?.isPrivate || false,
+    },
+    validationSchema: schema,
+    onSubmit: (values) => onCreate(cleanFormikData(values), initialValues?._id),
+  });
+
   const refetchIngredient = useCallback(
     async (newQuery: string, index: number) => {
       const preferCachedValues = true;
@@ -169,6 +181,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       ),
     [refetchIngredient],
   );
+
   const handleSearchItemSelect = (value: string, index: number) => {
     // not updating dish name because it is not needed in api.
     formik.setFieldValue(`ingredients.${index}.ingredient._id`, value);
@@ -178,16 +191,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
       ...ingredientsData.slice(index + 1),
     ]);
   };
-  const formik = useFormik<TDishFormikData>({
-    initialValues: {
-      name: initial?.name || "",
-      recipe: initial?.recipe || "",
-      ingredients: initial?.ingredients || [],
-      isPrivate: initial?.isPrivate || false,
-    },
-    validationSchema: schema,
-    onSubmit: (values) => onCreate(cleanFormikData(values), initialValues?._id),
-  });
 
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="off">
@@ -202,6 +205,10 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
           isInvalid={formik.touched.name && !!formik.errors.name}
           errorMessage={formik.errors.name}
         />
+
+        <div className="[&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-8 [&_ol]:pl-8">
+          <HTMLEditor formik={formik} name="recipe" placeholder="Type the recipe here ..." />
+        </div>
 
         <Textarea
           label="Recipe"
