@@ -11,3 +11,8 @@ export type TMealBase = TCreateMealBase & {
   day: TDays;
   planId: string;
 };
+
+export type TDeleteMeal = {
+  planId: string;
+  mealId: string;
+};

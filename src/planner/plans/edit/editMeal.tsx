@@ -99,7 +99,7 @@ export default function EditMeal({
   onUpdate,
   onClose,
 }: Props) {
-  const { id = "" } = useParams();
+  const { planId = "" } = useParams();
   const initialDishes = useMemo(() => (dishes ? prepareDishes(dishes) : undefined), [dishes]);
   const [dishesData, setDishesData] = useState<Option[][]>(() => dishes.map(({ dish }) => [dish]));
   const [getDishes] = useLazyGetDishesQuery();
@@ -111,7 +111,7 @@ export default function EditMeal({
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      onUpdate({ planId: id, day, ...cleanFormikData(values) });
+      onUpdate({ planId, day, ...cleanFormikData(values) });
     },
   });
 

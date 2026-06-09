@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { readCookie } from "../../common/cookieHelper";
 import { TCreatePlanBase } from "../../common/types";
-import { TMealBase } from "./edit/types";
+import { TDeleteMeal, TMealBase } from "./edit/types";
 import { TPlanResponse, TPlansGetAllQuery, TPlansResponse } from "./types";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -35,6 +35,13 @@ export const plansApi = createApi({
         body: data,
       }),
     }),
+    updatePlans: build.mutation<TPlanResponse, TCreatePlanBase & { id: string }>({
+      query: ({ id, ...data }) => ({
+        url: `${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
     deletePlan: build.mutation<void, string>({
       query: (id) => ({
         url: `/${id}`,
@@ -48,6 +55,12 @@ export const plansApi = createApi({
         body: data,
       }),
     }),
+    deleteMeal: build.mutation<void, TDeleteMeal>({
+      query: ({ planId, mealId }) => ({
+        url: `/${planId}/meals/${mealId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -55,6 +68,8 @@ export const {
   useGetPlansQuery,
   useGetPlanQuery,
   useCreatePlansMutation,
+  useUpdatePlansMutation,
   useDeletePlanMutation,
   useUpdateMealMutation,
+  useDeleteMealMutation,
 } = plansApi;
