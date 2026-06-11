@@ -59,6 +59,7 @@ const schema = yup.object({
           .string()
           .oneOf(measurementUnits, "Select a type from dropdown")
           .required("Measurement Unit is required"),
+        isOptional: yup.boolean(),
       }),
     )
     .max(100)
@@ -106,6 +107,7 @@ const prepareInitialData = (data: TDishes): TDishFormikData => {
       amount: ingredient.amount,
       to: ingredient.to,
       measurement_unit: ingredient.measurement_unit,
+      isOptional: ingredient.isOptional,
       fieldId: crypto.randomUUID(),
     })),
   };
@@ -120,6 +122,7 @@ const cleanFormikData = (data: TDishFormikData): TDishesBase => ({
     amount: ingredient.amount,
     to: ingredient.to,
     measurement_unit: ingredient.measurement_unit,
+    isOptional: ingredient.isOptional,
   })),
 });
 
@@ -327,6 +330,15 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
                           ))}
                         </Select>
                       </div>
+                    </div>
+
+                    <div className="flex">
+                      <Checkbox
+                        {...formik.getFieldProps(`ingredients.${index}.isOptional`)}
+                        classNames={{ label: "text-xs" }}
+                      >
+                        Optional
+                      </Checkbox>
                     </div>
 
                     <Divider className="sm:hidden" />

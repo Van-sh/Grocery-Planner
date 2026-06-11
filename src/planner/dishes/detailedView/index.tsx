@@ -17,11 +17,24 @@ export default function DetailedView({ value }: Props) {
         <table>
           {value?.ingredients.map((ingredient) => (
             <tr key={ingredient.ingredient._id}>
-              <td>{ingredient.ingredient.name}</td>
-              <td>{ingredient.ingredient.preparations.map(preparationToString).join(", ")}</td>
-              <td>
+              <td className="pb-2 text-xs">
+                {ingredient.ingredient.name}
+                {ingredient.ingredient.preparations.length ? (
+                  <span className="text-default-500 italic">
+                    {` (${ingredient.ingredient.preparations.map(preparationToString).join(", ")})`}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </td>
+              <td className="pb-2 text-sm">
                 {ingredient.amount}
                 {ingredient.to ? `-${ingredient.to}` : ""} {ingredient.measurement_unit}
+                {ingredient.isOptional ? (
+                  <span className="text-default-500 italic">{" (optional)"}</span>
+                ) : (
+                  ""
+                )}
               </td>
             </tr>
           ))}
