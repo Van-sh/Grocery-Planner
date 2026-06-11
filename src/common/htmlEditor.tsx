@@ -46,6 +46,9 @@ export default function HTMLEditor<T>({ formik, name, placeholder }: Props<T>) {
       onChange={handleChange}
       onBlur={handleBlur}
       placeholder={placeholder}
+      containerProps={{
+        style: { height: "150px", overflowY: "auto" },
+      }}
     />
   );
 }

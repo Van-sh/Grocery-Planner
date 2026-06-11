@@ -10,7 +10,6 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-  Textarea,
 } from "@heroui/react";
 import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -209,16 +208,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         <div className="[&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-8 [&_ol]:pl-8">
           <HTMLEditor formik={formik} name="recipe" placeholder="Type the recipe here ..." />
         </div>
-
-        <Textarea
-          label="Recipe"
-          placeholder="Insert recipe"
-          variant="bordered"
-          maxRows={5}
-          {...formik.getFieldProps("recipe")}
-          isInvalid={formik.touched.recipe && !!formik.errors.recipe}
-          errorMessage={formik.errors.recipe}
-        />
 
         <div className="text-default-500 text-small">Ingredients Needed?</div>
 
