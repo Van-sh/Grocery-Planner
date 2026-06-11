@@ -1,27 +1,17 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Input,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Select,
-  SelectItem,
-} from "@heroui/react";
-import { FieldArray, FormikErrors, FormikProvider, useFormik } from "formik";
+import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@heroui/react";
+import { FieldArray, FieldArrayRenderProps, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
+import Editor from "react-simple-wysiwyg";
 import * as yup from "yup";
-import Autocomplete from "../../../common/autoComplete";
-import HTMLEditor from "../../../common/htmlEditor";
 import type { Prettify } from "../../../common/types";
 import { debounce } from "../../../common/utils";
 import { useLazyGetIngredientsQuery } from "../../ingredients/api";
 import type { TIngredients } from "../../ingredients/types";
-import { preparationToString } from "../../ingredients/util";
+import { measurementUnits } from "../constants";
 import type { TDishIngredientsBase, TDishes, TDishesBase } from "../types";
+import IngredientRow from "./ingredientRow";
 
 // Local type that includes fieldId for React keys (never sent to API)
 type TDishIngredientsWithFieldId = Prettify<TDishIngredientsBase & { fieldId: string }>;
@@ -30,8 +20,6 @@ type TDishFormikData = Prettify<
     ingredients: TDishIngredientsWithFieldId[];
   }
 >;
-
-const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml", "number"];
 
 const schema = yup.object({
   name: yup.string().required("Name is required"),
@@ -44,7 +32,10 @@ const schema = yup.object({
           _id: yup.string().required("Ingredient is required"),
           name: yup.string(),
         }),
-        amount: yup.number().required("Amount is required").min(1, "Amount must be greater than 0"),
+        amount: yup
+          .number()
+          .required("Amount is required")
+          .moreThan(0, "Amount must be greater than 0"),
         to: yup
           .number()
           .nullable()
@@ -80,22 +71,6 @@ const createDefaultIngredient = (): TDishIngredientsWithFieldId => ({
   measurement_unit: "",
   fieldId: crypto.randomUUID(),
 });
-
-const ingredientInputClasses = {
-  inputWrapper: ["bg-white"],
-};
-
-const ingredientToAutocompleteOption = (ingredients: TIngredients[]) =>
-  ingredients.map((ingredient) => {
-    return {
-      _id: ingredient._id,
-      name: ingredient.name,
-      description:
-        ingredient.preparations.length === 0
-          ? ""
-          : ingredient.preparations.map(preparationToString).join(", "),
-    };
-  });
 
 const prepareInitialData = (data: TDishes): TDishFormikData => {
   return {
@@ -135,6 +110,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
   const searchControllerRef = useRef<Record<number, ReturnType<typeof getIngredients> | null>>({});
+  const arrayHelpersRef = useRef<FieldArrayRenderProps | null>(null);
 
   const [getIngredients] = useLazyGetIngredientsQuery();
 
@@ -148,6 +124,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     validationSchema: schema,
     onSubmit: (values) => onCreate(cleanFormikData(values), initialValues?._id),
   });
+  const { setFieldValue } = formik;
 
   const refetchIngredient = useCallback(
     async (newQuery: string, index: number) => {
@@ -184,15 +161,18 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     [refetchIngredient],
   );
 
-  const handleSearchItemSelect = (value: string, index: number) => {
-    // not updating dish name because it is not needed in api.
-    formik.setFieldValue(`ingredients.${index}.ingredient._id`, value);
-    setIngredientsData([
-      ...ingredientsData.slice(0, index),
-      [],
-      ...ingredientsData.slice(index + 1),
-    ]);
-  };
+  const handleSearchItemSelect = useCallback(
+    (value: string, index: number) => {
+      setFieldValue(`ingredients.${index}.ingredient._id`, value);
+      setIngredientsData((prev) => [...prev.slice(0, index), [], ...prev.slice(index + 1)]);
+    },
+    [setFieldValue],
+  );
+
+  const handleRemoveIngredient = useCallback((index: number) => {
+    setIngredientsData((prev) => prev.filter((_, i) => i !== index));
+    arrayHelpersRef.current?.remove(index);
+  }, []);
 
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="off">
@@ -209,166 +189,50 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         />
 
         <div className="[&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-8 [&_ol]:pl-8">
-          <HTMLEditor formik={formik} name="recipe" placeholder="Type the recipe here ..." />
+          <Editor
+            value={formik.values.recipe || ""}
+            onChange={formik.handleChange("recipe")}
+            onBlur={formik.handleBlur("recipe")}
+            placeholder="Type the recipe here ..."
+            containerProps={{
+              style: { height: "150px", overflowY: "auto" as const },
+            }}
+          />
         </div>
 
         <div className="text-default-500 text-small">Ingredients Needed?</div>
 
         <FormikProvider value={formik}>
           <FieldArray name="ingredients">
-            {({ push, remove }) => (
-              <>
-                {formik.values.ingredients.map(({ fieldId }, index) => (
-                  <div
-                    key={fieldId}
-                    className="bg-gray-100 flex flex-col sm:flex-row gap-1 p-2 rounded-lg "
-                  >
-                    <Autocomplete
-                      label="Ingredient"
-                      placeholder="Chana, Coriander, etc."
-                      variant="bordered"
-                      {...formik.getFieldProps(`ingredients.${index}.ingredient`)}
-                      isInvalid={
-                        formik.touched.ingredients?.[index]?.ingredient &&
-                        !!(
-                          (formik.errors.ingredients?.[
-                            index
-                          ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).ingredient?._id
-                      }
-                      errorMessage={
-                        (
-                          (formik.errors.ingredients?.[
-                            index
-                          ] as FormikErrors<TDishIngredientsBase>) || {}
-                        ).ingredient?._id
-                      }
-                      classNames={ingredientInputClasses}
-                      value={formik.values.ingredients[index].ingredient.name}
-                      options={ingredientToAutocompleteOption(ingredientsData[index])}
-                      onChange={(event) => handleSearchChange(event.target.value, index)}
-                      onSelect={(value) => handleSearchItemSelect(value, index)}
+            {(arrayHelpers) => {
+              arrayHelpersRef.current = arrayHelpers;
+              return (
+                <>
+                  {formik.values.ingredients.map(({ fieldId }, index) => (
+                    <IngredientRow
+                      key={fieldId}
+                      index={index}
+                      ingredientOptions={ingredientsData[index]}
+                      onSearchChange={handleSearchChange}
+                      onSearchSelect={handleSearchItemSelect}
+                      onRemove={handleRemoveIngredient}
                     />
+                  ))}
 
-                    <div className="flex gap-x-1 flex-1">
-                      <div className="flex-1 min-w-0">
-                        <Input
-                          label="Amount"
-                          variant="bordered"
-                          type="number"
-                          {...formik.getFieldProps(`ingredients.${index}.amount`)}
-                          isInvalid={
-                            formik.touched.ingredients?.[index]?.amount &&
-                            !!(
-                              (formik.errors.ingredients?.[
-                                index
-                              ] as FormikErrors<TDishIngredientsBase>) || {}
-                            ).amount
-                          }
-                          errorMessage={
-                            (
-                              (formik.errors.ingredients?.[
-                                index
-                              ] as FormikErrors<TDishIngredientsBase>) || {}
-                            )?.amount
-                          }
-                          classNames={ingredientInputClasses}
-                        />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <Input
-                          label="To (Optional)"
-                          variant="bordered"
-                          type="number"
-                          {...formik.getFieldProps(`ingredients.${index}.to`)}
-                          isInvalid={
-                            formik.touched.ingredients?.[index]?.to &&
-                            !!(
-                              (formik.errors.ingredients?.[
-                                index
-                              ] as FormikErrors<TDishIngredientsBase>) || {}
-                            ).to
-                          }
-                          errorMessage={
-                            (
-                              (formik.errors.ingredients?.[
-                                index
-                              ] as FormikErrors<TDishIngredientsBase>) || {}
-                            )?.to
-                          }
-                          classNames={ingredientInputClasses}
-                        />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <Select
-                          label="Unit"
-                          placeholder="cups, grams, etc."
-                          variant="bordered"
-                          selectedKeys={[formik.values.ingredients[index].measurement_unit]}
-                          {...formik.getFieldProps(`ingredients.${index}.measurement_unit`)}
-                          isInvalid={
-                            formik.touched.ingredients?.[index]?.measurement_unit &&
-                            !!(
-                              (formik.errors.ingredients?.[
-                                index
-                              ] as FormikErrors<TDishIngredientsBase>) || {}
-                            ).measurement_unit
-                          }
-                          errorMessage={
-                            (
-                              (formik.errors.ingredients?.[
-                                index
-                              ] as FormikErrors<TDishIngredientsBase>) || {}
-                            )?.measurement_unit
-                          }
-                          classNames={{ trigger: ["bg-white"] }}
-                        >
-                          {measurementUnits.map((unit) => (
-                            <SelectItem key={unit}>{unit}</SelectItem>
-                          ))}
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="flex">
-                      <Checkbox
-                        {...formik.getFieldProps(`ingredients.${index}.isOptional`)}
-                        classNames={{ label: "text-xs" }}
-                      >
-                        Optional
-                      </Checkbox>
-                    </div>
-
-                    <Divider className="sm:hidden" />
-
-                    <Button
-                      variant="flat"
-                      className="sm:h-auto"
-                      onPress={() => {
-                        setIngredientsData((prevState) => prevState.filter((_, i) => i !== index));
-                        remove(index);
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-
-                <Button
-                  variant="bordered"
-                  isDisabled={!!formik.getFieldMeta("ingredients").error}
-                  onPress={() => {
-                    setIngredientsData((prevState) => [...prevState, []]);
-                    push(createDefaultIngredient());
-                  }}
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                  Add Ingredient
-                </Button>
-              </>
-            )}
+                  <Button
+                    variant="bordered"
+                    isDisabled={!!formik.getFieldMeta("ingredients").error}
+                    onPress={() => {
+                      setIngredientsData((prevState) => [...prevState, []]);
+                      arrayHelpers.push(createDefaultIngredient());
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                    Add Ingredient
+                  </Button>
+                </>
+              );
+            }}
           </FieldArray>
         </FormikProvider>
         <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
