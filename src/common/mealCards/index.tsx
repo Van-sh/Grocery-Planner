@@ -1,7 +1,10 @@
-import { Card, CardBody, CardHeader, Divider, Tooltip } from "@heroui/react";
+import { Card, CardBody, CardHeader, Divider, Tooltip, useDisclosure } from "@heroui/react";
+import { useState } from "react";
 import DeleteIcon from "../../assets/deleteIcon";
 import EditIcon from "../../assets/editIcon";
 import { EMealType } from "../../constants";
+import { useGetDishByIdQuery } from "../../planner/dishes/api";
+import RecipeModal from "../detailedRecipe/modal";
 import { MealTypeKey, TDays, TMealDishBase } from "../types";
 import { useData } from "./context";
 import { getSortedMeals } from "./helper";
@@ -19,6 +22,18 @@ export default function MealCards({ day, onEdit, onDelete }: Props) {
   const { data } = useData();
   const { meals = {} } = data;
   const dayMeals = getSortedMeals(meals[day] || []);
+  const [selectedDishId, setSelectedDishId] = useState<string | undefined>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { data: dishResponse, isFetching } = useGetDishByIdQuery(selectedDishId!, {
+    skip: !selectedDishId,
+  });
+  const { data: dish } = dishResponse || {};
+
+  const handleDishClick = (dishId: string) => {
+    setSelectedDishId(dishId);
+    onOpen();
+  };
 
   return (
     <>
@@ -59,12 +74,21 @@ export default function MealCards({ day, onEdit, onDelete }: Props) {
           <CardBody>
             <ul className="list-disc ps-4">
               {dishes.map(({ dish }) => (
-                <li key={dish.name}>{dish.name}</li>
+                <li
+                  key={dish.name}
+                  className="cursor-pointer hover:text-secondary"
+                  onClick={() => handleDishClick(dish._id)}
+                >
+                  {dish.name}
+                </li>
               ))}
             </ul>
           </CardBody>
         </Card>
       ))}
+      {selectedDishId && (
+        <RecipeModal dish={dish} isFetching={isFetching} isOpen={isOpen} onClose={onClose} />
+      )}
     </>
   );
 }
