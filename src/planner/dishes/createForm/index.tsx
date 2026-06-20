@@ -43,10 +43,7 @@ const schema = yup.object({
               test: (value) => value === undefined || value === null || value > amount,
             }),
           ),
-        measurement_unit: yup
-          .string()
-          .oneOf(measurementUnits, "Select a type from dropdown")
-          .required("Measurement Unit is required"),
+        measurement_unit: yup.string().oneOf(measurementUnits, "Select a type from dropdown"),
         isOptional: yup.boolean(),
       }),
     )
@@ -148,11 +145,7 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
             {(arrayHelpers) => (
               <>
                 {formik.values.ingredients.map(({ fieldId }, index) => (
-                  <IngredientRow
-                    key={fieldId}
-                    index={index}
-                    onRemove={arrayHelpers.remove}
-                  />
+                  <IngredientRow key={fieldId} index={index} onRemove={arrayHelpers.remove} />
                 ))}
 
                 <Button

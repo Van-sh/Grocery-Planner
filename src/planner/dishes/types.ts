@@ -4,7 +4,7 @@ import type { TIngredients } from "../ingredients/types";
 
 export type TDishIngredientsBase = {
   ingredient: Option;
-  measurement_unit: "" | "cup" | "tablespoon" | "teaspoon" | "gm" | "ml" | "number";
+  measurement_unit: "" | "cup" | "tablespoon" | "teaspoon" | "gm" | "ml";
   amount: number;
   to?: number; // to: "To" part of a range. For e.g. 3-5 cloves, here 5 is this value.
   isOptional?: boolean;
