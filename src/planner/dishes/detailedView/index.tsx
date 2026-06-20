@@ -1,4 +1,5 @@
 import { ModalBody, ModalHeader } from "@heroui/react";
+import sanitizeHtml from "sanitize-html";
 import { preparationToString } from "../../ingredients/util";
 import type { TDishes } from "../types";
 
@@ -45,9 +46,9 @@ export default function DetailedView({ value }: Props) {
         </p>
         <div
           className="[&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4"
-          dangerouslySetInnerHTML={{ __html: value?.recipe || "" }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(value?.recipe || "") }}
         />
       </ModalBody>
     </>
-  );
+
 }
