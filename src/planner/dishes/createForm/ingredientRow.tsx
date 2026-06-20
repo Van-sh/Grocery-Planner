@@ -1,6 +1,6 @@
 import { Button, Checkbox, Divider, Input, Select, SelectItem } from "@heroui/react";
-import { FastField, FieldProps, FormikErrors } from "formik";
-import { ChangeEvent, memo, useCallback, useMemo } from "react";
+import { FastField, Field, FieldProps, FormikErrors } from "formik";
+import { ChangeEvent, useCallback, useMemo } from "react";
 import Autocomplete from "../../../common/autoComplete";
 import type { TIngredients } from "../../ingredients/types";
 import { preparationToString } from "../../ingredients/util";
@@ -28,7 +28,7 @@ type Props = {
   onRemove: (index: number) => void;
 };
 
-const IngredientRow = memo(function IngredientRow({
+export default function IngredientRow({
   index,
   ingredientOptions,
   onSearchChange,
@@ -52,7 +52,7 @@ const IngredientRow = memo(function IngredientRow({
 
   return (
     <div className="bg-gray-100 flex flex-col sm:flex-row gap-1 p-2 rounded-lg ">
-      <FastField name={`ingredients.${index}.ingredient`}>
+      <Field name={`ingredients.${index}.ingredient`}>
         {({ field, meta }: FieldProps<{ _id: string; name: string }>) => {
           const errors = meta.error as FormikErrors<{ _id: string; name: string }> | undefined;
           return (
@@ -71,7 +71,7 @@ const IngredientRow = memo(function IngredientRow({
             />
           );
         }}
-      </FastField>
+      </Field>
 
       <div className="flex gap-x-1 flex-1">
         <div className="flex-1 min-w-0">
@@ -159,6 +159,4 @@ const IngredientRow = memo(function IngredientRow({
       </Button>
     </div>
   );
-});
-
-export default IngredientRow;
+}
