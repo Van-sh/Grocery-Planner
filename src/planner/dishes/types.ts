@@ -35,6 +35,10 @@ export type TDishesResponse = {
   count: number;
 };
 
+export type TDishResponse = {
+  data: TDishes;
+};
+
 export type TDishesGetAllQuery = {
   page: number;
   query: string;

@@ -1,12 +1,12 @@
 import { ModalBody, ModalHeader } from "@heroui/react";
-import { preparationToString } from "../../ingredients/util";
-import type { TDishes } from "../types";
+import type { TDishes } from "../../planner/dishes/types";
+import { preparationToString } from "../../planner/ingredients/util";
 
 type Props = {
   value?: TDishes;
 };
 
-export default function DetailedView({ value }: Props) {
+export default function DetailedRecipe({ value }: Props) {
   return (
     <>
       <ModalHeader>{value?.name}</ModalHeader>
