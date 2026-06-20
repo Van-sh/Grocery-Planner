@@ -1,7 +1,9 @@
 import { Button, Checkbox, Divider, Input, Select, SelectItem } from "@heroui/react";
 import { FastField, Field, FieldProps, FormikErrors } from "formik";
-import { ChangeEvent, useCallback, useMemo } from "react";
-import Autocomplete from "../../../common/autoComplete";
+import { ChangeEvent, useMemo } from "react";
+import Autocomplete, { type Option } from "../../../common/autoComplete";
+import { debounce } from "../../../common/utils";
+import { useLazyGetIngredientsQuery } from "../../ingredients/api";
 import type { TIngredients } from "../../ingredients/types";
 import { preparationToString } from "../../ingredients/util";
 import { measurementUnits } from "../constants";
@@ -20,41 +22,48 @@ const ingredientToAutocompleteOption = (ingredients: TIngredients[]) =>
         : ingredient.preparations.map(preparationToString).join(", "),
   }));
 
+const buildOptions = (fetched: Option[], current: { _id: string; name: string }): Option[] => {
+  if (fetched.length > 0) return fetched;
+  if (current._id) return [{ _id: current._id, name: current.name }];
+  return [];
+};
+
 type Props = {
   index: number;
-  ingredientOptions: TIngredients[];
-  onSearchChange: (query: string, index: number) => void;
-  onSearchSelect: (value: string, index: number) => void;
   onRemove: (index: number) => void;
 };
 
-export default function IngredientRow({
-  index,
-  ingredientOptions,
-  onSearchChange,
-  onSearchSelect,
-  onRemove,
-}: Props) {
-  const options = useMemo(
-    () => ingredientToAutocompleteOption(ingredientOptions),
-    [ingredientOptions],
+export default function IngredientRow({ index, onRemove }: Props) {
+  const [getIngredients, { data }] = useLazyGetIngredientsQuery();
+
+  const fetchedOptions = useMemo(
+    () => (data?.data ? ingredientToAutocompleteOption(data.data) : []),
+    [data],
   );
 
-  const handleSearchChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => onSearchChange(event.target.value, index),
-    [onSearchChange, index],
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((query: string) => {
+        const preferCachedValues = true;
+        getIngredients({ query, page: 1 }, preferCachedValues);
+      }, 750),
+    [getIngredients],
   );
-  const handleSearchSelect = useCallback(
-    (value: string) => onSearchSelect(value, index),
-    [onSearchSelect, index],
-  );
-  const handleRemove = useCallback(() => onRemove(index), [onRemove, index]);
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
+    debouncedSearch(event.target.value);
+
+  const handleRemove = () => onRemove(index);
 
   return (
     <div className="bg-gray-100 flex flex-col sm:flex-row gap-1 p-2 rounded-lg ">
       <Field name={`ingredients.${index}.ingredient`}>
-        {({ field, meta }: FieldProps<{ _id: string; name: string }>) => {
+        {({ field, form, meta }: FieldProps<{ _id: string; name: string }>) => {
           const errors = meta.error as FormikErrors<{ _id: string; name: string }> | undefined;
+          const options = buildOptions(fetchedOptions, field.value);
+
+          const handleSelect = (value: string) => form.setFieldValue(`${field.name}._id`, value);
+
           return (
             <Autocomplete
               label="Ingredient"
@@ -67,7 +76,7 @@ export default function IngredientRow({
               value={field.value.name}
               options={options}
               onChange={handleSearchChange}
-              onSelect={handleSearchSelect}
+              onSelect={handleSelect}
             />
           );
         }}

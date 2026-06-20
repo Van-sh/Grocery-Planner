@@ -2,13 +2,10 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@heroui/react";
 import { FieldArray, FormikProvider, useFormik } from "formik";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import Editor from "react-simple-wysiwyg";
 import * as yup from "yup";
 import type { Prettify } from "../../../common/types";
-import { debounce } from "../../../common/utils";
-import { useLazyGetIngredientsQuery } from "../../ingredients/api";
-import type { TIngredients } from "../../ingredients/types";
 import { measurementUnits } from "../constants";
 import type { TDishIngredientsBase, TDishes, TDishesBase } from "../types";
 import IngredientRow from "./ingredientRow";
@@ -106,12 +103,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     () => (initialValues ? prepareInitialData(initialValues) : undefined),
     [initialValues],
   );
-  const [ingredientsData, setIngredientsData] = useState<TIngredients[][]>(
-    initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
-  );
-  const searchControllerRef = useRef<Record<number, ReturnType<typeof getIngredients> | null>>({});
-
-  const [getIngredients] = useLazyGetIngredientsQuery();
 
   const formik = useFormik<TDishFormikData>({
     initialValues: {
@@ -123,47 +114,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     validationSchema: schema,
     onSubmit: (values) => onCreate(cleanFormikData(values), initialValues?._id),
   });
-  const { setFieldValue } = formik;
-
-  const refetchIngredient = useCallback(
-    async (newQuery: string, index: number) => {
-      const preferCachedValues = true;
-
-      const getIngredientsPromise = getIngredients(
-        { query: newQuery, page: 1 },
-        preferCachedValues,
-      );
-      searchControllerRef.current[index] = getIngredientsPromise;
-
-      const { data, requestId } = await getIngredientsPromise;
-      const dish = data?.data ?? [];
-      // only update if the response is from the current request
-      if ((await searchControllerRef.current[index]).requestId === requestId) {
-        setIngredientsData((prevData) => [
-          ...prevData.slice(0, index),
-          dish,
-          ...prevData.slice(index + 1),
-        ]);
-      }
-    },
-    [getIngredients],
-  );
-
-  const handleSearchChange = useMemo(
-    () =>
-      debounce(
-        // updates a state when UI needs to be updated
-        // eslint-disable-next-line react-hooks/refs
-        refetchIngredient,
-        750,
-      ),
-    [refetchIngredient],
-  );
-
-  const handleSearchItemSelect = (value: string, index: number) => {
-    setFieldValue(`ingredients.${index}.ingredient._id`, value);
-    setIngredientsData((prev) => [...prev.slice(0, index), [], ...prev.slice(index + 1)]);
-  };
 
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="off">
@@ -195,39 +145,26 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
 
         <FormikProvider value={formik}>
           <FieldArray name="ingredients">
-            {(arrayHelpers) => {
-              const handleRemoveIngredient = (index: number) => {
-                setIngredientsData((prev) => prev.filter((_, i) => i !== index));
-                arrayHelpers.remove(index);
-              };
+            {(arrayHelpers) => (
+              <>
+                {formik.values.ingredients.map(({ fieldId }, index) => (
+                  <IngredientRow
+                    key={fieldId}
+                    index={index}
+                    onRemove={arrayHelpers.remove}
+                  />
+                ))}
 
-              return (
-                <>
-                  {formik.values.ingredients.map(({ fieldId }, index) => (
-                    <IngredientRow
-                      key={fieldId}
-                      index={index}
-                      ingredientOptions={ingredientsData[index]}
-                      onSearchChange={handleSearchChange}
-                      onSearchSelect={handleSearchItemSelect}
-                      onRemove={handleRemoveIngredient}
-                    />
-                  ))}
-
-                  <Button
-                    variant="bordered"
-                    isDisabled={!!formik.getFieldMeta("ingredients").error}
-                    onPress={() => {
-                      setIngredientsData((prevState) => [...prevState, []]);
-                      arrayHelpers.push(createDefaultIngredient());
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faPlus} />
-                    Add Ingredient
-                  </Button>
-                </>
-              );
-            }}
+                <Button
+                  variant="bordered"
+                  isDisabled={!!formik.getFieldMeta("ingredients").error}
+                  onPress={() => arrayHelpers.push(createDefaultIngredient())}
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                  Add Ingredient
+                </Button>
+              </>
+            )}
           </FieldArray>
         </FormikProvider>
         <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
