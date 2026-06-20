@@ -1,7 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Checkbox, Input, ModalBody, ModalFooter, ModalHeader } from "@heroui/react";
-import { FieldArray, FieldArrayRenderProps, FormikProvider, useFormik } from "formik";
+import { FieldArray, FormikProvider, useFormik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import Editor from "react-simple-wysiwyg";
 import * as yup from "yup";
@@ -110,7 +110,6 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     initialValues?.ingredients.map((ingredient) => [ingredient.ingredient]) || [],
   );
   const searchControllerRef = useRef<Record<number, ReturnType<typeof getIngredients> | null>>({});
-  const arrayHelpersRef = useRef<FieldArrayRenderProps | null>(null);
 
   const [getIngredients] = useLazyGetIngredientsQuery();
 
@@ -161,18 +160,10 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
     [refetchIngredient],
   );
 
-  const handleSearchItemSelect = useCallback(
-    (value: string, index: number) => {
-      setFieldValue(`ingredients.${index}.ingredient._id`, value);
-      setIngredientsData((prev) => [...prev.slice(0, index), [], ...prev.slice(index + 1)]);
-    },
-    [setFieldValue],
-  );
-
-  const handleRemoveIngredient = useCallback((index: number) => {
-    setIngredientsData((prev) => prev.filter((_, i) => i !== index));
-    arrayHelpersRef.current?.remove(index);
-  }, []);
+  const handleSearchItemSelect = (value: string, index: number) => {
+    setFieldValue(`ingredients.${index}.ingredient._id`, value);
+    setIngredientsData((prev) => [...prev.slice(0, index), [], ...prev.slice(index + 1)]);
+  };
 
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="off">
@@ -205,7 +196,11 @@ export default function CreateForm({ initialValues, isLoading, onClose, onCreate
         <FormikProvider value={formik}>
           <FieldArray name="ingredients">
             {(arrayHelpers) => {
-              arrayHelpersRef.current = arrayHelpers;
+              const handleRemoveIngredient = (index: number) => {
+                setIngredientsData((prev) => prev.filter((_, i) => i !== index));
+                arrayHelpers.remove(index);
+              };
+
               return (
                 <>
                   {formik.values.ingredients.map(({ fieldId }, index) => (
