@@ -1,1 +1,1 @@
-export const measurementUnits = ["cup", "tablespoon", "teaspoon", "gm", "ml", "number"];
+export const measurementUnits = ["", "cup", "tablespoon", "teaspoon", "gm", "ml"];

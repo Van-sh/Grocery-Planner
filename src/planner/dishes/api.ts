@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { readCookie } from "../../common/cookieHelper";
-import type { TDishesBase, TDishesGetAllQuery, TDishesResponse } from "./types";
+import type { TDishesBase, TDishesGetAllQuery, TDishesResponse, TDishResponse } from "./types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -43,6 +43,9 @@ export const dishesApi = createApi({
         method: "DELETE",
       }),
     }),
+    getDishById: build.query<TDishResponse, string>({
+      query: (id) => `/${id}`,
+    }),
   }),
 });
 
@@ -52,4 +55,5 @@ export const {
   useCreateDishMutation,
   useUpdateDishMutation,
   useDeleteDishMutation,
+  useGetDishByIdQuery,
 } = dishesApi;
