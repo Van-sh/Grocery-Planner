@@ -197,6 +197,7 @@ export default function Dishes() {
           isKeyboardDismissDisabled
           placement="top-center"
           scrollBehavior="outside"
+          size="4xl"
         >
           <ModalContent>
             {() => (
