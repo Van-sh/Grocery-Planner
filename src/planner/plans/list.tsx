@@ -7,6 +7,7 @@ type Props = {
   data: TPlans[];
   onDetails: (id: string) => void;
   onDelete: (id: string) => void;
+  onToggle: (id: string, name: string) => void;
 };
 
 export default function List(props: Props) {

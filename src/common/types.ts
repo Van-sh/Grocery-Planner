@@ -71,7 +71,6 @@ export type TMeal = {
 export type TCreatePlanBase = {
   name: string;
   isPrivate: boolean;
-  isActive: boolean;
 };
 
 export type TPlansBase = TCreatePlanBase & {

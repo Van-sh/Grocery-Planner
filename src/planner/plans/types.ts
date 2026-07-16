@@ -13,3 +13,12 @@ export type TPlansGetAllQuery = {
   page: number;
   query: string;
 };
+
+export type TStartPlanRequest = {
+  planId: TPlans["_id"];
+  range: { start: Date; end: Date };
+};
+
+export type TStopPlanRequest = {
+  planId: TPlans["_id"];
+};

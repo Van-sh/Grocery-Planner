@@ -7,8 +7,18 @@ export type TLoginData = {
   name: string;
 };
 
+export type TScheduledPlan = {
+  plan: { _id: string; name: string };
+  startedAt: string;
+  endsAt: string;
+};
+
+export type TCurrentPlan = TScheduledPlan;
+
 export type TUserData = TLoginData & {
   picture?: string;
+  scheduledPlans?: TScheduledPlan[];
+  currentPlan?: TScheduledPlan | null;
 };
 
 export type TSignupFormData = {

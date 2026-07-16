@@ -9,18 +9,36 @@ import Loader from "../../common/loader";
 import Search from "../../common/search";
 import { addToast } from "../../common/toast/slice";
 import { getErrorMessage } from "../../helper";
-import { useAppDispatch } from "../../store";
-import { useCreatePlansMutation, useDeletePlanMutation, useGetPlansQuery } from "./api";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { useGetCurrentUserQuery } from "../../user/api";
+import {
+  useCreatePlansMutation,
+  useDeletePlanMutation,
+  useGetPlansQuery,
+  useStartPlanMutation,
+  useStopPlanMutation,
+} from "./api";
 import CreateForm from "./createForm";
 import List from "./list";
+import StartForm from "./startForm";
+import {
+  findScheduledPlanForPlanId,
+  getScheduledPlanStatus,
+} from "../../common/planSchedule";
+import type { TStartPlanRequest } from "./types";
 
 const limit = 10;
 export default function Plans() {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState<string>();
+  const [selectedPlanName, setSelectedPlanName] = useState("");
+  const [selectedPlanScheduleStatus, setSelectedPlanScheduleStatus] = useState<
+    "active" | "future" | null
+  >(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const scheduledPlans = useAppSelector((state) => state.auth.userDetails?.scheduledPlans);
   const {
     isLoading,
     isError: isGetError,
@@ -29,9 +47,18 @@ export default function Plans() {
     data: { data = [], count = 0 } = {},
     refetch,
   } = useGetPlansQuery({ query, page });
+  const { refetch: refetchUser } = useGetCurrentUserQuery(null);
   const [create, { data: createData, isLoading: isCreateLoading, status: createStatus }] =
     useCreatePlansMutation();
   const [deleteP, { isLoading: isDeleteLoading, status: deleteStatus }] = useDeletePlanMutation();
+  const [
+    startPlan,
+    { isLoading: isStartPlanLoading, isSuccess: isStartPlanSuccess, isError: isStartPlanError },
+  ] = useStartPlanMutation();
+  const [
+    stopPlan,
+    { isLoading: isStopPlanLoading, isSuccess: isStopPlanSuccess, isError: isStopPlanError },
+  ] = useStopPlanMutation();
 
   const {
     isOpen: isCreateModalOpen,
@@ -42,6 +69,16 @@ export default function Plans() {
     isOpen: isDeleteModalOpen,
     onOpen: onDeleteModalOpen,
     onClose: onDeleteModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isStartModalOpen,
+    onOpen: onStartModalOpen,
+    onClose: onStartModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isStopModalOpen,
+    onOpen: onStopModalOpen,
+    onClose: onStopModalClose,
   } = useDisclosure();
 
   const goToAddNewPlanPage = () => {
@@ -95,6 +132,44 @@ export default function Plans() {
     deleteP(id);
   };
 
+  const handleStartPlanClose = useCallback(() => {
+    setSelectedPlan(undefined);
+    setSelectedPlanName("");
+    onStartModalClose();
+  }, [onStartModalClose]);
+
+  const handleStartPlan = (range: TStartPlanRequest["range"]) => {
+    if (!selectedPlan) return;
+    startPlan({ planId: selectedPlan, range });
+  };
+
+  const handleStopPlanClose = () => {
+    setSelectedPlan(undefined);
+    setSelectedPlanName("");
+    setSelectedPlanScheduleStatus(null);
+    onStopModalClose();
+  };
+
+  const handleStopPlan = () => {
+    if (!selectedPlan) return;
+    stopPlan({ planId: selectedPlan });
+  };
+
+  const handleToggle = (id: string, name: string) => {
+    const entry = findScheduledPlanForPlanId(scheduledPlans, id);
+    const scheduleStatus = entry ? getScheduledPlanStatus(entry) : null;
+
+    setSelectedPlan(id);
+    setSelectedPlanName(name);
+    if (scheduleStatus === "active" || scheduleStatus === "future") {
+      setSelectedPlanScheduleStatus(scheduleStatus);
+      onStopModalOpen();
+    } else {
+      setSelectedPlanScheduleStatus(null);
+      onStartModalOpen();
+    }
+  };
+
   useEffect(() => {
     if (createStatus === "fulfilled") {
       onCreateModalClose();
@@ -114,6 +189,45 @@ export default function Plans() {
     }
   }, [deleteStatus, onDeleteModalClose, handleMutationSuccess, handleMutationError]);
 
+  useEffect(() => {
+    if (isStartPlanSuccess) {
+      onStartModalClose();
+      refetchUser();
+      handleMutationSuccess("started");
+    } else if (isStartPlanError) {
+      handleMutationError("start");
+    }
+  }, [
+    handleMutationError,
+    handleMutationSuccess,
+    isStartPlanError,
+    isStartPlanSuccess,
+    onStartModalClose,
+    refetchUser,
+  ]);
+
+  useEffect(() => {
+    if (isStopPlanSuccess) {
+      const action = selectedPlanScheduleStatus === "future" ? "unscheduled" : "stopped";
+      onStopModalClose();
+      setSelectedPlan(undefined);
+      setSelectedPlanName("");
+      setSelectedPlanScheduleStatus(null);
+      refetchUser();
+      handleMutationSuccess(action);
+    } else if (isStopPlanError) {
+      handleMutationError(selectedPlanScheduleStatus === "future" ? "unschedule" : "stop");
+    }
+  }, [
+    handleMutationError,
+    handleMutationSuccess,
+    isStopPlanError,
+    isStopPlanSuccess,
+    onStopModalClose,
+    refetchUser,
+    selectedPlanScheduleStatus,
+  ]);
+
   return (
     <div className="flex justify-center">
       <div className="max-w-5xl w-full px-6">
@@ -126,7 +240,12 @@ export default function Plans() {
             <BlankScreen name="Meal Plans" onAdd={goToAddNewPlanPage} />
           ) : (
             <>
-              <List data={data} onDetails={handleDetails} onDelete={showDeleteModal} />
+              <List
+                data={data}
+                onDetails={handleDetails}
+                onDelete={showDeleteModal}
+                onToggle={handleToggle}
+              />
               <div className="mt-4 flex justify-end mb-24 sm:mb-0">
                 <Pagination
                   showControls
@@ -168,12 +287,42 @@ export default function Plans() {
         </ModalContent>
       </Modal>
 
+      <Modal
+        isOpen={isStartModalOpen}
+        onClose={handleStartPlanClose}
+        isDismissable={false}
+        isKeyboardDismissDisabled
+        placement="top-center"
+      >
+        <ModalContent>
+          {() => (
+            <StartForm
+              isLoading={isStartPlanLoading}
+              onClose={handleStartPlanClose}
+              onSubmit={handleStartPlan}
+              planName={selectedPlanName}
+            />
+          )}
+        </ModalContent>
+      </Modal>
+
       <ConfirmationModal
         isModalOpen={isDeleteModalOpen}
         onModalClose={onDeleteModalClose}
         onYesClick={() => handleDelete(selectedPlan!)}
         isLoading={isDeleteLoading}
         message="Are you sure you want to delete this plan?"
+      />
+      <ConfirmationModal
+        isModalOpen={isStopModalOpen}
+        onModalClose={handleStopPlanClose}
+        onYesClick={handleStopPlan}
+        isLoading={isStopPlanLoading}
+        message={
+          selectedPlanScheduleStatus === "future"
+            ? "Are you sure you want to unschedule this plan?"
+            : "Are you sure you want to stop this plan?"
+        }
       />
     </div>
   );

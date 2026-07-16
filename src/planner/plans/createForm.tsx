@@ -6,7 +6,6 @@ import { TCreatePlanBase } from "../../common/types";
 const schema = yup.object({
   name: yup.string().required("Name is required"),
   isPrivate: yup.boolean(),
-  isActive: yup.boolean(),
 });
 
 type Props = {
@@ -20,7 +19,6 @@ export default function CreateForm({ isLoading, onClose, onCreate }: Props) {
     initialValues: {
       name: "",
       isPrivate: false,
-      isActive: true,
     } as TCreatePlanBase,
     validationSchema: schema,
     onSubmit: (values) => {
@@ -42,9 +40,6 @@ export default function CreateForm({ isLoading, onClose, onCreate }: Props) {
           errorMessage={formik.errors.name}
         />
         <Checkbox {...formik.getFieldProps("isPrivate")}>Make Private</Checkbox>
-        <Checkbox {...formik.getFieldProps("isActive")} defaultSelected={formik.values.isActive}>
-          Is Active
-        </Checkbox>
         <ModalFooter>
           <Button color="danger" variant="light" onPress={onClose} isDisabled={isLoading}>
             Close
