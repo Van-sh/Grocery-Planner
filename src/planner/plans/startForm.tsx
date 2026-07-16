@@ -15,12 +15,12 @@ const schema = yup.object({
       .mixed<CalendarDate>()
       .test({
         name: "is-calendardate",
-        message: "Start date is required",
+        message: "End date is required",
         test: (value) => value instanceof CalendarDate,
       })
       .test({
         name: "is-after-start-date",
-        message: "Start date must be before end date",
+        message: "End date must be on or after start date",
         test: (value, ctx) => value!.compare(ctx.parent.start) >= 0,
       }),
   }),

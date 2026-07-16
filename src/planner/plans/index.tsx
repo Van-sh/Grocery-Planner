@@ -21,6 +21,10 @@ import {
 import CreateForm from "./createForm";
 import List from "./list";
 import StartForm from "./startForm";
+import {
+  findScheduledPlanForPlanId,
+  getScheduledPlanStatus,
+} from "../../common/planSchedule";
 import type { TStartPlanRequest } from "./types";
 
 const limit = 10;
@@ -29,9 +33,12 @@ export default function Plans() {
   const [page, setPage] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState<string>();
   const [selectedPlanName, setSelectedPlanName] = useState("");
+  const [selectedPlanScheduleStatus, setSelectedPlanScheduleStatus] = useState<
+    "active" | "future" | null
+  >(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const currentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
+  const scheduledPlans = useAppSelector((state) => state.auth.userDetails?.scheduledPlans);
   const {
     isLoading,
     isError: isGetError,
@@ -139,6 +146,7 @@ export default function Plans() {
   const handleStopPlanClose = () => {
     setSelectedPlan(undefined);
     setSelectedPlanName("");
+    setSelectedPlanScheduleStatus(null);
     onStopModalClose();
   };
 
@@ -148,15 +156,16 @@ export default function Plans() {
   };
 
   const handleToggle = (id: string, name: string) => {
-    const currentPlanId = currentPlan?.plan?._id;
-    const isThisPlanRunning =
-      currentPlanId === id && !!currentPlan?.endsAt && new Date(currentPlan.endsAt) > new Date();
+    const entry = findScheduledPlanForPlanId(scheduledPlans, id);
+    const scheduleStatus = entry ? getScheduledPlanStatus(entry) : null;
 
     setSelectedPlan(id);
     setSelectedPlanName(name);
-    if (isThisPlanRunning) {
+    if (scheduleStatus === "active" || scheduleStatus === "future") {
+      setSelectedPlanScheduleStatus(scheduleStatus);
       onStopModalOpen();
     } else {
+      setSelectedPlanScheduleStatus(null);
       onStartModalOpen();
     }
   };
@@ -199,11 +208,15 @@ export default function Plans() {
 
   useEffect(() => {
     if (isStopPlanSuccess) {
+      const action = selectedPlanScheduleStatus === "future" ? "unscheduled" : "stopped";
       onStopModalClose();
+      setSelectedPlan(undefined);
+      setSelectedPlanName("");
+      setSelectedPlanScheduleStatus(null);
       refetchUser();
-      handleMutationSuccess("stopped");
+      handleMutationSuccess(action);
     } else if (isStopPlanError) {
-      handleMutationError("stop");
+      handleMutationError(selectedPlanScheduleStatus === "future" ? "unschedule" : "stop");
     }
   }, [
     handleMutationError,
@@ -212,6 +225,7 @@ export default function Plans() {
     isStopPlanSuccess,
     onStopModalClose,
     refetchUser,
+    selectedPlanScheduleStatus,
   ]);
 
   return (
@@ -304,7 +318,11 @@ export default function Plans() {
         onModalClose={handleStopPlanClose}
         onYesClick={handleStopPlan}
         isLoading={isStopPlanLoading}
-        message="Are you sure you want to stop this plan?"
+        message={
+          selectedPlanScheduleStatus === "future"
+            ? "Are you sure you want to unschedule this plan?"
+            : "Are you sure you want to stop this plan?"
+        }
       />
     </div>
   );

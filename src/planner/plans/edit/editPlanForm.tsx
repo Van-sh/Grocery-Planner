@@ -1,10 +1,15 @@
 import { Button, Input, Modal, ModalContent, useDisclosure } from "@heroui/react";
+import { useDateFormatter } from "@react-aria/i18n";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 import ConfirmationModal from "../../../common/confirmationModal";
 import { useData } from "../../../common/mealCards/context";
+import {
+  findScheduledPlanForPlanId,
+  getScheduledPlanStatus,
+} from "../../../common/planSchedule";
 import { addToast } from "../../../common/toast/slice";
 import { MealTypeKey, TDays, TMealDishBase } from "../../../common/types";
 import { isDesktop } from "../../../constants";
@@ -22,7 +27,6 @@ import StartForm from "../startForm";
 import DesktopView from "./desktopView";
 import EditMeal from "./editMeal";
 import MobileView from "./mobileView";
-import { useDateFormatter } from "@react-aria/i18n";
 
 const schema = yup.object({
   name: yup.string().required("Name is required"),
@@ -40,14 +44,18 @@ export default function EditPlanForm({ refetch }: Props) {
   const { data } = useData();
   const dispatch = useAppDispatch();
   const { planId = "" } = useParams();
-  const currentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
+  const scheduledPlans = useAppSelector((state) => state.auth.userDetails?.scheduledPlans);
   const formatter = useDateFormatter({ dateStyle: "long" });
 
-  const currentPlanId = currentPlan?.plan?._id;
-  const isCurrentPlanRunning =
-    currentPlanId === data._id &&
-    !!currentPlan?.endsAt &&
-    new Date(currentPlan.endsAt) > new Date();
+  const scheduledEntry = findScheduledPlanForPlanId(scheduledPlans, data._id);
+  const scheduleStatus = scheduledEntry ? getScheduledPlanStatus(scheduledEntry) : null;
+  const isPlanScheduled = scheduleStatus === "active" || scheduleStatus === "future";
+  const planActionLabel =
+    scheduleStatus === "active"
+      ? "Stop Plan"
+      : scheduleStatus === "future"
+        ? "Unschedule Plan"
+        : "Start Plan";
 
   const { refetch: refetchUser } = useGetCurrentUserQuery(null);
   const [
@@ -77,7 +85,7 @@ export default function EditPlanForm({ refetch }: Props) {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      updatePlan({ id: planId, ...values });
+      updatePlan({ id: planId, isPrivate: data.isPrivate, ...values });
     },
   });
   const {
@@ -233,9 +241,9 @@ export default function EditPlanForm({ refetch }: Props) {
     if (isStopPlanSuccess) {
       onStopModalClose();
       refetchUser();
-      handleMutationSuccess("Stoped");
+      handleMutationSuccess(scheduleStatus === "future" ? "unscheduled" : "stopped");
     } else if (isStopPlanError) {
-      handleMutationError("Stop");
+      handleMutationError(scheduleStatus === "future" ? "unschedule" : "stop");
     }
   }, [
     handleMutationError,
@@ -244,6 +252,7 @@ export default function EditPlanForm({ refetch }: Props) {
     isStopPlanSuccess,
     onStopModalClose,
     refetchUser,
+    scheduleStatus,
   ]);
 
   return (
@@ -262,13 +271,13 @@ export default function EditPlanForm({ refetch }: Props) {
           />
           <div className="flex gap-2">
             <Button
-              color={isCurrentPlanRunning ? "danger" : "secondary"}
+              color={isPlanScheduled ? "danger" : "secondary"}
               size="lg"
               type="button"
-              onPress={isCurrentPlanRunning ? onStopModalOpen : onStartModalOpen}
+              onPress={isPlanScheduled ? onStopModalOpen : onStartModalOpen}
               isDisabled={isStartPlanLoading}
             >
-              {isCurrentPlanRunning ? "Stop Plan" : "Start Plan"}
+              {planActionLabel}
             </Button>
             <Button color="primary" size="lg" type="submit" isLoading={isUpdatePlanLoading}>
               Save
@@ -276,8 +285,12 @@ export default function EditPlanForm({ refetch }: Props) {
           </div>
         </div>
         <div>
-          {currentPlan &&
-            `Active for ${formatter.formatRange(new Date(currentPlan.startedAt), new Date(currentPlan.endsAt))}`}
+          {scheduleStatus === "active" &&
+            scheduledEntry &&
+            `Active for ${formatter.formatRange(new Date(scheduledEntry.startedAt), new Date(scheduledEntry.endsAt))}`}
+          {scheduleStatus === "future" &&
+            scheduledEntry &&
+            `Scheduled for ${formatter.formatRange(new Date(scheduledEntry.startedAt), new Date(scheduledEntry.endsAt))}`}
         </div>
 
         {isDesktop ? (
@@ -341,7 +354,11 @@ export default function EditPlanForm({ refetch }: Props) {
         onModalClose={onStopModalClose}
         onYesClick={() => stopPlan({ planId: data._id })}
         isLoading={isStopPlanLoading}
-        message="Are you sure you want to stop this plan?"
+        message={
+          scheduleStatus === "future"
+            ? "Are you sure you want to unschedule this plan?"
+            : "Are you sure you want to stop this plan?"
+        }
       />
 
       <ConfirmationModal

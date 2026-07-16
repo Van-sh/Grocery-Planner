@@ -12,7 +12,7 @@ import DeleteIcon from "../../assets/deleteIcon";
 import EyeIcon from "../../assets/eyeIcon";
 import PlayIcon from "../../assets/playIcon";
 import SquareIcon from "../../assets/squareIcon";
-import { TCurrentPlan } from "../../common/auth/types";
+import { getPlanScheduleDisplay } from "../../common/planSchedule";
 import { TPlans } from "../../common/types";
 import { useAppSelector } from "../../store";
 
@@ -21,51 +21,50 @@ type Props = {
   onDetails: (id: string) => void;
   onDelete: (id: string) => void;
   onToggle: (id: string, name: string) => void;
-  currentPlan?: TCurrentPlan | null;
 };
 
 const columns = [
   { name: "Name", key: "name" },
   { name: "Updated By", key: "updatedBy" },
-  { name: "Current Plan", key: "currentPlan" },
+  { name: "Schedule", key: "schedule" },
   { name: "", key: "actions" },
 ];
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
 export default function PlansTable({ data, onDetails, onDelete, onToggle }: Props) {
-  const userCurrentPlan = useAppSelector((state) => state.auth.userDetails?.currentPlan);
-  const userCurrentPlanId = userCurrentPlan?.plan?._id;
-  const userCurrentPlanEndsAt = userCurrentPlan?.endsAt
-    ? new Date(userCurrentPlan.endsAt)
-    : undefined;
-  const isUserCurrentPlanRunning = !!userCurrentPlanEndsAt && userCurrentPlanEndsAt > new Date();
+  const scheduledPlans = useAppSelector((state) => state.auth.userDetails?.scheduledPlans);
 
   const renderCell = (item: TPlans, columnKey: string | number) => {
     const value = getKeyValue(item, columnKey);
-    const isThisPlanRunning = userCurrentPlanId === item._id && isUserCurrentPlanRunning;
+    const { label, isScheduled, isActive } = getPlanScheduleDisplay(
+      scheduledPlans,
+      item._id,
+      dateFormatter,
+    );
+    const toggleLabel = isActive ? "Stop" : isScheduled ? "Unschedule" : "Start";
 
     switch (columnKey) {
       case "name":
         return value;
       case "updatedBy":
         return value?.name;
-      case "currentPlan":
-        return isThisPlanRunning ? (
-          `Ends ${dateFormatter.format(userCurrentPlanEndsAt)}`
+      case "schedule":
+        return label === "Not running" ? (
+          <span className="text-danger">{label}</span>
         ) : (
-          <span className="text-danger">Not running</span>
+          label
         );
       case "actions":
         return (
           <div className="flex items-center gap-2">
-            <Tooltip content={isThisPlanRunning ? "Stop" : "Start"}>
+            <Tooltip content={toggleLabel}>
               <button
-                aria-label={isThisPlanRunning ? "stop plan" : "start plan"}
+                aria-label={`${toggleLabel.toLowerCase()} plan`}
                 className="text-lg text-primary-400 cursor-pointer active:opacity-50"
                 onClick={() => onToggle(item._id, item.name)}
               >
-                {isThisPlanRunning ? <SquareIcon /> : <PlayIcon />}
+                {isScheduled ? <SquareIcon /> : <PlayIcon />}
               </button>
             </Tooltip>
             <Tooltip content="Details">
@@ -95,7 +94,6 @@ export default function PlansTable({ data, onDetails, onDelete, onToggle }: Prop
 
   return (
     <Table
-      key={userCurrentPlanId ?? "none"}
       aria-label="plans-table"
       removeWrapper
       className="mt-6"

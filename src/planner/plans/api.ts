@@ -44,7 +44,7 @@ export const plansApi = createApi({
     }),
     updatePlans: build.mutation<TPlanResponse, TCreatePlanBase & { id: string }>({
       query: ({ id, ...data }) => ({
-        url: `${id}`,
+        url: `/${id}`,
         method: "PATCH",
         body: data,
       }),
